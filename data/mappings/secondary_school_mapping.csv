@@ -1,0 +1,94 @@
+Original_School,Normalized_School,School_Type
+,NA,Secondary
+"(public,private)",State,Secondary
+/,NA,Secondary
+American School,NA,Secondary
+Anglican private school,Private,Secondary
+Catholic School,Church,Secondary
+Central School (K.VS) Kendriya,State,Secondary
+Centre-sponsored,NA,Secondary
+Church,Church,Secondary
+Convent school,Church,Secondary
+Country,NA,Secondary
+Drop-out,NA,Secondary
+Dropped out,NA,Secondary
+GEPŠ Gimnazija Piran,NA,Secondary
+Government (fee paying),State,Secondary
+Governmental school in Kuwait,State,Secondary
+Govt. Boys Higher Secondary School,NA,Secondary
+Govt. aided school,NA,Secondary
+Gymnasium,Other,Secondary
+High School in Australia,NA,Secondary
+IB,NA,Secondary
+Independent,Private,Secondary
+Independent; Church,Private,Secondary
+Municipality,Other,Secondary
+Online diploma,NA,Secondary
+Other,NA,Secondary
+Private,Private,Secondary
+Private (International),Private,Secondary
+Private Catholic,Private,Secondary
+"Private, D.AV Public School",State,Secondary
+"Private, but most of the fee pays the government",State,Secondary
+Private/ fee-paying,Private,Secondary
+Private/fee-paying,Private,Secondary
+Private/fee-paying and state-funded,State,Secondary
+Private; None,Private,Secondary
+Public,State,Secondary
+"Public, Private",Mixed,Secondary
+Public/State,State,Secondary
+Public/State; Private,Mixed,Secondary
+Public/States,State,Secondary
+SState,State,Secondary
+State,State,Secondary
+State (in Malta),State,Secondary
+State and Church,Mixed,Secondary
+"State, Church",Mixed,Secondary
+"State, Independent",State,Secondary
+"State, Junior College + Uni",State,Secondary
+"State, Private",Mixed,Secondary
+State-funded,State,Secondary
+State; Trade school,State,Secondary
+State; other,State,Secondary
+War,NA,Secondary
+chuch,NA,Secondary
+church,Church,Secondary
+church/state,State,Secondary
+comprehensive,State,Secondary
+"first Private, then State",State,Secondary
+governement,NA,Secondary
+government,State,Secondary
+independent,Private,Secondary
+"independent, church",Private,Secondary
+nA,NA,Secondary
+none,NA,Secondary
+other,NA,Secondary
+other (Grammar),State,Secondary
+other (public charter),State,Secondary
+"other, semi-private",Private,Secondary
+other/none,NA,Secondary
+other: disabled,NA,Secondary
+private,Private,Secondary
+private (Episcopalian),Private,Secondary
+private (religious-christian),Private,Secondary
+"private, state",Mixed,Secondary
+private/ Baptist Church,Private,Secondary
+private/ fee-paying,Private,Secondary
+private/ independent/ Christian,Private,Secondary
+private/fee-paying,Private,Secondary
+public,State,Secondary
+public and private,Mixed,Secondary
+"public, private",Mixed,Secondary
+"public,private",State,Secondary
+public; private,Mixed,Secondary
+semi-private,Private,Secondary
+state,State,Secondary
+state (UK),State,Secondary
+"state, private",Mixed,Secondary
+state-funded,State,Secondary
+state-funded and public/fee-paying,State,Secondary
+"state-funded, private/fee-paying",Mixed,Secondary
+"state-funded, selective (grammar school)",State,Secondary
+state-funded/ private-fee-paying,State,Secondary
+state-funded/partial funded by RC Church,State,Secondary
+state-funded/private/fee-paying,State,Secondary

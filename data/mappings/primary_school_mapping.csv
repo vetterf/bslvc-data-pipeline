@@ -1,0 +1,96 @@
+Original_School,Normalized_School,School_Type
+,NA,Primary
+"(State, Independent)",State,Primary
+Catholic School,Church,Primary
+Central School (K.VS) Kendriya,State,Primary
+Church,Church,Primary
+Convent school,Church,Primary
+Country,NA,Primary
+Government (fee paying),State,Primary
+Governmental school in Kuwait,State,Primary
+Independent,Private,Primary
+"Independent, Church",Private,Primary
+Indepenent Church,Church,Primary
+Municipality,Other,Primary
+NNA,NA,Primary
+Other,NA,Primary
+Other (in Marocco),NA,Primary
+Partly state-funded/ fee-paying,State,Primary
+Privat (baptist),Church,Primary
+Private,Private,Primary
+Private (Boarding school),Private,Primary
+Private Catholic,Private,Primary
+"Private, D.AV Public School",State,Primary
+Private/ fee-paying,Private,Primary
+Public,State,Primary
+Public&Private,State,Primary
+"Public, Private",Mixed,Primary
+Public/Private,Mixed,Primary
+Public/State,State,Primary
+Public/State & Private,State,Primary
+"Public/State, Private",Mixed,Primary
+Public/State; Private,Mixed,Primary
+Public/States,State,Primary
+SState,State,Primary
+State,State,Primary
+State (in Serbia,State,Primary
+"State, Church",Mixed,Primary
+"State, High School",State,Primary
+"State, Independent",State,Primary
+"State, Private",Mixed,Primary
+"State, international",State,Primary
+State-funded,State,Primary
+State-funded and private/ fee-paying,Mixed,Primary
+"State-funded, Private",Mixed,Primary
+"State-funded, private/ fee-paying",Mixed,Primary
+State; Church,State,Primary
+State; Independent,State,Primary
+Waldorf Steiner,Private,Primary
+both,NA,Primary
+church,Church,Primary
+combined,NA,Primary
+"first Private, then State",State,Primary
+government,State,Primary
+indenpendent,NA,Primary
+independent,Private,Primary
+international,Other,Primary
+mostly state,State,Primary
+none,NA,Primary
+none (Army School),Other,Primary
+orphan school,Other,Primary
+other,NA,Primary
+other (different),NA,Primary
+other: forces,Church,Primary
+pblic,NA,Primary
+privat,NA,Primary
+private,Private,Primary
+private (Montessori),Private,Primary
+private (catholic),Private,Primary
+private (religious-christian),Private,Primary
+private/ Baptist Church,Private,Primary
+private/ Montessori,Private,Primary
+private/ catholic,Private,Primary
+private/ fee-paying,Private,Primary
+private/ independent/ Christian,Private,Primary
+private/fee-paying,Private,Primary
+public,State,Primary
+public and private,Mixed,Primary
+"public, private",Mixed,Primary
+"public,private",State,Primary
+public/private,Mixed,Primary
+public; private,Mixed,Primary
+state,State,Primary
+state (India),State,Primary
+state (UK),State,Primary
+state + church,Mixed,Primary
+"state, church",Mixed,Primary
+"state, other (HighSchool)",State,Primary
+"state, private, church",Mixed,Primary
+state-funded,State,Primary
+state-funded (P1-P5)/private/fee-paying (P6 & P7),State,Primary
+state-funded and public/fee-paying,State,Primary
+"state-funded, private/ fee-paying",Mixed,Primary
+"state-funded, private/fee-paying",Mixed,Primary
+state-funded/other,State,Primary
+state-funded/partial,State,Primary
+state/church,Mixed,Primary

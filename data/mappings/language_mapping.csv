@@ -1,0 +1,823 @@
+Original_Language,NER_Result,Normalized_Language
+(American) English,,(American) English
+(English) English,,(English) English
+"(English, Danish)",,"(English, Danish)"
+"(English,German)",,"(English, German)"
+4ly English / 2 Maltese,,"4Ly English, 2 Maltese"
+"4ly English / 2 Maltese, 2 Italian",,"4Ly English, 2 Maltese, 2 Italian"
+4ly English / 2 Slovenian,,"4Ly English, 2 Slovenian"
+4ly Maltese / 2 English,,"4Ly Maltese, 2 English"
+"4ly Maltese / 2 English, Italian",,"4Ly Maltese, 2 English, Italian"
+4ly Slovenian / 2 English,,"4Ly Slovenian, 2 English"
+"4ly Slovenian / 2 English, Croatian",,"4Ly Slovenian, 2 English, Croatian"
+"8 languages, including Maltese and English",,"8 Languages, Including Maltese, English"
+Africaans,,Africaans
+Afrikaans,,Afrikaans
+Afrikaans/English,,"Afrikaans, English"
+Albanian,,Albanian
+Albenian,,Albenian
+American,,American
+American English,,English
+Amharic,,Amharic
+Amharic (/English at school),,"Amharic (, English At School)"
+Arabic,,Arabic
+Arabic (Kuwaiti),,Arabic (Kuwaiti)
+Arabic and Spanish,,"Arabic, Spanish"
+"Arabic, German",,"Arabic, German"
+"Arabic, Spanish",,"Arabic, Spanish"
+"Arabic, Spanish, English",,"Arabic, Spanish, English"
+"Arabic,Maltese,French,English",,"Arabic, Maltese, French, English"
+Arabic/Algerian Accent,,"Arabic, Algerian Accent"
+Arabic/French,,"Arabic, French"
+Arabic/Spanish,,"Arabic, Spanish"
+Aramaic,,Aramaic
+Aramaie,,Aramaie
+Assamese,,Assamese
+Australian,,Australian
+Australian English (?),,English (?)
+Austrian; Maltese,,"Austrian, Maltese"
+Balti,,Balti
+Balti (Ladakhi),,Balti (Ladakhi)
+"Balti,Hindi",,"Balti, Hindi"
+Bangulisi,,Bangulisi
+"Bangulisi, Sri Lankan, English",,"Bangulisi, Sri Lankan, English"
+Bayamón,,Bayamón
+Bengali,,Bengali
+"Bengali, Arabic",,"Bengali, Arabic"
+"Bengali,Dakhni",,"Bengali, Dakhni"
+Bihari,,Bihari
+Bilingual,,Bilingual
+Bosnia,,Bosnia
+Bosnian,,Bosnian
+Br.  English,,Br. English
+Br. English,,Br. English
+British,,British
+British English,,English
+British-Scottish,,British-Scottish
+Bulgarian,,Bulgarian
+"Bulgarian, Turkish",,"Bulgarian, Turkish"
+Canadian,,Canadian
+Canadian English,,English
+Cantonese,,Cantonese
+Catalan,,Catalan
+Catalan (Ibizan),,Catalan (Ibizan)
+Catalan (Majorcan (Manacar)),,Catalan (Majorcan (Manacar))
+Catalan (Majorcan),,Catalan (Majorcan)
+Catalan (Mallorcan (Palma)),,Catalan (Mallorcan (Palma))
+Catalan (Mallorcan),,Catalan (Mallorcan)
+"Catalan (Mallorcan, Pollença)",,"Catalan (Mallorcan, Pollença)"
+Catalan (Mallorqui),,Catalan (Mallorqui)
+Catalan (Mallorquin),,Catalan (Mallorquin)
+"Catalan (Mallorquin), English",,"Catalan (Mallorquin), English"
+Catalan (Manacor),,Catalan (Manacor)
+"Catalan (Menorcan, Maó)",,"Catalan (Menorcan, Maó)"
+Catalan (Pollença),,Catalan (Pollença)
+Catalan (Son Servera),,Catalan (Son Servera)
+"Catalan, Spanish",,"Catalan, Spanish"
+Chichewa,,Chichewa
+Chinese,,Chinese
+Chinese / Cantonese,,"Chinese, Cantonese"
+"Chinese, Cantonese",,"Chinese, Cantonese"
+Chinese/English,,"Chinese, English"
+Chitumbuka,,Chitumbuka
+Corozal,,Corozal
+"Creole, French, English",,"Creole, French, English"
+Croatian,,Croatian
+"Croatian, Serbian",,"Croatian, Serbian"
+Cypriot,,Cypriot
+Czech,,Czech
+DE,,De
+Danish,,Danish
+"Danish, German",,"Danish, German"
+"Danish, Icelandic",,"Danish, Icelandic"
+"Danish, Swedish",,"Danish, Swedish"
+"Danish, a little bit of German",,"Danish, A Little Bit Of German"
+Dogri,,Dogri
+Dutch,,Dutch
+Eglish,,Eglish
+Egyptian,,Egyptian
+Emglish,,Emglish
+Emmanuel,,Emmanuel
+Engliah,,Engliah
+Englih,,Englih
+Englilsh,,Englilsh
+Englisch,,Englisch
+English,,English
+English  with some Spanish,,English With Some Spanish
+English (+ Jèrriais),,"English (, Jèrriais)"
+English (American),,English (American)
+English (British),,English (British)
+"English (Doric, some Scots)",,"English (Doric, Some Scots)"
+"English (England), Spanish",,"English (England), Spanish"
+English (English),,English (English)
+English (India),,English (India)
+English (Irish English),,English (Irish English)
+English (Irish),,English (Irish)
+English (London),,English (London)
+English (Scotland),,English (Scotland)
+English (Scottish),,English (Scottish)
+English (South British),,English (South British)
+English (UK),,English (Uk)
+"English (mostly English, some Scots)",,"English (Mostly English, Some Scots)"
+English + Maltese,,"English, Maltese"
+English + Maltese equally,,"English, Maltese Equally"
+English + Spanish,,"English, Spanish"
+English / Afrikaans,,"English, Afrikaans"
+English / Chinese (Hokkien),,"English, Chinese (Hokkien)"
+English / Filipino,,"English, Filipino"
+English / Finnish (for infancy),,"English, Finnish (For Infancy)"
+English / French,,"English, French"
+English / German,,"English, German"
+English / German / Spanish,,"English, German, Spanish"
+English / German / Turkish / Kurdish,,"English, German, Turkish, Kurdish"
+English / Greek,,"English, Greek"
+English / Irish Eglish,,"English, Irish Eglish"
+English / Italian,,"English, Italian"
+English / Italian / Dutch,,"English, Italian, Dutch"
+English / Latvian,,"English, Latvian"
+English / Maltese,,"English, Maltese"
+English / Maltese / German,,"English, Maltese, German"
+English / Maltese / Italian,,"English, Maltese, Italian"
+English / Russian / Arabic,,"English, Russian, Arabic"
+English / Scots,,"English, Scots"
+English / Serbian,,"English, Serbian"
+English / Spanish,,"English, Spanish"
+English / Yoruba,,"English, Yoruba"
+English / other,,"English, Other"
+English British,,English British
+English West Indies (American),,English West Indies (American)
+English and Bulgarian,,"English, Bulgarian"
+English and Maltese,,"English, Maltese"
+English and Spanish,,"English, Spanish"
+English&Spanish,,"English, Spanish"
+English+French,,"English, French"
+English+Spanish,,"English, Spanish"
+"English,
+Italian",,"English, Italian"
+"English,
+Spanish",,"English, Spanish"
+"English, 
+Spanish",,"English, Spanish"
+"English,  Spanish",,"English, Spanish"
+"English, Africaan, French, Swedish, Norwegian, Danish",,"English, Africaan, French, Swedish, Norwegian, Danish"
+"English, Africaans",,"English, Africaans"
+"English, Afrikaans",,"English, Afrikaans"
+"English, Arabic",,"English, Arabic"
+"English, Arabic, Bengali",,"English, Arabic, Bengali"
+"English, Bosnian, German",,"English, Bosnian, German"
+"English, Cantonese",,"English, Cantonese"
+"English, Chinese",,"English, Chinese"
+"English, Chinese, German, Czech",,"English, Chinese, German, Czech"
+"English, Dutch",,"English, Dutch"
+"English, Egyptian",,"English, Egyptian"
+"English, Filipino",,"English, Filipino"
+"English, French",,"English, French"
+"English, French, Jèrriais",,"English, French, Jèrriais"
+"English, French, Spanish",,"English, French, Spanish"
+"English, Gaelic",,"English, Gaelic"
+"English, German",,"English, German"
+"English, Gibraltarian",,"English, Gibraltarian"
+"English, Gibraltarian (Yanito)",,"English, Gibraltarian (Yanito)"
+"English, Glaswegian",,"English, Glaswegian"
+"English, Greek",,"English, Greek"
+"English, Guernsey French",,"English, Guernsey French"
+"English, Gujurati",,"English, Gujurati"
+"English, Hawaiian",,"English, Hawaiian"
+"English, Hindi",,"English, Hindi"
+"English, Hindi, Punjabi",,"English, Hindi, Punjabi"
+"English, Hindi,unspecified",,"English, Hindi, Unspecified"
+"English, Irish",,"English, Irish"
+"English, Irish Gaelic",,"English, Irish Gaelic"
+"English, Italian",,"English, Italian"
+"English, Italian, French",,"English, Italian, French"
+"English, Japanese",,"English, Japanese"
+"English, Jersey French",,"English, Jersey French"
+"English, Jèrriais",,"English, Jèrriais"
+"English, Jèrriais, French",,"English, Jèrriais, French"
+"English, Kiswahili",,"English, Kiswahili"
+"English, Maltese",,"English, Maltese"
+"English, Maltese + French",,"English, Maltese, French"
+"English, Maltese, French",,"English, Maltese, French"
+"English, Maltese, Italian",,"English, Maltese, Italian"
+"English, Maltese, Italian, French",,"English, Maltese, Italian, French"
+"English, Mandarin",,"English, Mandarin"
+"English, Native, French",,"English, Native, French"
+"English, Polish",,"English, Polish"
+"English, Portuguese",,"English, Portuguese"
+"English, Portuguese for the first two years",,"English, Portuguese For The First Two Years"
+"English, Punjabi",,"English, Punjabi"
+"English, Romanian",,"English, Romanian"
+"English, Russian",,"English, Russian"
+"English, Scots",,"English, Scots"
+"English, Scottish",,"English, Scottish"
+"English, Serquais",,"English, Serquais"
+"English, Slovenian",,"English, Slovenian"
+"English, Slovenian, Croatian",,"English, Slovenian, Croatian"
+"English, Slovenian, German",,"English, Slovenian, German"
+"English, Slovenian, Serbian",,"English, Slovenian, Serbian"
+"English, Spanish",,"English, Spanish"
+"English, Spanish for 15 years",,"English, Spanish For 15 Years"
+"English, Spanish, French, Arabic",,"English, Spanish, French, Arabic"
+"English, Spanish, German",,"English, Spanish, German"
+"English, Spanish, sign language",,"English, Spanish, Sign Language"
+"English, Swedish",,"English, Swedish"
+"English, Swedish, Arabic",,"English, Swedish, Arabic"
+"English, Swedish, Danish",,"English, Swedish, Danish"
+"English, Swedish, Greenlandic",,"English, Swedish, Greenlandic"
+"English, Swedish, Polish",,"English, Swedish, Polish"
+"English, Swedish, Russian",,"English, Swedish, Russian"
+"English, Swedish, Spanish",,"English, Swedish, Spanish"
+"English, Swedish, Spanish, German",,"English, Swedish, Spanish, German"
+"English, Swedish, Thai",,"English, Swedish, Thai"
+"English, Tagalog",,"English, Tagalog"
+"English, Turkish",,"English, Turkish"
+"English, Venetian",,"English, Venetian"
+"English, Vietnamese",,"English, Vietnamese"
+"English, Welsh",,"English, Welsh"
+"English, Welsh, Arabic",,"English, Welsh, Arabic"
+"English, Yanito",,"English, Yanito"
+"English, Zulu",,"English, Zulu"
+"English, contact Guernésiais and Jèrriais",,"English, Contact Guernésiais, Jèrriais"
+"English, mostly English / some Spanish",,"English, Mostly English, Some Spanish"
+"English, mostly English, some Scots",,"English, Mostly English, Some Scots"
+"English, mostly English, some Sots, Gaidhlig",,"English, Mostly English, Some Sots, Gaidhlig"
+"English, other (Filipino / Ilocano)",,"English, Other (Filipino, Ilocano)"
+"English, other (Filipino)",,"English, Other (Filipino)"
+"English, other (French)",,"English, Other (French)"
+"English, other (Serbian)",,"English, Other (Serbian)"
+"English, other (Vietnamese)",,"English, Other (Vietnamese)"
+"English, other: Chichewa",,"English, Other: Chichewa"
+"English, some French",,"English, Some French"
+"English, some Greek, but only till 6 years old",,"English, Some Greek, But Only Till 6 Years Old"
+"English, some Malaysian",,"English, Some Malaysian"
+"English, some Welsh",,"English, Some Welsh"
+"English,Hindi",,"English, Hindi"
+"English,Hindi,Dakhni,Telugu,Bengali",,"English, Hindi, Dakhni, Telugu, Bengali"
+"English,Hindi,Dogri",,"English, Hindi, Dogri"
+"English,Hindi,Haryanvi",,"English, Hindi, Haryanvi"
+"English,Hindi,Himachali",,"English, Hindi, Himachali"
+"English,Hindi,Kashmiri",,"English, Hindi, Kashmiri"
+"English,Hindi,Multani",,"English, Hindi, Multani"
+"English,Hindi,Paharhi (Dialect)",,"English, Hindi, Paharhi (Dialect)"
+"English,Hindi,Punjabi",,"English, Hindi, Punjabi"
+"English,Hindi,Punjabi,Poonchi,Urdu",,"English, Hindi, Punjabi, Poonchi, Urdu"
+"English,Hindi,Punjabi,Urdu",,"English, Hindi, Punjabi, Urdu"
+"English,Hindi,unspecified",,"English, Hindi, Unspecified"
+"English,Manipuri",,"English, Manipuri"
+"English,Scots",,"English, Scots"
+"English,Spanish",,"English, Spanish"
+"English,Welsh",,"English, Welsh"
+"English,other (German)",,"English, Other (German)"
+"English,other (Mongolian)",,"English, Other (Mongolian)"
+"English,unspecified",,"English, Unspecified"
+English/ Italian,,"English, Italian"
+English/Afrikaans,,"English, Afrikaans"
+English/Arabic,,"English, Arabic"
+English/French,,"English, French"
+English/German/Romanian/some Spanish,,"English, German, Romanian, Some Spanish"
+English/German/Swiss-German,,"English, German, Swiss-German"
+English/Indian,,"English, Indian"
+English/Scots,,"English, Scots"
+English/Scottish,,"English, Scottish"
+English/Spanish,,"English, Spanish"
+English/Welsh,,"English, Welsh"
+English/little Welsh,,"English, Little Welsh"
+English; Czech,,"English, Czech"
+English; French; Vietnamese,,"English, French, Vietnamese"
+English; German,,"English, German"
+English; Malta,,"English, Malta"
+English; Maltese,,"English, Maltese"
+English; Maltese; French,,"English, Maltese, French"
+English; Maltese; Italian,,"English, Maltese, Italian"
+English; Turkish,,"English, Turkish"
+English; attended Irish medium primary school from age 4-11; was bilingual as a child,,"English, Attended Irish Medium Primary School From Age 4-11, Was Bilingual As A Child"
+English; father spoke German 50 % of the time,,"English, Father Spoke German 50 % Of The Time"
+"English; mostly English, some Hawaiian",,"English, Mostly English, Some Hawaiian"
+English; other,,"English, Other"
+English; some Hungarian and Chinese,,"English, Some Hungarian, Chinese"
+English?,,English?
+"Englishi, Punjabi",,"Englishi, Punjabi"
+Englsih (Edinburgh),,Englsih (Edinburgh)
+Enl,,Enl
+European,,European
+Farsi,,Farsi
+"Farsi, Assyrian",,"Farsi, Assyrian"
+Filipino,,Filipino
+Finnish,,Finnish
+"Finnish, Swedish",,"Finnish, Swedish"
+Flamish,,Flamish
+French,,French
+French / German,,"French, German"
+"French, Congolese",,"French, Congolese"
+"French, English",,"French, English"
+"French, Jèrriais",,"French, Jèrriais"
+"French, Spanish",,"French, Spanish"
+"French, Swiss-German",,"French, Swiss-German"
+French. Italian,,French. Italian
+French; Maltese,,"French, Maltese"
+Ga,,Ga
+Gaelic,,Gaelic
+"Gaelic, English",,"Gaelic, English"
+Gaidhlig,,Gaidhlig
+Geman,,Geman
+German,,German
+German (NRW),,German (Nrw)
+German / Arabic,,"German, Arabic"
+German / Bulgarian,,"German, Bulgarian"
+German / French,,"German, French"
+German / Fränkisch,,"German, Fränkisch"
+German / Italian,,"German, Italian"
+German / Polish,,"German, Polish"
+German / Romanian,,"German, Romanian"
+German / Russian,,"German, Russian"
+German / Spanish,,"German, Spanish"
+German / Turkish,,"German, Turkish"
+German / Vietnamese / some English,,"German, Vietnamese, Some English"
+German / Yugoslavian,,"German, Yugoslavian"
+German / some Russian,,"German, Some Russian"
+German+Russian,,"German, Russian"
+"German, Arabic/Algerian Accent (Darija)",,"German, Arabic, Algerian Accent (Darija)"
+"German, English",,"German, English"
+"German, French, Danish, English",,"German, French, Danish, English"
+"German, Japanese",,"German, Japanese"
+"German, Russian",,"German, Russian"
+"German, Spanish",,"German, Spanish"
+"German, other (Italian)",,"German, Other (Italian)"
+"German, other (Kurdish)",,"German, Other (Kurdish)"
+"German, other (Russian)",,"German, Other (Russian)"
+"German, other (Sorbian)",,"German, Other (Sorbian)"
+"German,Slovenian",,"German, Slovenian"
+German/Bayrisch,,"German, Bayrisch"
+German/Dutch,,"German, Dutch"
+German/English,,"German, English"
+German/Persian,,"German, Persian"
+German/Polish,,"German, Polish"
+German/Russian,,"German, Russian"
+German/Spanish,,"German, Spanish"
+German/Turkish,,"German, Turkish"
+German; English,,"German, English"
+German; Maltese,,"German, Maltese"
+Gibraltarian,,Gibraltarian
+Gibraltarian (Yanito),,Gibraltarian (Yanito)
+Gibraltarian English,,Gibraltarian English
+"Gibraltarian, English",,"Gibraltarian, English"
+Glaswegian,,Glaswegian
+Gozotan,,Gozotan
+Greek,,Greek
+Greek; Maltese,,"Greek, Maltese"
+Greenlandic language,,Greenlandic Language
+Guernsey French,,Guernsey French
+"Gujarati,Hindi,English",,"Gujarati, Hindi, English"
+Gujurati,,Gujurati
+Hamirpuri,,Hamirpuri
+Haryanvi,,Haryanvi
+"Haryanvi,Hindi",,"Haryanvi, Hindi"
+Hawaiian,,Hawaiian
+Hebrew,,Hebrew
+Hidni,,Hidni
+Himachali,,Himachali
+Hindi,,Hindi
+"Hindi
+English",,Hindi English
+Hindi (Khari Boli),,Hindi (Khari Boli)
+"Hindi, English",,"Hindi, English"
+"Hindi, Himalchali",,"Hindi, Himalchali"
+"Hindi, Punjabi",,"Hindi, Punjabi"
+"Hindi, unspecified",,"Hindi, Unspecified"
+"Hindi,Assamese",,"Hindi, Assamese"
+"Hindi,Bhojpuri",,"Hindi, Bhojpuri"
+"Hindi,Dogri/Jammu",,"Hindi, Dogri, Jammu"
+"Hindi,English",,"Hindi, English"
+"Hindi,Haryanvi",,"Hindi, Haryanvi"
+"Hindi,Himachali",,"Hindi, Himachali"
+"Hindi,Kinnauri",,"Hindi, Kinnauri"
+"Hindi,Maithili",,"Hindi, Maithili"
+"Hindi,Pahadi",,"Hindi, Pahadi"
+"Hindi,Pahari",,"Hindi, Pahari"
+"Hindi,Punjabi",,"Hindi, Punjabi"
+"Hindi,Sirmauri-Tamkari",,"Hindi, Sirmauri-Tamkari"
+"Hindi,Sirmauri-Tankari",,"Hindi, Sirmauri-Tankari"
+"Hindi,Tamil",,"Hindi, Tamil"
+"Hindi,unspecified",,"Hindi, Unspecified"
+Hindu,,Hindu
+Hungarian,,Hungarian
+Icelandic,,Icelandic
+Igbo,,Igbo
+Ilocano,,Ilocano
+Indian,,Indian
+"Indian, English",,"Indian, English"
+Irish,,Irish
+Irish English,,Irish English
+"Irish, English",,"Irish, English"
+Islandic,,Islandic
+Italian,,Italian
+Italian and Maltese,,"Italian, Maltese"
+"Italian, English",,"Italian, English"
+"Italian, Maltese",,"Italian, Maltese"
+"Italian, Serbian, Croatian",,"Italian, Serbian, Croatian"
+"Italian, Slovene",,"Italian, Slovene"
+"Italian, Slovenian, German",,"Italian, Slovenian, German"
+"Italian, Venetian",,"Italian, Venetian"
+Italian/ English,,"Italian, English"
+Italien,,Italien
+Japanese,,Japanese
+Jersey,,Jersey
+"Jersey French, English",,"Jersey French, English"
+Jèrriais,,Jèrriais
+"Jèrriais, English",,"Jèrriais, English"
+Jérriais,,Jérriais
+Kalenjin,,Kalenjin
+Kashmiri,,Kashmiri
+Kenyan,,Kenyan
+Korean,,Korean
+Kosovo,,Kosovo
+Kurdish,,Kurdish
+Ladakhi,,Ladakhi
+Latvian,,Latvian
+Le Masurier (?),,Le Masurier (?)
+Lebanese,,Lebanese
+"Lingala, French",,"Lingala, French"
+Macedonian,,Macedonian
+Maghi,,Maghi
+Majorcan,,Majorcan
+Malagasy,,Malagasy
+Malayalam,,Malayalam
+Malaysian,,Malaysian
+Malese,,Malese
+Mallorqui,,Mallorqui
+Mallorquin,,Mallorquin
+Mallorquin Catalan,,Mallorquin Catalan
+Maltese,,Maltese
+Maltese (talks English at home),,Maltese (Talks English At Home)
+Maltese (very little English),,Maltese (Very Little English)
+Maltese +  English,,"Maltese, English"
+Maltese + English,,"Maltese, English"
+Maltese + Italian,,"Maltese, Italian"
+Maltese / English,,"Maltese, English"
+Maltese / English / Italian,,"Maltese, English, Italian"
+Maltese / some Italian,,"Maltese, Some Italian"
+Maltese English,,Maltese English
+Maltese and English,,"Maltese, English"
+Maltese&Italian,,"Maltese, Italian"
+"Maltese,
+English",,"Maltese, English"
+"Maltese, Arabic",,"Maltese, Arabic"
+"Maltese, English",,"Maltese, English"
+"Maltese, English, Italian",,"Maltese, English, Italian"
+"Maltese, French",,"Maltese, French"
+"Maltese, Gozitan",,"Maltese, Gozitan"
+"Maltese, Italian",,"Maltese, Italian"
+Maltese/ English,,"Maltese, English"
+Maltese/English,,"Maltese, English"
+Maltese/English/Italian,,"Maltese, English, Italian"
+Maltese/Gozetan,,"Maltese, Gozetan"
+Maltese/Italian,,"Maltese, Italian"
+Maltese; Arabic,,"Maltese, Arabic"
+Maltese; English,,"Maltese, English"
+Maltese; English; Italian,,"Maltese, English, Italian"
+Maltese; Englsih,,"Maltese, Englsih"
+Maltese; Italian,,"Maltese, Italian"
+Mandarin,,Mandarin
+"Mandarin, Chinese",,"Mandarin, Chinese"
+Mandarin/English,,"Mandarin, English"
+Manipuri,,Manipuri
+Marathi,,Marathi
+Maroccan,,Maroccan
+"Maroccan, Arabic, Spanish",,"Maroccan, Arabic, Spanish"
+"Marrocan, Spanish",,"Marrocan, Spanish"
+Maya,,Maya
+Mexican/Caucasian,,"Mexican, Caucasian"
+Mix,,Mix
+Mongolian,,Mongolian
+Montenegrin,,Montenegrin
+Moroccan,,Moroccan
+"Mostly
+English, but
+some
+Maltese",,"Mostly English, But Some Maltese"
+"Mostly
+English, but
+some
+Maltese; + Italian",,"Mostly English, But Some Maltese, Italian"
+Mostly English / some Maltese,,"Mostly English, Some Maltese"
+Mostly English / some Maltese / French,,"Mostly English, Some Maltese, French"
+Mostly English / some Maltese / Italian,,"Mostly English, Some Maltese, Italian"
+Mostly English / some Maltese / Italian / German / French,,"Mostly English, Some Maltese, Italian, German, French"
+"Mostly English, but some Maltese",,"Mostly English, But Some Maltese"
+"Mostly English, but some Maltese; Serbo-Croat",,"Mostly English, But Some Maltese, Serbo-Croat"
+"Mostly English, some Maltese",,"Mostly English, Some Maltese"
+"Mostly English, some Maltese, some Italian",,"Mostly English, Some Maltese, Some Italian"
+"Mostly Macedonian, some English",,"Mostly Macedonian, Some English"
+Mostly Maltese / some English,,"Mostly Maltese, Some English"
+Mostly Maltese / some English / Italian,,"Mostly Maltese, Some English, Italian"
+Mostly Maltese / some English / Turkish,,"Mostly Maltese, Some English, Turkish"
+"Mostly Maltese, but some English",,"Mostly Maltese, But Some English"
+"Mostly Maltese, but some English; French",,"Mostly Maltese, But Some English, French"
+"Mostly Maltese, but some English; Italian",,"Mostly Maltese, But Some English, Italian"
+"Mostly Maltese, but some English; some Italian",,"Mostly Maltese, But Some English, Some Italian"
+"Mostly Maltese, some English",,"Mostly Maltese, Some English"
+Mostly Slovenian / some English,,"Mostly Slovenian, Some English"
+"Mostly Spanish, some English",,"Mostly Spanish, Some English"
+Nepali,,Nepali
+Nigerian+English,,"Nigerian, English"
+Norwegian,,Norwegian
+Notul,,Notul
+Odiya,,Odiya
+Other,,Other
+"Other (Scots, Gaelic, English)",,"Other (Scots, Gaelic, English)"
+Other (Shetland dialect),,Other (Shetland Dialect)
+"Other(Mostly English, but also Maltese and Dutch)",,"Other(Mostly English, But Also Maltese, Dutch)"
+Pahadi-Hindi,,Pahadi-Hindi
+Pahari,,Pahari
+Patois,,Patois
+Persian,,Persian
+Persian (Farsi),,Persian (Farsi)
+Philippino,,Philippino
+"Phillipin, English, Slovene",,"Phillipin, English, Slovene"
+Police,,Police
+Polish,,Polish
+"Polish, English",,"Polish, English"
+"Polish, Swedish",,"Polish, Swedish"
+Polish/German,,"Polish, German"
+Poonchi,,Poonchi
+Portugese,,Portugese
+Portuguese,,Portuguese
+"Portuguese, English since he's 6 years old",,"Portuguese, English Since He'S 6 Years Old"
+"Portuguese, Spanish",,"Portuguese, Spanish"
+Portuguese/German,,"Portuguese, German"
+Prsian,,Prsian
+Puerto Rican,,Puerto Rican
+Punjabi,,Punjabi
+Punjabi (Multani),,Punjabi (Multani)
+"Punjabi, Hindi",,"Punjabi, Hindi"
+"Punjabi,Hindi",,"Punjabi, Hindi"
+Romanian,,Romanian
+"Romanian, English",,"Romanian, English"
+Russian,,Russian
+"Russian, English",,"Russian, English"
+"Russian, Ukrainian",,"Russian, Ukrainian"
+"Russian, Ukranian",,"Russian, Ukranian"
+"Russian, with friends E",,"Russian, With Friends E"
+Russian/Tartarian,,"Russian, Tartarian"
+Russian/Ukrainian,,"Russian, Ukrainian"
+S,,
+Sal,,Sal
+Scotland,,Scotland
+Scots,,Scots
+Scots English,,Scots English
+"Scots, English",,"Scots, English"
+Scots/English,,"Scots, English"
+Scottish,,Scottish
+Scottish English,,Scottish English
+Scottish/English,,"Scottish, English"
+Serbia,,Serbia
+Serbian,,Serbian
+"Serbian, English, Maltese",,"Serbian, English, Maltese"
+"Serbian, Slovenian",,"Serbian, Slovenian"
+Serbo-Croat,,Serbo-Croat
+Serbo-Croatian,,Serbo-Croatian
+Serbocroatian,,Serbocroatian
+Serquais,,Serquais
+Shetland dialect,,Shetland Dialect
+Shona,,Shona
+Sicilian; Italian,,"Sicilian, Italian"
+Slovack,,Slovack
+Slovak,,Slovak
+Slovene,,Slovene
+Slovene Italian,,Slovene Italian
+"Slovene, Croatian",,"Slovene, Croatian"
+"Slovene, German",,"Slovene, German"
+"Slovene, Serbo-Croatian",,"Slovene, Serbo-Croatian"
+Slovenian,,Slovenian
+"Slovenian, Bosnian",,"Slovenian, Bosnian"
+"Slovenian, Croatian",,"Slovenian, Croatian"
+"Slovenian, Croatian, Italian",,"Slovenian, Croatian, Italian"
+"Slovenian, English",,"Slovenian, English"
+"Slovenian, English, Serbo-Croatian",,"Slovenian, English, Serbo-Croatian"
+"Slovenian, German",,"Slovenian, German"
+"Slovenian, German, Croatian",,"Slovenian, German, Croatian"
+"Slovenian, Hungarian",,"Slovenian, Hungarian"
+"Slovenian, Italian",,"Slovenian, Italian"
+"Slovenian, Italian, Croatian",,"Slovenian, Italian, Croatian"
+"Slovenian, Macedonian",,"Slovenian, Macedonian"
+"Slovenian, Serbian",,"Slovenian, Serbian"
+"Slovenian, Serbo-Croatian",,"Slovenian, Serbo-Croatian"
+"Slovenian, mostly English / some Slovenian",,"Slovenian, Mostly English, Some Slovenian"
+"Slovenian, some Italian",,"Slovenian, Some Italian"
+"Slovinian, Bosnian",,"Slovinian, Bosnian"
+"Sorbian, German",,"Sorbian, German"
+South Africa,,South Africa
+South African-English; English-English,,"South African-English, English-English"
+Spanih,,Spanih
+Spanisch+English,,"Spanisch, English"
+Spanish,,Spanish
+Spanish Italien,,Spanish Italien
+Spanish and English,,"Spanish, English"
+Spanish+English,,"Spanish, English"
+"Spanish,  English",,"Spanish, English"
+"Spanish, Basque",,"Spanish, Basque"
+"Spanish, Catalan",,"Spanish, Catalan"
+"Spanish, Catalan (Majorcan, Alaró)",,"Spanish, Catalan (Majorcan, Alaró)"
+"Spanish, Catalan (Mallorcan)",,"Spanish, Catalan (Mallorcan)"
+"Spanish, Catalan (Mallorqui)",,"Spanish, Catalan (Mallorqui)"
+"Spanish, Catalan (Mallorquin)",,"Spanish, Catalan (Mallorquin)"
+"Spanish, Catalan (Mallorquin), English",,"Spanish, Catalan (Mallorquin), English"
+"Spanish, Catalan, English",,"Spanish, Catalan, English"
+"Spanish, Creole",,"Spanish, Creole"
+"Spanish, English",,"Spanish, English"
+"Spanish, French",,"Spanish, French"
+"Spanish, French, Arabic",,"Spanish, French, Arabic"
+"Spanish, Swedish",,"Spanish, Swedish"
+"Spanish, Valencian",,"Spanish, Valencian"
+"Spanish/
+English",,"Spanish, English"
+Spanish/English,,"Spanish, English"
+Spansih,,Spansih
+Swahili / English,,"Swahili, English"
+Swedish,,Swedish
+"Swedish, Arabic",,"Swedish, Arabic"
+"Swedish, Bosnian",,"Swedish, Bosnian"
+"Swedish, Bulgarian",,"Swedish, Bulgarian"
+"Swedish, Czech",,"Swedish, Czech"
+"Swedish, Dutch",,"Swedish, Dutch"
+"Swedish, English",,"Swedish, English"
+"Swedish, Finnish",,"Swedish, Finnish"
+"Swedish, Flamish",,"Swedish, Flamish"
+"Swedish, German",,"Swedish, German"
+"Swedish, German, Spanish",,"Swedish, German, Spanish"
+"Swedish, Italian",,"Swedish, Italian"
+"Swedish, Persian",,"Swedish, Persian"
+"Swedish, Spanish",,"Swedish, Spanish"
+"Swedish, Thai",,"Swedish, Thai"
+Swiss,,Swiss
+Swiss German,,German
+Swiss-German,,Swiss-German
+Tagalog,,Tagalog
+"Tagalog, French",,"Tagalog, French"
+Tamil,,Tamil
+Tartarian,,Tartarian
+Thai,,Thai
+Tigrinya,,Tigrinya
+Tongan,,Tongan
+Tongan/Samoan,,"Tongan, Samoan"
+Trinidadian English,,Trinidadian English
+Tunasine,,Tunasine
+Turkish,,Turkish
+Turkish/German (only with brother),,"Turkish, German (Only With Brother)"
+Twi,,Twi
+Ugandan,,Ugandan
+Uighurish,,Uighurish
+Uigurish,,Uigurish
+Ukrainian,,Ukrainian
+"Ukrainian, English",,"Ukrainian, English"
+"Ukrainian, Russian",,"Ukrainian, Russian"
+Ukranian,,Ukranian
+Urdu,,Urdu
+"Urdu, Punjabi, English",,"Urdu, Punjabi, English"
+Urhobo,,Urhobo
+Uzbek,,Uzbek
+"Uzbek, Russian",,"Uzbek, Russian"
+Vietnamese,,Vietnamese
+Welsh,,Welsh
+Welsh English,,Welsh English
+"Welsh, English",,"Welsh, English"
+Welsh/English,,"Welsh, English"
+Yanito,,Yanito
+"Yanito, English",,"Yanito, English"
+"Yanito, English, Spanish",,"Yanito, English, Spanish"
+"Yanito, some English",,"Yanito, Some English"
+Yoruba,,Yoruba
+"Yoruba, Nig. English",,"Yoruba, Nig. English"
+Yugoslavian,,Yugoslavian
+Zulu,,Zulu
+both English + Maltese equally,,"Both English, Maltese Equally"
+both English and Maltese,,"Both English, Maltese"
+both English and Spanish,,"Both English, Spanish"
+both spanish and english fluently,,"Both Spanish, English Fluently"
+equally English and Scots,,"Equally English, Scots"
+local language,,Local Language
+"moslty Maltese, some English",,"Moslty Maltese, Some English"
+"mostly  Spanish, some English",,"Mostly Spanish, Some English"
+mostly Catalan (Majorcan)/ some Spanish,,"Mostly Catalan (Majorcan), Some Spanish"
+mostly Catalan (Mallorcan)/ some Spanish,,"Mostly Catalan (Mallorcan), Some Spanish"
+mostly Catalan (Mallorquin)/ some Spanish,,"Mostly Catalan (Mallorquin), Some Spanish"
+mostly Catalan (Menorca (El Castell))/ some Spanish,,"Mostly Catalan (Menorca (El Castell)), Some Spanish"
+mostly Catalan (Menorcan)/ some Spanish,,"Mostly Catalan (Menorcan), Some Spanish"
+mostly Catalan/ some Spanish,,"Mostly Catalan, Some Spanish"
+mostly Danish / some English,,"Mostly Danish, Some English"
+"mostly Danish / some English, Polish, German",,"Mostly Danish, Some English, Polish, German"
+"mostly English
++ some Spanish",,"Mostly English, Some Spanish"
+mostly English + some Spanish,,"Mostly English, Some Spanish"
+mostly English / some Danish,,"Mostly English, Some Danish"
+mostly English / some German,,"Mostly English, Some German"
+mostly English / some German / Chinese,,"Mostly English, Some German, Chinese"
+mostly English / some Maltese,,"Mostly English, Some Maltese"
+"mostly English / some Maltese, German",,"Mostly English, Some Maltese, German"
+"mostly English / some Maltese, arabic",,"Mostly English, Some Maltese, Arabic"
+mostly English / some Scots,,"Mostly English, Some Scots"
+mostly English / some Scots / Spanish,,"Mostly English, Some Scots, Spanish"
+mostly English / some Slovenian,,"Mostly English, Some Slovenian"
+mostly English / some Spanish,,"Mostly English, Some Spanish"
+"mostly English / some Spanish, Arabic",,"Mostly English, Some Spanish, Arabic"
+mostly English / some Swedish,,"Mostly English, Some Swedish"
+mostly English some Maltese,,Mostly English Some Maltese
+mostly English some Spanish,,Mostly English Some Spanish
+"mostly English, but some Maltese",,"Mostly English, But Some Maltese"
+"mostly English, some French",,"Mostly English, Some French"
+"mostly English, some Hawaiian",,"Mostly English, Some Hawaiian"
+"mostly English, some Maltese",,"Mostly English, Some Maltese"
+"mostly English, some Maltese and Italian",,"Mostly English, Some Maltese, Italian"
+"mostly English, some Maltese, German",,"Mostly English, Some Maltese, German"
+"mostly English, some Maltese, Italian",,"Mostly English, Some Maltese, Italian"
+"mostly English, some Maltese, Turkish",,"Mostly English, Some Maltese, Turkish"
+"mostly English, some Scots",,"Mostly English, Some Scots"
+"mostly English, some Spamish",,"Mostly English, Some Spamish"
+"mostly English, some Spanish",,"Mostly English, Some Spanish"
+"mostly English, some Spanish, French",,"Mostly English, Some Spanish, French"
+"mostly English, some Spanish, German",,"Mostly English, Some Spanish, German"
+"mostly English, some Spanish, Portuguese",,"Mostly English, Some Spanish, Portuguese"
+"mostly Enlish, some Scots",,"Mostly Enlish, Some Scots"
+mostly German / some English,,"Mostly German, Some English"
+mostly German / some English / some Turkish,,"Mostly German, Some English, Some Turkish"
+"mostly German / some English, other (French)",,"Mostly German, Some English, Other (French)"
+mostly German 2 English. Thai,,Mostly German 2 English. Thai
+mostly German some English,,Mostly German Some English
+"mostly German, some Turkish",,"Mostly German, Some Turkish"
+mostly Maltese,,Mostly Maltese
+mostly Maltese + some English,,"Mostly Maltese, Some English"
+mostly Maltese / some English,,"Mostly Maltese, Some English"
+"mostly Maltese / some English, Italian",,"Mostly Maltese, Some English, Italian"
+mostly Maltese some English,,Mostly Maltese Some English
+"mostly Maltese some English, Italian",,"Mostly Maltese Some English, Italian"
+mostly Maltese+some English,,"Mostly Maltese, Some English"
+"mostly Maltese, but some English",,"Mostly Maltese, But Some English"
+"mostly Maltese, but some English, Italian",,"Mostly Maltese, But Some English, Italian"
+"mostly Maltese, some English",,"Mostly Maltese, Some English"
+"mostly Maltese, some English + Italian",,"Mostly Maltese, Some English, Italian"
+"mostly Maltese, some English and Italian",,"Mostly Maltese, Some English, Italian"
+"mostly Maltese, some English and some Italian",,"Mostly Maltese, Some English, Some Italian"
+"mostly Maltese, some English, Italian",,"Mostly Maltese, Some English, Italian"
+"mostly Maltese, some English, some Italian",,"Mostly Maltese, Some English, Some Italian"
+"mostly Maltesem, but some English",,"Mostly Maltesem, But Some English"
+"mostly Romanian, some German",,"Mostly Romanian, Some German"
+mostly Scots,,Mostly Scots
+mostly Scots / some English,,"Mostly Scots, Some English"
+"mostly Scots, some English",,"Mostly Scots, Some English"
+mostly Slovenian / some English,,"Mostly Slovenian, Some English"
+mostly Slovenian / some English and some Italian,,"Mostly Slovenian, Some English, Some Italian"
+"mostly Slovenian / some English, Spanish",,"Mostly Slovenian, Some English, Spanish"
+"mostly Spanish
++  some English",,"Mostly Spanish, Some English"
+"mostly Spanish
++ some English",,"Mostly Spanish, Some English"
+"mostly Spanish
+some English",,Mostly Spanish Some English
+mostly Spanish / some English,,"Mostly Spanish, Some English"
+"mostly Spanish / some English, Korean",,"Mostly Spanish, Some English, Korean"
+mostly Spanish some English,,Mostly Spanish Some English
+"mostly Spanish, 
+some English",,"Mostly Spanish, Some English"
+"mostly Spanish,  some English",,"Mostly Spanish, Some English"
+"mostly Spanish, some English",,"Mostly Spanish, Some English"
+"mostly Spanish, some English, Arabic, French",,"Mostly Spanish, Some English, Arabic, French"
+"mostly Spanish, some English, Moroccan",,"Mostly Spanish, Some English, Moroccan"
+"mostly Spanish, some English, Yanito",,"Mostly Spanish, Some English, Yanito"
+mostly Spanish/ some Catalan,,"Mostly Spanish, Some Catalan"
+mostly Spanish/ some Catalan (Mallorqui),,"Mostly Spanish, Some Catalan (Mallorqui)"
+mostly Spanish/ some Catalan (Mallorquin),,"Mostly Spanish, Some Catalan (Mallorquin)"
+"mostly Spanish/ some Catalan, French",,"Mostly Spanish, Some Catalan, French"
+"mostly Spansih, some Englilsh",,"Mostly Spansih, Some Englilsh"
+"mostly Spansih, some English",,"Mostly Spansih, Some English"
+mostly Swedish / some English,,"Mostly Swedish, Some English"
+mostly Swedish / some English / Thai,,"Mostly Swedish, Some English, Thai"
+"mostly Swedish / some English, Norwegian",,"Mostly Swedish, Some English, Norwegian"
+"mostly Swedish / some English, Spanish",,"Mostly Swedish, Some English, Spanish"
+"mostly Yanito, some English",,"Mostly Yanito, Some English"
+"other (Amharic), English, German",,"Other (Amharic), English, German"
+"other (Arabic, Turkish), German",,"Other (Arabic, Turkish), German"
+"other (Bosnian, Serbo-Croatian)",,"Other (Bosnian, Serbo-Croatian)"
+other (Chinese),,Other (Chinese)
+"other (Dutch, Persian), German",,"Other (Dutch, Persian), German"
+other (Equal parts English and Spanish),,"Other (Equal Parts English, Spanish)"
+other (German),,Other (German)
+other (Italian),,Other (Italian)
+"other (Italian), German",,"Other (Italian), German"
+other (Mandarin),,Other (Mandarin)
+other (Moroccan),,Other (Moroccan)
+"other (Polish), German",,"Other (Polish), German"
+"other (Romanian), German",,"Other (Romanian), German"
+"other (Russian), German",,"Other (Russian), German"
+"other (Russian), some German",,"Other (Russian), Some German"
+"other (Russian, Ukrainian)",,"Other (Russian, Ukrainian)"
+other (Serbian),,Other (Serbian)
+"other (Spanish), German",,"Other (Spanish), German"
+other (Tagalog),,Other (Tagalog)
+"other (Tigrinya), some German",,"Other (Tigrinya), Some German"
+other (Uighurish),,Other (Uighurish)
+other (Ukrainian),,Other (Ukrainian)
+other (Ukranian),,Other (Ukranian)
+other (Vietnamese),,Other (Vietnamese)
+"other (initially spoke Spanish, later switched to English. Parents, however, still spoke Spanish)",,"Other (Initially Spoke Spanish, Later Switched To English. Parents, However, Still Spoke Spanish)"
+"some Spanish, mostly Hebrew",,"Some Spanish, Mostly Hebrew"
+unspecified,,Unspecified

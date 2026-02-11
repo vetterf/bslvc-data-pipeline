@@ -1,0 +1,528 @@
+question_code;target_column;comment
+id;_drop;LimeSurvey internal
+submitdate;_drop;LimeSurvey internal
+lastpage;_drop;LimeSurvey internal
+startlanguage;_drop;LimeSurvey internal
+seed;_drop;LimeSurvey internal
+startdate;_drop;LimeSurvey internal
+datestamp;_drop;LimeSurvey internal
+refurl;_drop;LimeSurvey internal
+PI01;Age;
+PI02;Gender;
+PI02[other];_combine_Gender;appended to Gender if non-empty
+PI03;Nationality;
+PI03[other];_combine_Nationality;appended to Nationality if non-empty (Ireland only)
+PI04;Ethnic self-identification;
+PI05;Country or region you identify with;
+PI06;Languages used at home while  growing up;single-select with comment (Germany lexical)
+PI06[comment];_combine_LanguageHome;comment appended to PI06 (Germany lexical)
+PI06[SQ006];_combine_LanguageHome_checkbox;checkbox: English (Ireland) / Hungarian (Germany full)
+PI06[SQ001];_combine_LanguageHome_checkbox;checkbox: Irish (Ireland)
+PI06[SQ001SQ001];_combine_LanguageHome_checkbox;checkbox: German (Germany full)
+PI06[SQ002];_combine_LanguageHome_checkbox;checkbox: English (Germany full)
+PI06[SQ003];_combine_LanguageHome_checkbox;checkbox: French (Germany full)
+PI06[SQ004];_combine_LanguageHome_checkbox;checkbox: Italian (Germany full)
+PI06[SQ005];_combine_LanguageHome_checkbox;checkbox: Spanish (Germany full)
+PI06[SQ007];_combine_LanguageHome_checkbox;checkbox: Polish (Germany full)
+PI06[SQ008];_combine_LanguageHome_checkbox;checkbox: Czech (Germany full)
+PI06[other];_combine_LanguageHome_other;other language text
+PI07[SQ001];Native Lg. Mother;Ireland / Germany lexical
+PI07[SQ002];Native Lg. Father;Ireland / Germany lexical
+PI07m[SQ001SQ001];_combine_LanguageMother;checkbox: German (Germany full)
+PI07m[SQ002];_combine_LanguageMother;checkbox: English (Germany full)
+PI07m[SQ003];_combine_LanguageMother;checkbox: French (Germany full)
+PI07m[SQ004];_combine_LanguageMother;checkbox: Italian (Germany full)
+PI07m[SQ005];_combine_LanguageMother;checkbox: Spanish (Germany full)
+PI07m[SQ006];_combine_LanguageMother;checkbox: Hungarian (Germany full)
+PI07m[SQ007];_combine_LanguageMother;checkbox: Polish (Germany full)
+PI07m[SQ008];_combine_LanguageMother;checkbox: Czech (Germany full)
+PI07m[other];_combine_LanguageMother;other language text (Germany full)
+PI07f[SQ001SQ001];_combine_LanguageFather;checkbox: German (Germany full)
+PI07f[SQ002];_combine_LanguageFather;checkbox: English (Germany full)
+PI07f[SQ003];_combine_LanguageFather;checkbox: French (Germany full)
+PI07f[SQ004];_combine_LanguageFather;checkbox: Italian (Germany full)
+PI07f[SQ005];_combine_LanguageFather;checkbox: Spanish (Germany full)
+PI07f[SQ006];_combine_LanguageFather;checkbox: Hungarian (Germany full)
+PI07f[SQ007];_combine_LanguageFather;checkbox: Polish (Germany full)
+PI07f[SQ008];_combine_LanguageFather;checkbox: Czech (Germany full)
+PI07f[other];_combine_LanguageFather;other language text (Germany full)
+PI11;Years lived in other English-speaking countries;Germany full
+PI07Copy[SQ001];_extra_PeerLanguage1;peer native language person 1 (Ireland)
+PI07Copy[SQ002];_extra_PeerLanguage2;peer native language person 2 (Ireland)
+PI07Copy[SQ003];_extra_PeerLanguage3;peer native language person 3 (Ireland)
+PI07Copy[SQ004];_extra_PeerLanguage4;peer native language person 4 (Ireland)
+PI07Copy[SQ005];_extra_PeerLanguage5;peer native language person 5 (Ireland)
+PI06Copy[SQ006];_extra_PeerLangUse_English;peer group language use: English (Ireland)
+PI06Copy[SQ001];_extra_PeerLangUse_Irish;peer group language use: Irish (Ireland)
+PI06Copy[SQ007];_extra_PeerLangUse_Chinese;peer group language use: Chinese (Ireland)
+PI06Copy[SQ008];_extra_PeerLangUse_German;peer group language use: German (Ireland)
+PI06Copy[SQ009];_extra_PeerLangUse_Spanish;peer group language use: Spanish (Ireland)
+PI06Copy[SQ010];_extra_PeerLangUse_Japanese;peer group language use: Japanese (Ireland)
+PI06Copy[SQ011];_extra_PeerLangUse_Italian;peer group language use: Italian (Ireland)
+PI06Copy[other];_extra_PeerLangUse_Other;peer group language use: Other (Ireland)
+PI08;Years lived outside of home country;
+PI08Copy;Years lived in home country;Ireland only
+PI09;_extra_LivedOutside;Yes/No whether lived outside home country
+PI10;Timeline Comments;free-text timeline
+EP01;Primary school;
+EP01[other];_combine_PrimarySchool;appended to EP01 if non-empty
+EP02;Secondary school;Germany only
+EP02[other];_combine_SecondarySchool;appended to EP02 if non-empty (Germany)
+EP03;Name and Place of high school;Germany only
+EP04[SQ001];_combine_Qualifications;Apprenticeship (Germany)
+EP04[SQ001comment];_combine_Qualifications_comment;Apprenticeship comment (Germany)
+EP04[SQ002];_combine_Qualifications;Vocational classes (Germany)
+EP04[SQ002comment];_combine_Qualifications_comment;Vocational comment (Germany)
+EP04[SQ007];_combine_Qualifications;General secondary education (Germany)
+EP04[SQ007comment];_combine_Qualifications_comment;General secondary comment (Germany)
+EP04[SQ003];_combine_Qualifications;Bachelor (Germany)
+EP04[SQ003comment];_combine_Qualifications_comment;Bachelor comment (Germany)
+EP04[SQ004];_combine_Qualifications;Master's (Germany)
+EP04[SQ004comment];_combine_Qualifications_comment;Master's comment (Germany)
+EP04[SQ005];_combine_Qualifications;PhD (Germany)
+EP04[SQ005comment];_combine_Qualifications_comment;PhD comment (Germany)
+EP04[SQ006];_combine_Qualifications;Other qualification (Germany)
+EP04[SQ006comment];_combine_Qualifications_comment;Other qualification comment (Germany)
+EP05;Current occupation;
+EP05[other];_combine_Occupation;appended to EP05 if non-empty
+EP05Copy;_extra_CurrentResidence;where do you currently live (Ireland)
+EP05Copy[other];_extra_CurrentResidence_other;(Ireland)
+EP06[SQ001];Qualification mother;Ireland / Germany lexical
+EP06[SQ002];Occupation mother;Ireland / Germany lexical
+EP06[SQ003];Qualification father;Ireland / Germany lexical
+EP06[SQ004];Occupation father;Ireland / Germany lexical
+EP06[SQ005];Qualification partner;Germany lexical only
+EP06[SQ006];Occupation partner;Germany lexical only
+EP06;_combine_QualificationMother_base;Germany full: Mother's education (dropdown)
+EP06[other];_combine_QualificationMother_other;Germany full: Mother's education other
+EP07;_combine_QualificationFather_base;Germany full: Father's education (dropdown)
+EP07[other];_combine_QualificationFather_other;Germany full: Father's education other
+EP08;_combine_QualificationPartner_base;Germany full: Partner's education (dropdown)
+EP08[other];_combine_QualificationPartner_other;Germany full: Partner's education other
+EP09[SQ002];_combine_OccupationMother;Germany full: Mother's occupation
+EP09[SQ004];_combine_OccupationFather;Germany full: Father's occupation
+EP09[SQ006];_combine_OccupationPartner;Germany full: Partner's occupation
+G01Q24;_extra_SchoolYear;which year are you in (Ireland)
+CF01;_drop;consent form acknowledgement
+G04Q47;_drop;grammar spoken instructions
+HC2;GrammarSpokenFillingInFor;home country for grammar spoken
+G13Q46;_drop;grammar written instructions
+G24Q42;_extra_CommentsGrammar;general comments at end of survey
+LI01[SQ001];a drop in the ocean -;
+LI01[SQ002];a tap;
+LI01[SQ003];aluminium;
+LI01[SQ004];anticlockwise -;
+LI01[SQ005];aubergine;
+LI01[SQ006];autumn;
+LI01[SQ007];backwards;
+LI01[SQ008];bicentenary -;
+LI01[SQ009];biscuit;
+LI01[SQ010];bookings -;
+LI01[SQ011];boot;
+LI01[SQ012];car park -;
+LI01[SQ013];centre;
+LI01[SQ014];chemist's -;
+LI01[SQ015];ill -;
+LI01[SQ016];potato chips;
+LI01[SQ017];chips;
+LI1C;_comment_lexical_1;lexical comment block 1
+LI02[SQ001];cinema -;
+LI02[SQ002];colour;
+LI02[SQ003];cupboard -;
+LI02[SQ004];driving licence;
+LI02[SQ005];dummy -;
+LI02[SQ006];dustbin;
+LI02[SQ007];fish fingers -;
+LI02[SQ008];football;
+LI02[SQ009];forwards -;
+LI02[SQ010];globalisation;
+LI02[SQ011];glocalisation -;
+LI02[SQ012];holiday;
+LI02[SQ013];liberalisation;
+LI02[SQ014];jacket potato;
+LI02[SQ015];laund(e)rette -;
+LI02[SQ016];potato crisps -;
+LI02[SQ017];crisps -;
+LI02[SQ018];rubbish;
+L2C;_comment_lexical_2;lexical comment block 2
+LI03[SQ001];to licence -;
+LI03[SQ002];lift;
+LI03[SQ003];localisation -;
+LI03[SQ004];lorry;
+LI03[SQ005];maths -;
+LI03[SQ006];mobile phone;
+LI03[SQ007];modernisation -;
+LI03[SQ008];nappies;
+LI03[SQ009];organisation -;
+LI03[SQ010];parcel;
+LI03[SQ011];pavement -;
+LI03[SQ012];petrol;
+LI03[SQ013];petrol station -;
+LI03[SQ014];postman;
+LI03[SQ015];pushchair -;
+LI03[SQ016];railway;
+LI03[SQ017];realisation -;
+L3C;_comment_lexical_3;lexical comment block 3
+LI04[SQ001];roundabout;
+LI04[SQ002];rubber -;
+LI04[SQ003];shopping trolley -;
+LI04[SQ004];sport;
+LI04[SQ005];storm in a teacup -;
+LI04[SQ006];subway;
+LI04[SQ007];to let -;
+LI04[SQ008];torch;
+LI04[SQ009];touch wood -;
+LI04[SQ010];trainers;
+LI04[SQ011];whilst -;
+LI04[SQ012];windscreen;
+LI04[SQ013];a book about  chemistry -;
+LI04[SQ014];compare X to Y -;
+LI04[SQ015];typical of -;
+LI04[SQ016];Anyway;
+L4C;_comment_lexical_4;lexical comment block 4
+SSA[SSA1];A1;grammar spoken group A
+SSA[SSA2];A2;
+SSA[SSA3];A3;
+SSA[SSA4];A4;
+SSA[SSA5];A5;
+SSA[SSA6];A6;
+SSA[SSA7];A7;
+SSA[SSA8];A8;
+SSA[SSA9];A9;
+SSA[SSA10];A10;
+SSA[SSA11];A11;
+SSA[SSA12];A12;
+SSA[SSA13];A13;
+SSA[SSA14];A14;
+SSA[SSA15];A15;
+SSA[SSA16];A16;
+SSA[SSA17];A17;
+SSA[SSA18];A18;
+SSA[SSA19];A19;
+SSA[SSA20];A20;
+SSA[SSA21];A21;
+SSA[SSA22];A22;
+SSA[SSA23];A23;
+SSB[SSB1];B1;grammar spoken group B
+SSB[SSB2];B2;
+SSB[SSB3];B3;
+SSB[SSB4];B4;
+SSB[SSB5];B5;
+SSB[SSB6];B6;
+SSB[SSB7];B7;
+SSB[SSB8];B8;
+SSB[SSB9];B9;
+SSB[SSB10];B10;
+SSB[SSB11];B11;
+SSB[SSB12];B12;
+SSB[SSB13];B13;
+SSB[SSB14];B14;
+SSB[SSB15];B15;
+SSB[SSB16];B16;
+SSB[SSB17];B17;
+SSB[SSB18];B18;
+SSB[SSB19];B19;
+SSB[SSB20];B20;
+SSB[SSB21];B21;
+SSB[SSB22];B22;
+SSB[SSB23];B23;
+SSC[SSC1];C1;grammar spoken group C
+SSC[SSC2];C2;
+SSC[SSC3];C3;
+SSC[SSC4];C4;
+SSC[SSC5];C5;
+SSC[SSC6];C6;
+SSC[SSC7];C7;
+SSC[SSC8];C8;
+SSC[SSC9];C9;
+SSC[SSC10];C10;
+SSC[SSC11];C11;
+SSC[SSC12];C12;
+SSC[SSC13];C13;
+SSC[SSC14];C14;
+SSC[SSC15];C15;
+SSC[SSC16];C16;
+SSC[SSC17];C17;
+SSC[SSC18];C18;
+SSC[SSC19];C19;
+SSC[SSC20];C20;
+SSC[SSC21];C21;
+SSC[SSC22];C22;
+SSC[SSC23];C23;
+SSD[SSD1];D1;grammar spoken group D
+SSD[SSD2];D2;
+SSD[SSD3];D3;
+SSD[SSD4];D4;
+SSD[SSD5];D5;
+SSD[SSD6];D6;
+SSD[SSD7];D7;
+SSD[SSD8];D8;
+SSD[SSD9];D9;
+SSD[SSD10];D10;
+SSD[SSD11];D11;
+SSD[SSD12];D12;
+SSD[SSD13];D13;
+SSD[SSD14];D14;
+SSD[SSD15];D15;
+SSD[SSD16];D16;
+SSD[SSD17];D17;
+SSD[SSD18];D18;
+SSD[SSD19];D19;
+SSD[SSD20];D20;
+SSD[SSD21];D21;
+SSD[SSD22];D22;
+SSD[SSD23];D23;
+SSE[SSE1];E1;grammar spoken group E
+SSE[SSE2];E2;
+SSE[SSE3];E3;
+SSE[SSE4];E4;
+SSE[SSE5];E5;
+SSE[SSE6];E6;
+SSE[SSE7];E7;
+SSE[SSE8];E8;
+SSE[SSE9];E9;
+SSE[SSE10];E10;
+SSE[SSE11];E11;
+SSE[SSE12];E12;
+SSE[SSE13];E13;
+SSE[SSE14];E14;
+SSE[SSE15];E15;
+SSE[SSE16];E16;
+SSE[SSE17];E17;
+SSE[SSE18];E18;
+SSE[SSE19];E19;
+SSE[SSE20];E20;
+SSE[SSE21];E21;
+SSE[SSE22];E22;
+SSE[SSE23];E23;
+SSF[SSF1];F1;grammar spoken group F
+SSF[SSF2];F2;
+SSF[SSF3];F3;
+SSF[SSF4];F4;
+SSF[SSF5];F5;
+SSF[SSF6];F6;
+SSF[SSF7];F7;
+SSF[SSF8];F8;
+SSF[SSF9];F9;
+SSF[SSF10];F10;
+SSF[SSF11];F11;
+SSF[SSF12];F12;
+SSF[SSF13];F13;
+SSF[SSF14];F14;
+SSF[SSF15];F15;
+SSF[SSF16];F16;
+SSF[SSF17];F17;
+SSF[SSF18];F18;
+SSF[SSF19];F19;
+SSF[SSF20];F20;
+SSF[SSF21];F21;
+SSF[SSF22];F22;
+SSF[SSF23];F23;
+WSG[WSG1];G1;grammar written group G
+WSG[WSG2];G2;
+WSG[WSG3];G3;
+WSG[WSG4];G4;
+WSG[WSG5];G5;
+WSG[WSG6];G6;
+WSG[WSG7];G7;
+WSG[WSG8];G8;
+WSG[WSG9];G9;
+WSG[WSG10];G10;
+WSG[WSG11];G11;
+WSG[WSG12];G12;
+WSG[WSG13];G13;
+WSG[WSG14];G14;
+WSG[WSG15];G15;
+WSG[WSG16];G16;
+WSG[WSG17];G17;
+WSG[WSG18];G18;
+WSG[WSG19];G19;
+WSG[WSG20];G20;
+WSG[WSG21];G21;
+WSG[WSG22];G22;
+WSG[WSG23];G23;
+WSG[WSG24];G24;
+WSG[WSG25];G25;
+WSG[WSG26];G26;
+WSH[WSH1];H1;grammar written group H
+WSH[WSH2];H2;
+WSH[WSH3];H3;
+WSH[WSH4];H4;
+WSH[WSH5];H5;
+WSH[WSH6];H6;
+WSH[WSH7];H7;
+WSH[WSH8];H8;
+WSH[WSH9];H9;
+WSH[WSH10];H10;
+WSH[WSH11];H11;
+WSH[WSH12];H12;
+WSH[WSH13];H13;
+WSH[WSH14];H14;
+WSH[WSH15];H15;
+WSH[WSH16];H16;
+WSH[WSH17];H17;
+WSH[WSH18];H18;
+WSH[WSH19];H19;
+WSH[WSH20];H20;
+WSH[WSH21];H21;
+WSH[WSH22];H22;
+WSH[WSH23];H23;
+WSH[WSH24];H24;
+WSH[WSH25];H25;
+WSH[WSH26];H26;
+WSI[WSI1];I1;grammar written group I
+WSI[WSI2];I2;
+WSI[WSI3];I3;
+WSI[WSI4];I4;
+WSI[WSI5];I5;
+WSI[WSI6];I6;
+WSI[WSI7];I7;
+WSI[WSI8];I8;
+WSI[WSI9];I9;
+WSI[WSI10];I10;
+WSI[WSI11];I11;
+WSI[WSI12];I12;
+WSI[WSI13];I13;
+WSI[WSI14];I14;
+WSI[WSI15];I15;
+WSI[WSI16];I16;
+WSI[WSI17];I17;
+WSI[WSI18];I18;
+WSI[WSI19];I19;
+WSI[WSI20];I20;
+WSI[WSI21];I21;
+WSI[WSI22];I22;
+WSI[WSI23];I23;
+WSI[WSI24];I24;
+WSI[WSI25];I25;
+WSI[WSI26];I26;
+WSJ[WSJ1];J1;grammar written group J
+WSJ[WSJ2];J2;
+WSJ[WSJ3];J3;
+WSJ[WSJ4];J4;
+WSJ[WSJ5];J5;
+WSJ[WSJ6];J6;
+WSJ[WSJ7];J7;
+WSJ[WSJ8];J8;
+WSJ[WSJ9];J9;
+WSJ[WSJ10];J10;
+WSJ[WSJ11];J11;
+WSJ[WSJ12];J12;
+WSJ[WSJ13];J13;
+WSJ[WSJ14];J14;
+WSJ[WSJ15];J15;
+WSJ[WSJ16];J16;
+WSJ[WSJ17];J17;
+WSJ[WSJ18];J18;
+WSJ[WSJ19];J19;
+WSJ[WSJ20];J20;
+WSJ[WSJ21];J21;
+WSJ[WSJ22];J22;
+WSJ[WSJ23];J23;
+WSJ[WSJ24];J24;
+WSJ[WSJ25];J25;
+WSJ[WSJ26];J26;
+WSK[WSK1];K1;grammar written group K
+WSK[WSK2];K2;
+WSK[WSK3];K3;
+WSK[WSK4a];K4a;
+WSK[WSK4b];K4b;
+WSK[WSK5];K5;
+WSK[WSK6];K6;
+WSK[WSK7];K7;
+WSK[WSK8];K8;
+WSK[WSK9];K9;
+WSK[WSK10];K10;
+WSK[WSK11];K11;
+WSK[WSK12];K12;
+WSK[WSK13];K13;
+WSK[WSK14];K14;
+WSK[WSK15];K15;
+WSK[WSK16];K16;
+WSK[WSK17];K17;
+WSK[WSK18];K18;
+WSK[WSK19];K19;
+WSK[WSK20];K20;
+WSK[WSK21];K21;
+WSK[WSK22];K22;
+WSK[WSK23];K23;
+WSK[WSK24];K24;
+WSK[WSK25];K25;
+WSK[WSK26];K26;
+WSL[WSL1];L1;grammar written group L
+WSL[WSL2];L2;
+WSL[WSL3];L3;
+WSL[WSL4];L4;
+WSL[WSL5];L5;
+WSL[WSL6];L6;
+WSL[WSL7];L7;
+WSL[WSL8];L8;
+WSL[WSL9];L9;
+WSL[WSL10];L10;
+WSL[WSL11];L11;
+WSL[WSL12];L12;
+WSL[WSL13];L13;
+WSL[WSL14];L14;
+WSL[WSL15];L15;
+WSL[WSL16];L16;
+WSL[WSL17];L17;
+WSL[WSL18];L18;
+WSL[WSL19];L19;
+WSL[WSL20];L20;
+WSL[WSL21];L21;
+WSL[WSL22];L22;
+WSL[WSL23];L23;
+WSL[WSL24];L24;
+WSL[WSL25];L25;
+WSL[WSL26];L26;
+WSM[WSM1];M1;grammar written group M
+WSM[WSM2];M2;
+WSM[WSM3];M3;
+WSM[WSM4];M4;
+WSM[WSM5];M5;
+WSM[WSM6];M6;
+WSM[WSM7];M7;
+WSM[WSM8];M8;
+WSM[WSM9];M9;
+WSM[WSM10];M10;
+WSM[WSM11];M11;
+WSM[WSM12];M12;
+WSM[WSM13];M13;
+WSM[WSM14];M14;
+WSM[WSM15];M15;
+WSM[WSM16];M16;
+WSM[WSM17];M17;
+WSM[WSM18];M18;
+WSM[WSM19];M19;
+WSM[WSM20];M20;
+WSM[WSM21];M21;
+WSM[WSM22];M22;
+WSM[WSM23];M23;
+WSM[WSM24];M24;
+WSM[WSM25];M25;
+WSN[WSN1];N1;grammar written group N
+WSN[WSN2];N2;
+WSN[WSN3];N3;
+WSN[WSN4];N4;
+WSN[WSN5];N5;
+WSN[WSN6];N6;
+WSN[WSN7];N7;
+WSN[WSN8];N8;
+WSN[WSN9];N9;
+WSN[WSN10];N10;
+WSN[WSN11];N11;
+WSN[WSN12];N12;
+WSN[WSN13];N13;
+WSN[WSN14];N14;
+WSN[WSN15];N15;
+WSN[WSN16];N16;
+WSN[WSN17];N17;
+WSN[WSN18];N18;
+WSN[WSN19];N19;
+WSN[WSN20];N20;
+WSN[WSN21];N21;
+WSN[WSN22];N22;
+WSN[WSN23];N23;
+WSN[WSN24];N24;
+WSN[WSN25];N25;
+interviewtime;_drop;LimeSurvey timing data
