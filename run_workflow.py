@@ -191,10 +191,17 @@ def run_export():
 #  Stage: IMPUTATION
 # ═══════════════════════════════════════════════════════════════════════════════
 
-def run_imputation():
-    """Run variety-stratified PMM imputation (Python)."""
+def run_imputation(method: str = "missforest"):
+    """Run imputation with the specified method.
+
+    Parameters
+    ----------
+    method : str
+        ``'missforest'`` (default) — R missForest (best accuracy, slower).
+        ``'pmm'`` — Python variety-stratified PMM (faster, good accuracy).
+    """
     from lib.imputation import run_imputation as _run_imp
-    _run_imp()
+    _run_imp(method=method)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -206,12 +213,15 @@ def execute_pipeline(
     *,
     cleansing_mode="apply",
     fill_empty_with_na=False,
+    imputation_method="missforest",
     dry_run=False,
 ):
     """Execute each stage in *pipeline* sequentially."""
     print()
     print("━" * 80)
     print(f"  BSLVC Workflow – execution plan: {' → '.join(pipeline)}")
+    if "imputation" in pipeline:
+        print(f"  Imputation method: {imputation_method}")
     print("━" * 80)
 
     if dry_run:
@@ -229,7 +239,6 @@ def execute_pipeline(
         "etl":        run_etl,
         "meta":       run_meta,
         "export":     run_export,
-        "imputation": run_imputation,
     }
 
     for stage in pipeline:
@@ -238,6 +247,8 @@ def execute_pipeline(
                 mode=cleansing_mode,
                 fill_empty_with_na=fill_empty_with_na,
             )
+        elif stage == "imputation":
+            run_imputation(method=imputation_method)
         else:
             dispatch[stage]()
 
@@ -292,6 +303,15 @@ def main():
         help="When applying cleansing, fill empty cells with NA.",
     )
     parser.add_argument(
+        "--imputation-method",
+        choices=["missforest", "pmm", "fabof"],
+        default="missforest",
+        help="Imputation method: 'missforest' (default, R missForest — best "
+             "accuracy, ~10 min), 'pmm' (Python variety-stratified PMM — "
+             "faster, ~1.5 min), or 'fabof' (R fabOF ordinal chained-forest "
+             "— proper ordinal treatment).",
+    )
+    parser.add_argument(
         "--dry-run", action="store_true",
         help="Show the execution plan without running any stage.",
     )
@@ -303,6 +323,7 @@ def main():
         pipeline,
         cleansing_mode=args.cleansing_mode,
         fill_empty_with_na=args.fill_empty_with_na,
+        imputation_method=args.imputation_method,
         dry_run=args.dry_run,
     )
 

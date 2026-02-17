@@ -12,28 +12,33 @@
 
 args <- commandArgs(trailingOnly = TRUE)
 if (length(args) < 1) {
-  stop("Usage: Rscript BSLVC_imputation_unified.R <data_directory>")
+  stop("Usage: Rscript BSLVC_imputation_unified.R <data_directory> [method]")
 }
 
 DATA_DIR <- args[1]
+METHOD_ARG <- if (length(args) >= 2) args[2] else "hdImpute"
 
 ################################################################################
 # CONFIGURATION
 ################################################################################
 
 CONFIG <- list(
-  # Imputation method
-  METHOD = "hdImpute",           # Options: "missForest" or "hdImpute"
+  # Imputation method (overridden by CLI argument if provided)
+  METHOD = METHOD_ARG,           # Options: "missForest" or "hdImpute"
 
   # Data processing options
-  SEPARATE_SPOKEN_WRITTEN = TRUE, # If TRUE, impute spoken and written separately (grammar only)
+  SEPARATE_SPOKEN_WRITTEN = FALSE, # If TRUE, impute spoken and written separately (grammar only)
+  USE_VARIETY_PREDICTOR = TRUE,    # If TRUE, include variety as predictor in missForest (recommended)
+  MAX_VARIETY_CATEGORIES = 53,     # missForest limit for categorical predictors
+  MIN_VARIETY_SIZE_GRAMMAR = 15,   # Min participants per variety for grammar, smaller → "Other"
+  MIN_VARIETY_SIZE_LEXICAL = 50,   # Min participants per variety for lexical, smaller → "Other"
 
   # Cutoff thresholds (number of missing values per participant)
   GRAMMAR_CUTOFF = 50,
   LEXICAL_CUTOFF = 25,
 
   # missForest parameters
-  MISSFOREST_PARALLEL_CORES = 6,
+  MISSFOREST_PARALLEL_CORES = 3,
   MISSFOREST_VERBOSE = TRUE,
 
   # hdImpute parameters
@@ -102,6 +107,12 @@ print("")
 print("=== CONFIGURATION ===")
 print(paste("Method:", CONFIG$METHOD))
 print(paste("Separate spoken/written:", CONFIG$SEPARATE_SPOKEN_WRITTEN))
+print(paste("Use variety as predictor:", CONFIG$USE_VARIETY_PREDICTOR))
+if (CONFIG$USE_VARIETY_PREDICTOR && CONFIG$METHOD == "missForest") {
+  print(paste("Max variety categories:", CONFIG$MAX_VARIETY_CATEGORIES))
+  print(paste("Min variety size (grammar):", CONFIG$MIN_VARIETY_SIZE_GRAMMAR))
+  print(paste("Min variety size (lexical):", CONFIG$MIN_VARIETY_SIZE_LEXICAL))
+}
 print(paste("Grammar cutoff:", CONFIG$GRAMMAR_CUTOFF))
 print(paste("Lexical cutoff:", CONFIG$LEXICAL_CUTOFF))
 if (CONFIG$METHOD == "missForest") {
@@ -122,16 +133,54 @@ print("")
 # HELPER FUNCTIONS
 ################################################################################
 
+# Function to extract variety from InformantID (e.g., "MT08_123" -> "MT")
+# NOTE: Now using MainVariety column from dataset instead (fallback only)
+extract_variety <- function(informant_ids) {
+  varieties <- gsub("^([A-Za-z]+).*", "\\1", informant_ids)
+  return(toupper(varieties))
+}
+
+# Function to group small varieties into "Other" category
+group_small_varieties <- function(variety_values, min_size = 15, data_name = "data") {
+  # Remove NAs for counting
+  variety_counts <- table(variety_values, useNA = "no")
+  small_varieties <- names(variety_counts[variety_counts < min_size])
+  
+  if (length(small_varieties) > 0) {
+    variety_values_grouped <- ifelse(variety_values %in% small_varieties, "Other", variety_values)
+    n_grouped <- sum(variety_values %in% small_varieties, na.rm = TRUE)
+    n_original_unique <- length(unique(variety_values[!is.na(variety_values)]))
+    n_final_unique <- length(unique(variety_values_grouped[!is.na(variety_values_grouped)]))
+    n_other <- sum(variety_values_grouped == "Other", na.rm = TRUE)
+    
+    print(paste("  Variety grouping for", data_name, ":"))
+    print(paste("    Original varieties:", n_original_unique))
+    print(paste("    Small varieties (n <", min_size, "):", length(small_varieties)))
+    print(paste("    Participants grouped into 'Other':", n_other))
+    print(paste("    Final variety count:", n_final_unique))
+    
+    return(variety_values_grouped)
+  } else {
+    print(paste("  No varieties grouped for", data_name, "- all have ≥", min_size, "participants"))
+    return(variety_values)
+  }
+}
+
 # Function to impute data using missForest
-impute_with_missForest <- function(data_to_impute, data_name, treat_as_factors = TRUE) {
+impute_with_missForest <- function(data_to_impute, data_name, treat_as_factors = TRUE, has_variety_col = FALSE) {
   print(sprintf("\n=== RUNNING missForest for %s ===", data_name))
 
   registerDoParallel(cores = CONFIG$MISSFOREST_PARALLEL_CORES)
 
   if (treat_as_factors) {
+    # Convert all columns to factors
     data_prep <- as.data.table(lapply(data_to_impute, as.factor))
   } else {
     data_prep <- data_to_impute
+    # If variety column exists, ensure it's a factor even when other cols are numeric
+    if (has_variety_col && "variety" %in% names(data_prep)) {
+      data_prep$variety <- as.factor(data_prep$variety)
+    }
   }
 
   start_time <- Sys.time()
@@ -151,7 +200,19 @@ impute_with_missForest <- function(data_to_impute, data_name, treat_as_factors =
   data_imputed <- imputed_result$ximp
 
   if (treat_as_factors) {
-    data_imputed <- as.data.table(lapply(data_imputed, function(x) as.numeric(x) - 1))
+    # Convert back from factors to numeric, but skip variety column
+    cols_to_convert <- names(data_imputed)
+    if (has_variety_col) {
+      cols_to_convert <- cols_to_convert[cols_to_convert != "variety"]
+    }
+    for (col in cols_to_convert) {
+      data_imputed[[col]] <- as.numeric(data_imputed[[col]]) - 1
+    }
+  }
+  
+  # Remove variety column after imputation (it was only used as predictor)
+  if (has_variety_col && "variety" %in% names(data_imputed)) {
+    data_imputed$variety <- NULL
   }
 
   return(list(
@@ -400,6 +461,26 @@ if (CONFIG$SEPARATE_SPOKEN_WRITTEN) {
       grammar_spoken_data[[col]] <- as.numeric(grammar_spoken_data[[col]])
     }
   }
+  
+  # Add variety as predictor for missForest (using MainVariety column)
+  if (CONFIG$METHOD == "missForest" && CONFIG$USE_VARIETY_PREDICTOR) {
+    if ("MainVariety" %in% colnames(grammar_filtered)) {
+      variety_values <- grammar_filtered$MainVariety
+    } else {
+      variety_values <- extract_variety(informant_ids_grammar)
+    }
+    # Group small varieties into "Other"
+    variety_values <- group_small_varieties(variety_values, 
+                                           min_size = CONFIG$MIN_VARIETY_SIZE_GRAMMAR,
+                                           data_name = "Grammar Spoken")
+    n_varieties <- length(unique(variety_values))
+    if (n_varieties <= CONFIG$MAX_VARIETY_CATEGORIES) {
+      grammar_spoken_data$variety <- variety_values
+      print(paste("  ✓ Added variety predictor with", n_varieties, "unique varieties"))
+    } else {
+      print(paste("  ⚠ Skipping variety predictor:", n_varieties, "varieties still exceeds limit of", CONFIG$MAX_VARIETY_CATEGORIES))
+    }
+  }
 
   grammar_written_data <- grammar_filtered[, ..grammar_written_items]
   if (CONFIG$METHOD == "hdImpute") {
@@ -407,16 +488,40 @@ if (CONFIG$SEPARATE_SPOKEN_WRITTEN) {
       grammar_written_data[[col]] <- as.numeric(grammar_written_data[[col]])
     }
   }
+  
+  # Add variety as predictor for missForest (using MainVariety column)
+  if (CONFIG$METHOD == "missForest" && CONFIG$USE_VARIETY_PREDICTOR) {
+    if ("MainVariety" %in% colnames(grammar_filtered)) {
+      variety_values <- grammar_filtered$MainVariety
+    } else {
+      variety_values <- extract_variety(informant_ids_grammar)
+    }
+    # Group small varieties into "Other"
+    variety_values <- group_small_varieties(variety_values, 
+                                           min_size = CONFIG$MIN_VARIETY_SIZE_GRAMMAR,
+                                           data_name = "Grammar Written")
+    n_varieties <- length(unique(variety_values))
+    if (n_varieties <= CONFIG$MAX_VARIETY_CATEGORIES) {
+      grammar_written_data$variety <- variety_values
+      print(paste("  ✓ Added variety predictor with", n_varieties, "unique varieties"))
+    } else {
+      print(paste("  ⚠ Skipping variety predictor:", n_varieties, "varieties still exceeds limit of", CONFIG$MAX_VARIETY_CATEGORIES))
+    }
+  }
 
   if (CONFIG$METHOD == "missForest") {
-    spoken_result <- impute_with_missForest(grammar_spoken_data, "Grammar Spoken", treat_as_factors = TRUE)
+    spoken_result <- impute_with_missForest(grammar_spoken_data, "Grammar Spoken", 
+                                           treat_as_factors = TRUE,
+                                           has_variety_col = CONFIG$USE_VARIETY_PREDICTOR)
   } else {
     spoken_result <- impute_with_hdImpute(grammar_spoken_data, "Grammar Spoken", CONFIG$HDIMPUTE_BATCH_GRAMMAR)
   }
   grammar_spoken_imputed <- post_process_imputed(spoken_result$data_imputed)
 
   if (CONFIG$METHOD == "missForest") {
-    written_result <- impute_with_missForest(grammar_written_data, "Grammar Written", treat_as_factors = TRUE)
+    written_result <- impute_with_missForest(grammar_written_data, "Grammar Written", 
+                                            treat_as_factors = TRUE,
+                                            has_variety_col = CONFIG$USE_VARIETY_PREDICTOR)
   } else {
     written_result <- impute_with_hdImpute(grammar_written_data, "Grammar Written", CONFIG$HDIMPUTE_BATCH_GRAMMAR)
   }
@@ -437,9 +542,31 @@ if (CONFIG$SEPARATE_SPOKEN_WRITTEN) {
       grammar_all_data[[col]] <- as.numeric(grammar_all_data[[col]])
     }
   }
+  
+  # Add variety as predictor for missForest (using MainVariety column)
+  if (CONFIG$METHOD == "missForest" && CONFIG$USE_VARIETY_PREDICTOR) {
+    if ("MainVariety" %in% colnames(grammar_filtered)) {
+      variety_values <- grammar_filtered$MainVariety
+    } else {
+      variety_values <- extract_variety(informant_ids_grammar)
+    }
+    # Group small varieties into "Other"
+    variety_values <- group_small_varieties(variety_values, 
+                                           min_size = CONFIG$MIN_VARIETY_SIZE_GRAMMAR,
+                                           data_name = "Grammar All")
+    n_varieties <- length(unique(variety_values))
+    if (n_varieties <= CONFIG$MAX_VARIETY_CATEGORIES) {
+      grammar_all_data$variety <- variety_values
+      print(paste("  ✓ Added variety predictor with", n_varieties, "unique varieties"))
+    } else {
+      print(paste("  ⚠ Skipping variety predictor:", n_varieties, "varieties still exceeds limit of", CONFIG$MAX_VARIETY_CATEGORIES))
+    }
+  }
 
   if (CONFIG$METHOD == "missForest") {
-    all_result <- impute_with_missForest(grammar_all_data, "Grammar All", treat_as_factors = TRUE)
+    all_result <- impute_with_missForest(grammar_all_data, "Grammar All", 
+                                        treat_as_factors = TRUE,
+                                        has_variety_col = CONFIG$USE_VARIETY_PREDICTOR)
   } else {
     all_result <- impute_with_hdImpute(grammar_all_data, "Grammar All", CONFIG$HDIMPUTE_BATCH_GRAMMAR)
   }
@@ -458,8 +585,13 @@ print(paste("Grammar imputed data saved to:", output_file))
 
 print(sprintf("\nGrammar imputation summary:"))
 print(sprintf("  Runtime: %.2f minutes", grammar_runtime))
-if (!is.na(grammar_oob)) {
-  print(sprintf("  OOB error: %.4f", grammar_oob))
+if (any(!is.na(grammar_oob))) {
+  if (length(grammar_oob) > 1) {
+    print(sprintf("  OOB error (numeric): %.4f", grammar_oob[1]))
+    print(sprintf("  OOB error (categorical): %.4f", grammar_oob[2]))
+  } else {
+    print(sprintf("  OOB error: %.4f", grammar_oob))
+  }
 }
 
 ################################################################################
@@ -508,18 +640,43 @@ informant_ids_lexical <- lexical_filtered$InformantID
 print("\n=== IMPUTING LEXICAL DATA ===")
 
 lexical_all_data <- lexical_filtered[, ..lexical_all_items]
-if (CONFIG$METHOD == "hdImpute") {
-  for (col in lexical_all_items) {
-    lexical_all_data[[col]] <- as.numeric(lexical_all_data[[col]])
+
+# Convert all lexical columns to numeric (scale: -2 to 2)
+# Non-numeric values will be automatically converted to NA
+print("Converting lexical columns to numeric...")
+for (col in lexical_all_items) {
+  lexical_all_data[[col]] <- suppressWarnings(as.numeric(lexical_all_data[[col]]))
+}
+print("Lexical columns converted to numeric")
+
+# Add variety as predictor for missForest (using MainVariety column)
+if (CONFIG$METHOD == "missForest" && CONFIG$USE_VARIETY_PREDICTOR) {
+  if ("MainVariety" %in% colnames(lexical_filtered)) {
+    variety_values <- lexical_filtered$MainVariety
+  } else {
+    variety_values <- extract_variety(informant_ids_lexical)
+  }
+  # Group small varieties into "Other"
+  variety_values <- group_small_varieties(variety_values, 
+                                         min_size = CONFIG$MIN_VARIETY_SIZE_LEXICAL,
+                                         data_name = "Lexical")
+  n_varieties <- length(unique(variety_values))
+  if (n_varieties <= CONFIG$MAX_VARIETY_CATEGORIES) {
+    lexical_all_data$variety <- variety_values
+    print(paste("  ✓ Added variety predictor with", n_varieties, "unique varieties"))
+  } else {
+    print(paste("  ⚠ Skipping variety predictor:", n_varieties, "varieties exceeds missForest limit of", CONFIG$MAX_VARIETY_CATEGORIES))
   }
 }
 
 if (CONFIG$METHOD == "missForest") {
-  lexical_result <- impute_with_missForest(lexical_all_data, "Lexical", treat_as_factors = FALSE)
+  lexical_result <- impute_with_missForest(lexical_all_data, "Lexical", 
+                                          treat_as_factors = FALSE,
+                                          has_variety_col = CONFIG$USE_VARIETY_PREDICTOR)
 } else {
   lexical_result <- impute_with_hdImpute(lexical_all_data, "Lexical", CONFIG$HDIMPUTE_BATCH_LEXICAL)
 }
-lexical_imputed <- post_process_imputed(lexical_result$data_imputed)
+lexical_imputed <- post_process_imputed(lexical_result$data_imputed, min_val = -2, max_val = 2)
 lexical_imputed$InformantID <- informant_ids_lexical
 
 lexical_runtime <- lexical_result$runtime_mins
@@ -532,8 +689,13 @@ print(paste("Lexical imputed data saved to:", output_file_lex))
 
 print(sprintf("\nLexical imputation summary:"))
 print(sprintf("  Runtime: %.2f minutes", lexical_runtime))
-if (!is.na(lexical_oob)) {
-  print(sprintf("  OOB error: %.4f", lexical_oob))
+if (any(!is.na(lexical_oob))) {
+  if (length(lexical_oob) > 1) {
+    print(sprintf("  OOB error (numeric): %.4f", lexical_oob[1]))
+    print(sprintf("  OOB error (categorical): %.4f", lexical_oob[2]))
+  } else {
+    print(sprintf("  OOB error: %.4f", lexical_oob))
+  }
 }
 
 ################################################################################
@@ -548,6 +710,7 @@ print("\n")
 print("CONFIGURATION:")
 print(sprintf("  Method: %s", CONFIG$METHOD))
 print(sprintf("  Separate spoken/written: %s", CONFIG$SEPARATE_SPOKEN_WRITTEN))
+print(sprintf("  Use variety as predictor: %s", CONFIG$USE_VARIETY_PREDICTOR))
 print(sprintf("  Grammar cutoff: %d", CONFIG$GRAMMAR_CUTOFF))
 print(sprintf("  Lexical cutoff: %d", CONFIG$LEXICAL_CUTOFF))
 print("")
@@ -555,16 +718,26 @@ print("GRAMMAR IMPUTATION:")
 print(sprintf("  Participants: %d", nrow(grammar_imputed) - 1))
 print(sprintf("  Items: %d", length(grammar_all_items)))
 print(sprintf("  Runtime: %.2f minutes", grammar_runtime))
-if (!is.na(grammar_oob)) {
-  print(sprintf("  OOB error: %.4f", grammar_oob))
+if (any(!is.na(grammar_oob))) {
+  if (length(grammar_oob) > 1) {
+    print(sprintf("  OOB error (numeric): %.4f", grammar_oob[1]))
+    print(sprintf("  OOB error (categorical): %.4f", grammar_oob[2]))
+  } else {
+    print(sprintf("  OOB error: %.4f", grammar_oob))
+  }
 }
 print("")
 print("LEXICAL IMPUTATION:")
 print(sprintf("  Participants: %d", nrow(lexical_imputed) - 1))
 print(sprintf("  Items: %d", length(lexical_all_items)))
 print(sprintf("  Runtime: %.2f minutes", lexical_runtime))
-if (!is.na(lexical_oob)) {
-  print(sprintf("  OOB error: %.4f", lexical_oob))
+if (any(!is.na(lexical_oob))) {
+  if (length(lexical_oob) > 1) {
+    print(sprintf("  OOB error (numeric): %.4f", lexical_oob[1]))
+    print(sprintf("  OOB error (categorical): %.4f", lexical_oob[2]))
+  } else {
+    print(sprintf("  OOB error: %.4f", lexical_oob))
+  }
 }
 print("")
 print("TOTAL:")
@@ -579,6 +752,9 @@ if (CONFIG$METHOD == "missForest") {
   print("- missForest provides OOB errors for quality assessment")
   print("- Treats grammar data as factors during imputation")
   print("- Uses parallel processing with random forests")
+  if (CONFIG$USE_VARIETY_PREDICTOR) {
+    print(paste("- Variety used as predictor when < ", CONFIG$MAX_VARIETY_CATEGORIES, " categories (missForest limit)", sep=""))
+  }
 } else {
   print("Method Notes:")
   print("- hdImpute uses hybrid distance-based imputation with PMM")
