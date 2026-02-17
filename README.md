@@ -64,7 +64,7 @@ python run_workflow.py --run <STEP> [STEP ...]
 | `etl`         | Full pipeline (ETL → cleansing → meta → export → imputation → export) |
 | `cleansing`   | Normalise / clean data (→ export)                |
 | `meta`        | Load feature metadata into DB (→ export)         |
-| `imputation`  | Run variety-stratified PMM imputation (→ export) |
+| `imputation`  | Run imputation with the selected method (→ export) |
 | `export`      | Export DB views to CSV and RDS                   |
 
 Downstream dependencies are added automatically.
@@ -74,6 +74,7 @@ Downstream dependencies are added automatically.
 | Flag                       | Description                                       |
 |----------------------------|---------------------------------------------------|
 | `--cleansing-mode {update,apply}` | `update` regenerates mappings; `apply` normalises data (default) |
+| `--imputation-method {missforest,pmm,fabof}` | Imputation method (default: `missforest`) |
 | `--fill-empty-with-na`     | Fill empty cells with NA during cleansing          |
 | `--dry-run`                | Show execution plan without running anything       |
 
@@ -85,7 +86,19 @@ python run_workflow.py --run cleansing --cleansing-mode update # regenerate mapp
 python run_workflow.py --run export                          # export only
 python run_workflow.py --dry-run --run etl                   # preview plan
 python run_workflow.py --run convert                         # LimeSurvey → XLSX
+python run_workflow.py --run imputation --imputation-method fabof   # fabOF imputation
+python run_workflow.py --run imputation --imputation-method pmm    # PMM imputation
 ```
+
+### Imputation methods
+
+| Method        | Backend | Description                                                                 |
+|---------------|---------|-----------------------------------------------------------------------------|
+| `missforest`  | R       | Random-forest chained-equations imputation (default, best accuracy, ~10 min) |
+| `pmm`         | Python  | Variety-stratified Predictive Mean Matching with cross-modality predictors (~1.5 min) |
+| `fabof`       | R       | Frequency-Adjusted Borders Ordinal Forest (fabOF; Buczak 2025) — treats each variable as ordinal in a chained-equations framework with OOB convergence monitoring |
+
+All methods impute grammar (0–5 scale) and lexical (−2 to +2 scale) data, apply per-participant missingness cutoffs, and upload the results to the SQLite database.
 
 
 

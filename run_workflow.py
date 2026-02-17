@@ -199,6 +199,7 @@ def run_imputation(method: str = "missforest"):
     method : str
         ``'missforest'`` (default) — R missForest (best accuracy, slower).
         ``'pmm'`` — Python variety-stratified PMM (faster, good accuracy).
+        ``'fabof'`` — R fabOF ordinal chained-forest (proper ordinal treatment).
     """
     from lib.imputation import run_imputation as _run_imp
     _run_imp(method=method)
