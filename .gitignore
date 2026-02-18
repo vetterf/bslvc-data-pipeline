@@ -7,8 +7,6 @@ venv/
 
 # ── Data files (input XLSX/CSV, output DB/CSV/RDS) ─────
 data/input/
-data/Feature_Overview_BSLVC.xlsx
-output/
 
 # ── IDE / OS ────────────────────────────────────────────
 .idea/
