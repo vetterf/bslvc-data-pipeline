@@ -595,9 +595,13 @@ def impute_grammar(
     db_path: Path,
     log: ImputationLog,
     rng: np.random.Generator,
+    prefilled_data: pd.DataFrame | None = None,
 ) -> tuple[pd.DataFrame, pd.DataFrame, dict]:
     """Impute grammar (spoken + written) with variety stratification
     and cross-modality predictors.
+
+    If *prefilled_data* is provided, use it instead of loading from DB
+    (for incremental mode where existing participants are pre-filled).
 
     Returns (spoken_imputed, written_imputed, cv_metrics) where *cv_metrics*
     is ``{"spoken": {var: metrics}, "written": {var: metrics}}``.
@@ -607,9 +611,12 @@ def impute_grammar(
     log.log("=" * 80)
 
     # ── load data ───────────────────────────────────────────────────────
-    with sqlite3.connect(str(db_path)) as conn:
-        df = pd.read_sql_query("SELECT * FROM BSLVC_GRAMMAR", conn)
-    df = df.copy()  # defragment
+    if prefilled_data is not None:
+        df = prefilled_data.copy()
+    else:
+        with sqlite3.connect(str(db_path)) as conn:
+            df = pd.read_sql_query("SELECT * FROM BSLVC_GRAMMAR", conn)
+        df = df.copy()  # defragment
 
     spoken_cols = sorted(
         [c for c in df.columns if re.match(r"^[A-F]\d+[a-z]?$", c)],
@@ -805,8 +812,12 @@ def impute_lexical(
     db_path: Path,
     log: ImputationLog,
     rng: np.random.Generator,
+    prefilled_data: pd.DataFrame | None = None,
 ) -> tuple[pd.DataFrame, dict]:
     """Impute lexical data with variety stratification.
+
+    If *prefilled_data* is provided, use it instead of loading from DB
+    (for incremental mode where existing participants are pre-filled).
 
     Returns (lexical_df, cv_var_metrics) where *cv_var_metrics* is
     ``{var: metrics}``.
@@ -816,8 +827,11 @@ def impute_lexical(
     log.log("=" * 80)
 
     # ── load data ───────────────────────────────────────────────────────
-    with sqlite3.connect(str(db_path)) as conn:
-        df = pd.read_sql_query("SELECT * FROM BSLVC_LEXICAL", conn)
+    if prefilled_data is not None:
+        df = prefilled_data.copy()
+    else:
+        with sqlite3.connect(str(db_path)) as conn:
+            df = pd.read_sql_query("SELECT * FROM BSLVC_LEXICAL", conn)
 
     # Determine lexical feature columns (between aDropInTheOcean and Anyway)
     all_cols = list(df.columns)
@@ -929,8 +943,13 @@ def upload_to_db(
     written_df: pd.DataFrame,
     lexical_df: pd.DataFrame,
     log: ImputationLog,
+    new_informant_ids: list[str] | None = None,
 ):
-    """Upload imputed data to the *Imputed tables in the SQLite database."""
+    """Upload imputed data to the *Imputed tables in the SQLite database.
+
+    If *new_informant_ids* is provided, only appends those participants
+    (preserving existing imputed data). Otherwise replaces all data.
+    """
     log.log("\n" + "=" * 80)
     log.log("  UPLOADING TO DATABASE")
     log.log("=" * 80)
@@ -953,12 +972,45 @@ def upload_to_db(
                 pass
             return int(v) if isinstance(v, (np.integer, int)) else v
 
+        incremental = new_informant_ids is not None
+
+        if incremental:
+            # Remove any existing rows for new IDs (in case of re-run)
+            new_ids_set = set(new_informant_ids)
+            for table in ("SpokenItemsImputed", "WrittenItemsImputed", "LexicalItemsImputed"):
+                placeholders = ",".join(["?"] * len(new_ids_set))
+                cursor.execute(
+                    f"DELETE FROM {table} WHERE InformantID IN ({placeholders})",
+                    list(new_ids_set),
+                )
+            log.log(f"  Incremental mode: appending {len(new_ids_set)} new participants")
+
+            # Filter DataFrames to only new participants
+            spoken_df = spoken_df[spoken_df["InformantID"].isin(new_ids_set)].copy()
+            written_df = written_df[written_df["InformantID"].isin(new_ids_set)].copy()
+            lexical_df = lexical_df[lexical_df["InformantID"].isin(new_ids_set)].copy()
+
+            # Get current max IDs for auto-numbering
+            cursor.execute("SELECT COALESCE(MAX(ID), 0) FROM SpokenItemsImputed")
+            spoken_start_id = cursor.fetchone()[0]
+            cursor.execute("SELECT COALESCE(MAX(ID), 0) FROM WrittenItemsImputed")
+            written_start_id = cursor.fetchone()[0]
+            cursor.execute("SELECT COALESCE(MAX(ID), 0) FROM LexicalItemsImputed")
+            lexical_start_id = cursor.fetchone()[0]
+        else:
+            # Full replace mode (original behavior)
+            cursor.execute("DELETE FROM SpokenItemsImputed")
+            cursor.execute("DELETE FROM WrittenItemsImputed")
+            cursor.execute("DELETE FROM LexicalItemsImputed")
+            spoken_start_id = 0
+            written_start_id = 0
+            lexical_start_id = 0
+
         # ── spoken ──────────────────────────────────────────────────────
-        cursor.execute("DELETE FROM SpokenItemsImputed")
         spoken_feature_cols = [c for c in spoken_df.columns if c != "InformantID"]
         spoken_col_list = ", ".join(["ID", "InformantID", "GrammarSpokenFillingInFor"] + spoken_feature_cols)
         spoken_placeholders = ", ".join(["?"] * (3 + len(spoken_feature_cols)))
-        for i, row in enumerate(spoken_df.itertuples(index=False), 1):
+        for i, row in enumerate(spoken_df.itertuples(index=False), spoken_start_id + 1):
             vals = [_val(getattr(row, c)) for c in spoken_feature_cols]
             cursor.execute(
                 f"INSERT INTO SpokenItemsImputed ({spoken_col_list}) VALUES ({spoken_placeholders})",
@@ -967,11 +1019,10 @@ def upload_to_db(
         log.log(f"  Inserted {len(spoken_df)} spoken records")
 
         # ── written ─────────────────────────────────────────────────────
-        cursor.execute("DELETE FROM WrittenItemsImputed")
         written_feature_cols = [c for c in written_df.columns if c != "InformantID"]
         written_col_list = ", ".join(["ID", "InformantID", "GrammarWrittenFillingInFor"] + written_feature_cols)
         written_placeholders = ", ".join(["?"] * (3 + len(written_feature_cols)))
-        for i, row in enumerate(written_df.itertuples(index=False), 1):
+        for i, row in enumerate(written_df.itertuples(index=False), written_start_id + 1):
             vals = [_val(getattr(row, c)) for c in written_feature_cols]
             cursor.execute(
                 f"INSERT INTO WrittenItemsImputed ({written_col_list}) VALUES ({written_placeholders})",
@@ -980,11 +1031,10 @@ def upload_to_db(
         log.log(f"  Inserted {len(written_df)} written records")
 
         # ── lexical ─────────────────────────────────────────────────────
-        cursor.execute("DELETE FROM LexicalItemsImputed")
         lex_feature_cols = [c for c in lexical_df.columns if c != "InformantID"]
         lex_col_list = ", ".join(["ID", "InformantID"] + lex_feature_cols + ["CommentsLexical"])
         lex_placeholders = ", ".join(["?"] * (3 + len(lex_feature_cols)))
-        for i, row in enumerate(lexical_df.itertuples(index=False), 1):
+        for i, row in enumerate(lexical_df.itertuples(index=False), lexical_start_id + 1):
             vals = [_val(getattr(row, c)) for c in lex_feature_cols]
             cursor.execute(
                 f"INSERT INTO LexicalItemsImputed ({lex_col_list}) VALUES ({lex_placeholders})",
@@ -1251,7 +1301,97 @@ def _run_fabof_via_r(
 VALID_IMPUTATION_METHODS = ("missforest", "pmm", "fabof")
 
 
-def run_imputation(method: str = "missforest"):
+def _prefill_with_imputed(db_path: Path, new_informant_ids: list[str], log: ImputationLog):
+    """Pre-fill existing participants' raw data with their imputed values.
+
+    For incremental imputation, we want the algorithm to see existing participants
+    as fully observed (using their previously imputed values), so it only imputes
+    the new participants.
+
+    Returns (grammar_df, lexical_df) with existing participants' values pre-filled.
+    """
+    new_ids_set = set(new_informant_ids)
+
+    with sqlite3.connect(str(db_path)) as conn:
+        grammar_raw = pd.read_sql_query("SELECT * FROM BSLVC_GRAMMAR", conn)
+        lexical_raw = pd.read_sql_query("SELECT * FROM BSLVC_LEXICAL", conn)
+
+        # Load existing imputed tables
+        try:
+            spoken_imp = pd.read_sql_query("SELECT * FROM SpokenItemsImputed", conn)
+            written_imp = pd.read_sql_query("SELECT * FROM WrittenItemsImputed", conn)
+            lexical_imp = pd.read_sql_query("SELECT * FROM LexicalItemsImputed", conn)
+        except pd.errors.DatabaseError:
+            log.log("  No existing imputed tables found — running full imputation")
+            return grammar_raw, lexical_raw
+
+    # --- Vectorized pre-fill for grammar data ---
+    existing_mask = ~grammar_raw["InformantID"].isin(new_ids_set)
+    grammar_before_na = grammar_raw.isna().sum().sum()
+
+    # Build an imputed-values frame aligned to grammar_raw by InformantID
+    spoken_feature_cols = [c for c in spoken_imp.columns
+                          if c not in ("ID", "InformantID", "GrammarSpokenFillingInFor")
+                          and c in grammar_raw.columns]
+    written_feature_cols = [c for c in written_imp.columns
+                           if c not in ("ID", "InformantID", "GrammarWrittenFillingInFor")
+                           and c in grammar_raw.columns]
+
+    # Merge imputed spoken values onto raw grammar by InformantID
+    if spoken_feature_cols:
+        spoken_fill = spoken_imp[["InformantID"] + spoken_feature_cols].drop_duplicates("InformantID")
+        spoken_fill = spoken_fill.set_index("InformantID")
+        spoken_aligned = grammar_raw[["InformantID"]].merge(
+            spoken_fill, left_on="InformantID", right_index=True, how="left"
+        ).drop(columns=["InformantID"])
+        spoken_aligned.index = grammar_raw.index
+        for col in spoken_feature_cols:
+            mask = existing_mask & grammar_raw[col].isna() & spoken_aligned[col].notna()
+            grammar_raw.loc[mask, col] = spoken_aligned.loc[mask, col]
+
+    if written_feature_cols:
+        written_fill = written_imp[["InformantID"] + written_feature_cols].drop_duplicates("InformantID")
+        written_fill = written_fill.set_index("InformantID")
+        written_aligned = grammar_raw[["InformantID"]].merge(
+            written_fill, left_on="InformantID", right_index=True, how="left"
+        ).drop(columns=["InformantID"])
+        written_aligned.index = grammar_raw.index
+        for col in written_feature_cols:
+            mask = existing_mask & grammar_raw[col].isna() & written_aligned[col].notna()
+            grammar_raw.loc[mask, col] = written_aligned.loc[mask, col]
+
+    grammar_after_na = grammar_raw.isna().sum().sum()
+    n_filled_grammar = int(grammar_before_na - grammar_after_na)
+
+    # --- Vectorized pre-fill for lexical data ---
+    existing_mask_lex = ~lexical_raw["InformantID"].isin(new_ids_set)
+    lexical_before_na = lexical_raw.isna().sum().sum()
+
+    lex_feature_cols = [c for c in lexical_imp.columns
+                        if c not in ("ID", "InformantID", "CommentsLexical")
+                        and c in lexical_raw.columns]
+
+    if lex_feature_cols:
+        lex_fill = lexical_imp[["InformantID"] + lex_feature_cols].drop_duplicates("InformantID")
+        lex_fill = lex_fill.set_index("InformantID")
+        lex_aligned = lexical_raw[["InformantID"]].merge(
+            lex_fill, left_on="InformantID", right_index=True, how="left"
+        ).drop(columns=["InformantID"])
+        lex_aligned.index = lexical_raw.index
+        for col in lex_feature_cols:
+            mask = existing_mask_lex & lexical_raw[col].isna() & lex_aligned[col].notna()
+            lexical_raw.loc[mask, col] = lex_aligned.loc[mask, col]
+
+    lexical_after_na = lexical_raw.isna().sum().sum()
+    n_filled_lexical = int(lexical_before_na - lexical_after_na)
+
+    log.log(f"  Pre-filled {n_filled_grammar} grammar cells and {n_filled_lexical} lexical cells "
+            f"from existing imputed data")
+
+    return grammar_raw, lexical_raw
+
+
+def run_imputation(method: str = "missforest", new_informant_ids: list[str] | None = None):
     """Run the imputation pipeline.
 
     Parameters
@@ -1293,15 +1433,64 @@ def run_imputation(method: str = "missforest"):
     log.log(f"  Starting imputation at {datetime.now()}")
     log.log(f"  Database: {DB_PATH}")
     log.log(f"  Method:   {method_label}")
+    if new_informant_ids is not None:
+        log.log(f"  Incremental mode: {len(new_informant_ids)} new participants")
 
     if method == "missforest":
+        if new_informant_ids is not None:
+            log.log("  ⚠  R missForest does not support incremental mode natively.")
+            log.log("     Pre-filling existing participants with imputed values before R call.")
+            _prepare_prefilled_rds_for_r(DB_PATH, new_informant_ids, log)
         _run_imputation_missforest(log, t0)
     elif method == "fabof":
+        if new_informant_ids is not None:
+            log.log("  ⚠  R fabOF does not support incremental mode natively.")
+            log.log("     Pre-filling existing participants with imputed values before R call.")
+            _prepare_prefilled_rds_for_r(DB_PATH, new_informant_ids, log)
         _run_imputation_fabof(log, t0)
     else:
-        _run_imputation_pmm(log, t0)
+        _run_imputation_pmm(log, t0, new_informant_ids=new_informant_ids)
 
     print("  ✅ Imputation completed successfully")
+
+
+def _prepare_prefilled_rds_for_r(db_path: Path, new_informant_ids: list[str], log: ImputationLog):
+    """Re-export BSLVC_GRAMMAR.rds and BSLVC_LEXICAL.rds with existing
+    participants' missing values pre-filled from the imputed tables.
+
+    This makes R-based imputation methods only impute new participants,
+    since existing participants appear fully observed.
+    """
+    import csv as csv_mod
+
+    grammar_df, lexical_df = _prefill_with_imputed(db_path, new_informant_ids, log)
+
+    # Write prefilled data as CSV, then call a small R snippet to save as RDS
+    grammar_csv = OUTPUT_DIR / "BSLVC_GRAMMAR.csv"
+    lexical_csv = OUTPUT_DIR / "BSLVC_LEXICAL.csv"
+
+    grammar_df.to_csv(str(grammar_csv), index=False, sep=";", quoting=csv_mod.QUOTE_ALL)
+    lexical_df.to_csv(str(lexical_csv), index=False, sep=";", quoting=csv_mod.QUOTE_ALL)
+
+    # Re-export as RDS via R
+    r_code = f"""
+    grammar <- read.csv("{grammar_csv}", sep=";", check.names=FALSE)
+    saveRDS(grammar, "{OUTPUT_DIR / 'BSLVC_GRAMMAR.rds'}")
+    lexical <- read.csv("{lexical_csv}", sep=";", check.names=FALSE)
+    saveRDS(lexical, "{OUTPUT_DIR / 'BSLVC_LEXICAL.rds'}")
+    cat("Prefilled RDS files written\\n")
+    """
+    try:
+        result = subprocess.run(
+            ["Rscript", "-e", r_code],
+            capture_output=True, text=True,
+        )
+        if result.returncode == 0:
+            log.log("  Pre-filled RDS files written for R imputation")
+        else:
+            log.log(f"  ⚠  Failed to write pre-filled RDS: {result.stderr}")
+    except FileNotFoundError:
+        log.log("  ⚠  Rscript not found — cannot prepare pre-filled RDS")
 
 
 def _run_imputation_missforest(log: ImputationLog, t0: float):
@@ -1350,9 +1539,10 @@ def _run_imputation_fabof(log: ImputationLog, t0: float):
         raise RuntimeError("R fabOF imputation failed — see log for details.")
 
 
-def _run_imputation_pmm(log: ImputationLog, t0: float):
+def _run_imputation_pmm(log: ImputationLog, t0: float, new_informant_ids: list[str] | None = None):
     """Run variety-stratified PMM imputation (Python)."""
     rng = np.random.default_rng(SEED)
+    incremental = new_informant_ids is not None
 
     log.log(f"  Configuration:")
     log.log(f"    Method:             Variety-stratified PMM")
@@ -1364,21 +1554,34 @@ def _run_imputation_pmm(log: ImputationLog, t0: float):
     log.log(f"    Lexical cutoff:     {LEXICAL_CUTOFF}")
     log.log(f"    Min variety size:   {MIN_VARIETY_SIZE}")
     log.log(f"    Seed:               {SEED}")
+    if incremental:
+        log.log(f"    Incremental:        Yes ({len(new_informant_ids)} new participants)")
+
+    # For incremental mode, pre-fill existing participants with imputed values
+    prefilled_grammar = None
+    prefilled_lexical = None
+    if incremental:
+        prefilled_grammar, prefilled_lexical = _prefill_with_imputed(DB_PATH, new_informant_ids, log)
 
     # ── Grammar ─────────────────────────────────────────────────────────
     t_gram = time.time()
-    spoken_df, written_df, grammar_cv = impute_grammar(DB_PATH, log, rng)
+    spoken_df, written_df, grammar_cv = impute_grammar(
+        DB_PATH, log, rng, prefilled_data=prefilled_grammar,
+    )
     grammar_time = time.time() - t_gram
     log.log(f"\n  Grammar runtime: {grammar_time:.1f}s")
 
     # ── Lexical ─────────────────────────────────────────────────────────
     t_lex = time.time()
-    lexical_df, lexical_cv = impute_lexical(DB_PATH, log, rng)
+    lexical_df, lexical_cv = impute_lexical(
+        DB_PATH, log, rng, prefilled_data=prefilled_lexical,
+    )
     lexical_time = time.time() - t_lex
     log.log(f"\n  Lexical runtime: {lexical_time:.1f}s")
 
     # ── Upload ──────────────────────────────────────────────────────────
-    upload_to_db(DB_PATH, spoken_df, written_df, lexical_df, log)
+    upload_to_db(DB_PATH, spoken_df, written_df, lexical_df, log,
+                 new_informant_ids=new_informant_ids)
 
     total_time = time.time() - t0
     log.log(f"\n  Total imputation runtime: {total_time:.1f}s")
