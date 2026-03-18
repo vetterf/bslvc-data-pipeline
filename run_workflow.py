@@ -20,6 +20,7 @@ Usage
   python run_workflow.py --run imputation    # imputation → export
   python run_workflow.py --run meta          # meta → export
   python run_workflow.py --dry-run --run etl # show plan without executing
+  python run_workflow.py --update            # add new data to existing DB
 """
 
 import argparse
@@ -191,7 +192,7 @@ def run_export():
 #  Stage: IMPUTATION
 # ═══════════════════════════════════════════════════════════════════════════════
 
-def run_imputation(method: str = "missforest"):
+def run_imputation(method: str = "missforest", new_informant_ids: list[str] | None = None):
     """Run imputation with the specified method.
 
     Parameters
@@ -200,9 +201,11 @@ def run_imputation(method: str = "missforest"):
         ``'missforest'`` (default) — R missForest (best accuracy, slower).
         ``'pmm'`` — Python variety-stratified PMM (faster, good accuracy).
         ``'fabof'`` — R fabOF ordinal chained-forest (proper ordinal treatment).
+    new_informant_ids : list[str] | None
+        If provided, only impute these participants (incremental mode).
     """
     from lib.imputation import run_imputation as _run_imp
-    _run_imp(method=method)
+    _run_imp(method=method, new_informant_ids=new_informant_ids)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -216,11 +219,19 @@ def execute_pipeline(
     fill_empty_with_na=False,
     imputation_method="missforest",
     dry_run=False,
+    update=False,
 ):
-    """Execute each stage in *pipeline* sequentially."""
+    """Execute each stage in *pipeline* sequentially.
+
+    When *update* is True, the ETL stage adds new participants to the
+    existing database instead of recreating it.  Cleansing and imputation
+    are restricted to the newly added participants.
+    """
+    mode_label = "UPDATE (incremental)" if update else "FULL"
     print()
     print("━" * 80)
-    print(f"  BSLVC Workflow – execution plan: {' → '.join(pipeline)}")
+    print(f"  BSLVC Workflow – {mode_label}")
+    print(f"  Execution plan: {' → '.join(pipeline)}")
     if "imputation" in pipeline:
         print(f"  Imputation method: {imputation_method}")
     print("━" * 80)
@@ -232,7 +243,7 @@ def execute_pipeline(
 
     # Lazy imports – heavy dependencies (pandas, flair, …) are only loaded
     # when a stage actually runs, so --dry-run / --help work without them.
-    from lib.etl import run_etl
+    from lib.etl import run_etl, run_etl_update
     from lib.cleansing import run_cleansing
 
     dispatch = {
@@ -242,20 +253,39 @@ def execute_pipeline(
         "export":     run_export,
     }
 
+    # In update mode, the ETL stage returns new InformantIDs which are
+    # passed to downstream stages so they only process new participants.
+    new_informant_ids = None
+
     for stage in pipeline:
-        if stage == "cleansing":
+        if stage == "etl" and update:
+            new_informant_ids = run_etl_update()
+            if not new_informant_ids:
+                print()
+                print("━" * 80)
+                print("  ℹ  No new participants found. Nothing to update.")
+                print("━" * 80)
+                return
+        elif stage == "cleansing":
             run_cleansing(
                 mode=cleansing_mode,
                 fill_empty_with_na=fill_empty_with_na,
+                informant_ids=new_informant_ids if update else None,
             )
         elif stage == "imputation":
-            run_imputation(method=imputation_method)
+            run_imputation(
+                method=imputation_method,
+                new_informant_ids=new_informant_ids if update else None,
+            )
         else:
             dispatch[stage]()
 
     print()
     print("━" * 80)
-    print("  ✅ All stages finished.")
+    if update and new_informant_ids:
+        print(f"  ✅ Update finished: {len(new_informant_ids)} new participants added.")
+    else:
+        print("  ✅ All stages finished.")
     print("━" * 80)
 
 
@@ -284,15 +314,24 @@ def main():
               %(prog)s --run cleansing --cleansing-mode update
               %(prog)s --run export                         Export only
               %(prog)s --dry-run --run etl                  Show plan
+              %(prog)s --update                             Incremental update
+              %(prog)s --update --imputation-method pmm     Update with PMM
         """),
     )
 
     parser.add_argument(
-        "--run", nargs="+", required=True,
+        "--run", nargs="+",
         choices=sorted(VALID_STEPS),
         metavar="STEP",
         help="Stage(s) to run.  Downstream dependencies are added automatically.  "
              f"Choices: {', '.join(sorted(VALID_STEPS))}",
+    )
+    parser.add_argument(
+        "--update", action="store_true",
+        help="Incremental update mode: add new participants from data/input/ "
+             "to the existing database. Cleansing, imputation, and export "
+             "are applied only to the newly added participants. "
+             "Equivalent to --run etl with incremental load.",
     )
     parser.add_argument(
         "--cleansing-mode", choices=["update", "apply"], default="apply",
@@ -319,14 +358,28 @@ def main():
 
     args = parser.parse_args()
 
-    pipeline = build_pipeline(args.run)
-    execute_pipeline(
-        pipeline,
-        cleansing_mode=args.cleansing_mode,
-        fill_empty_with_na=args.fill_empty_with_na,
-        imputation_method=args.imputation_method,
-        dry_run=args.dry_run,
-    )
+    if not args.run and not args.update:
+        parser.error("one of --run or --update is required")
+
+    if args.update:
+        pipeline = ["etl", "cleansing", "export", "imputation", "export"]
+        execute_pipeline(
+            pipeline,
+            cleansing_mode=args.cleansing_mode,
+            fill_empty_with_na=args.fill_empty_with_na,
+            imputation_method=args.imputation_method,
+            dry_run=args.dry_run,
+            update=True,
+        )
+    else:
+        pipeline = build_pipeline(args.run)
+        execute_pipeline(
+            pipeline,
+            cleansing_mode=args.cleansing_mode,
+            fill_empty_with_na=args.fill_empty_with_na,
+            imputation_method=args.imputation_method,
+            dry_run=args.dry_run,
+        )
 
 
 if __name__ == "__main__":

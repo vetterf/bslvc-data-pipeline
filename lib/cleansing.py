@@ -453,16 +453,43 @@ class UnifiedDataNormalizer:
         # Summary
         self.print_update_summary()
     
-    def apply_all_mappings(self, fill_empty_with_na=False):
+    def _setup_id_filter(self, conn, informant_ids):
+        """Create a temp table for filtering by InformantID and return a WHERE clause fragment."""
+        if informant_ids is None:
+            return ""
+        cursor = conn.cursor()
+        cursor.execute("CREATE TEMP TABLE IF NOT EXISTS _update_ids (InformantID TEXT PRIMARY KEY)")
+        cursor.execute("DELETE FROM _update_ids")
+        cursor.executemany(
+            "INSERT OR IGNORE INTO _update_ids (InformantID) VALUES (?)",
+            [(iid,) for iid in informant_ids],
+        )
+        conn.commit()
+        return f" AND {self.table_name}.InformantID IN (SELECT InformantID FROM _update_ids)"
+
+    def _cleanup_id_filter(self, conn):
+        """Drop the temp filter table."""
+        try:
+            conn.execute("DROP TABLE IF EXISTS _update_ids")
+        except sqlite3.Error:
+            pass
+
+    def apply_all_mappings(self, fill_empty_with_na=False, informant_ids=None):
         """
         APPLY MODE: Apply all CSV mappings to the database.
         
         Args:
             fill_empty_with_na: If True, fill empty mappings with "NA" instead of blocking
+            informant_ids: If provided, only normalize these InformantIDs (for incremental updates)
         """
-        print("📊 UNIFIED DATA NORMALIZATION - APPLY MODE 📊")
-        print("=" * 80)
-        print("Applying CSV mapping files to database...")
+        if informant_ids is not None:
+            print("📊 UNIFIED DATA NORMALIZATION - INCREMENTAL APPLY MODE 📊")
+            print("=" * 80)
+            print(f"Applying CSV mapping files to {len(informant_ids)} new participants...")
+        else:
+            print("📊 UNIFIED DATA NORMALIZATION - APPLY MODE 📊")
+            print("=" * 80)
+            print("Applying CSV mapping files to database...")
         print()
         
         if fill_empty_with_na:
@@ -505,25 +532,25 @@ class UnifiedDataNormalizer:
         # 1. Apply gender mapping
         print("1️⃣  APPLYING GENDER MAPPING")
         print("-" * 40)
-        self.apply_gender_mapping(fill_empty_with_na=fill_empty_with_na)
+        self.apply_gender_mapping(fill_empty_with_na=fill_empty_with_na, informant_ids=informant_ids)
         print()
         
         # 2. Apply school mappings
         print("2️⃣  APPLYING SCHOOL MAPPINGS")
         print("-" * 40)
-        self.apply_school_mappings(fill_empty_with_na=fill_empty_with_na)
+        self.apply_school_mappings(fill_empty_with_na=fill_empty_with_na, informant_ids=informant_ids)
         print()
         
         # 3. Apply qualification mapping
         print("3️⃣  APPLYING QUALIFICATION MAPPING")
         print("-" * 40)
-        self.apply_qualification_mapping(fill_empty_with_na=fill_empty_with_na)
+        self.apply_qualification_mapping(fill_empty_with_na=fill_empty_with_na, informant_ids=informant_ids)
         print()
         
         # 4. Apply language mapping
         print("4️⃣  APPLYING LANGUAGE MAPPING")
         print("-" * 40)
-        self.apply_language_mapping(fill_empty_with_na=fill_empty_with_na)
+        self.apply_language_mapping(fill_empty_with_na=fill_empty_with_na, informant_ids=informant_ids)
         print()
         
         # Summary
@@ -627,11 +654,12 @@ class UnifiedDataNormalizer:
         finally:
             conn.close()
     
-    def apply_gender_mapping(self, fill_empty_with_na=False):
+    def apply_gender_mapping(self, fill_empty_with_na=False, informant_ids=None):
         """Apply gender mapping to database.
         
         Args:
             fill_empty_with_na: If True, fill empty mappings with "NA"
+            informant_ids: If provided, only normalize these InformantIDs
         """
         # Load mapping file (check for manual override first)
         manual_file = self.config['manual_override_files']['gender']
@@ -676,6 +704,7 @@ class UnifiedDataNormalizer:
             
             # Apply mappings
             updated_count = 0
+            id_filter = self._setup_id_filter(conn, informant_ids)
             for orig_gender, norm_gender in mapping_dict.items():
                 db_value = 'NULL' if norm_gender == 'NA' else f"'{norm_gender}'"
                 
@@ -683,15 +712,19 @@ class UnifiedDataNormalizer:
                     cursor.execute(f"""
                         UPDATE {self.table_name} 
                         SET gender_normalized = {db_value}
-                        WHERE {self.config['columns']['gender']} IS NULL
+                        WHERE {self.config['columns']['gender']} IS NULL{id_filter}
                     """)
                 else:
                     escaped_gender = str(orig_gender).replace("'", "''")
                     cursor.execute(f"""
                         UPDATE {self.table_name} 
                         SET gender_normalized = {db_value}
-                        WHERE {self.config['columns']['gender']} = '{escaped_gender}'
+                        WHERE {self.config['columns']['gender']} = '{escaped_gender}'{id_filter}
                     """)
+                updated_count += cursor.rowcount
+            
+            if informant_ids is not None:
+                self._cleanup_id_filter(conn)
                 updated_count += cursor.rowcount
             
             conn.commit()
@@ -855,11 +888,12 @@ class UnifiedDataNormalizer:
         finally:
             conn.close()
     
-    def apply_school_mappings(self, fill_empty_with_na=False):
+    def apply_school_mappings(self, fill_empty_with_na=False, informant_ids=None):
         """Apply school mappings to database.
         
         Args:
             fill_empty_with_na: If True, fill empty mappings with "NA"
+            informant_ids: If provided, only normalize these InformantIDs
         """
         # Load mapping files
         for school_type in ['primary_school', 'secondary_school']:
@@ -909,6 +943,7 @@ class UnifiedDataNormalizer:
                 
                 # Apply mappings
                 updated_count = 0
+                id_filter = self._setup_id_filter(conn, informant_ids)
                 for orig_school, norm_school in mapping_dict.items():
                     db_value = 'NULL' if norm_school == 'NA' else f"'{norm_school}'"
                     
@@ -916,15 +951,19 @@ class UnifiedDataNormalizer:
                         cursor.execute(f"""
                             UPDATE {self.table_name} 
                             SET {normalized_column} = {db_value}
-                            WHERE {original_column} IS NULL
+                            WHERE {original_column} IS NULL{id_filter}
                         """)
                     else:
                         escaped_school = str(orig_school).replace("'", "''")
                         cursor.execute(f"""
                             UPDATE {self.table_name} 
                             SET {normalized_column} = {db_value}
-                            WHERE {original_column} = '{escaped_school}'
+                            WHERE {original_column} = '{escaped_school}'{id_filter}
                         """)
+                    updated_count += cursor.rowcount
+                
+                if informant_ids is not None:
+                    self._cleanup_id_filter(conn)
                     updated_count += cursor.rowcount
                 
                 conn.commit()
@@ -1062,11 +1101,12 @@ class UnifiedDataNormalizer:
         finally:
             conn.close()
     
-    def apply_qualification_mapping(self, fill_empty_with_na=False):
+    def apply_qualification_mapping(self, fill_empty_with_na=False, informant_ids=None):
         """Apply qualification mapping to database.
         
         Args:
             fill_empty_with_na: If True, fill empty mappings with "NA"
+            informant_ids: If provided, only normalize these InformantIDs
         """
         # Load mapping file
         manual_file = self.config['manual_override_files']['qualifications']
@@ -1132,13 +1172,17 @@ class UnifiedDataNormalizer:
                 
                 # Apply mappings
                 updated_count = 0
+                id_filter = self._setup_id_filter(conn, informant_ids)
                 for qual, category in mapping_dict.items():
                     escaped_qual = qual.replace("'", "''")
                     cursor.execute(f"""
                         UPDATE {self.table_name} 
                         SET {normalized_column} = '{category}' 
-                        WHERE {column} = '{escaped_qual}'
+                        WHERE {column} = '{escaped_qual}'{id_filter}
                     """)
+                    updated_count += cursor.rowcount
+                if informant_ids is not None:
+                    self._cleanup_id_filter(conn)
                     updated_count += cursor.rowcount
                 
                 print(f"✅ Updated {updated_count} records in {column} → {normalized_column}")
@@ -1154,11 +1198,14 @@ class UnifiedDataNormalizer:
                         raise e
                 
                 # Copy from Qualifications_normalized to highest_qualification
+                id_filter = self._setup_id_filter(conn, informant_ids)
                 cursor.execute(f"""
                     UPDATE {self.table_name}
                     SET highest_qualification = Qualifications_normalized
-                    WHERE Qualifications_normalized IS NOT NULL
+                    WHERE Qualifications_normalized IS NOT NULL{id_filter}
                 """)
+                if informant_ids is not None:
+                    self._cleanup_id_filter(conn)
             
             # Apply InformantID-specific mappings if available
             id_mapping_file = self.config['manual_override_files']['qualifications_by_id']
@@ -1167,6 +1214,10 @@ class UnifiedDataNormalizer:
                 id_mapping_df = pd.read_csv(id_mapping_file, keep_default_na=False)
                 
                 if 'InformantID' in id_mapping_df.columns and 'Mapped_Category' in id_mapping_df.columns:
+                    # If filtering by IDs, only apply overrides for new participants
+                    if informant_ids is not None:
+                        id_mapping_df = id_mapping_df[id_mapping_df['InformantID'].isin(informant_ids)]
+                    
                     id_updates = 0
                     for _, row in id_mapping_df.iterrows():
                         # Apply to highest_qualification (main column)
@@ -1189,12 +1240,13 @@ class UnifiedDataNormalizer:
             
             # Update qualifications based on secondary school data (for main Qualifications column only)
             if 'Qualifications' in qualification_columns:
+                id_filter = self._setup_id_filter(conn, informant_ids)
                 cursor.execute(f"""
                     UPDATE {self.table_name} 
                     SET highest_qualification = 'Secondary Education'
                     WHERE highest_qualification IS NULL 
                     AND secondary_school_normalized IS NOT NULL
-                    AND secondary_school_normalized != ''
+                    AND secondary_school_normalized != ''{id_filter}
                 """)
                 secondary_updates = cursor.rowcount
                 
@@ -1372,11 +1424,12 @@ class UnifiedDataNormalizer:
         
         return ', '.join(final_languages)
     
-    def apply_language_mapping(self, fill_empty_with_na=False):
+    def apply_language_mapping(self, fill_empty_with_na=False, informant_ids=None):
         """Apply language mapping to database.
         
         Args:
             fill_empty_with_na: If True, fill empty mappings with "NA"
+            informant_ids: If provided, only normalize these InformantIDs
         """
         # Load mapping file
         manual_file = self.config['manual_override_files']['languages']
@@ -1409,8 +1462,15 @@ class UnifiedDataNormalizer:
         conn = sqlite3.connect(self.db_path)
         
         try:
-            # Load the table
-            df = pd.read_sql_query(f"SELECT * FROM {self.table_name}", conn)
+            # Determine which rows to process
+            if informant_ids is not None:
+                placeholders = ",".join(["?"] * len(informant_ids))
+                df = pd.read_sql_query(
+                    f"SELECT * FROM {self.table_name} WHERE InformantID IN ({placeholders})",
+                    conn, params=list(informant_ids),
+                )
+            else:
+                df = pd.read_sql_query(f"SELECT * FROM {self.table_name}", conn)
             
             # Process each language column
             for column in self.config['columns']['languages']:
@@ -1419,6 +1479,14 @@ class UnifiedDataNormalizer:
                     continue
                 
                 normalized_column = f"{column}_normalized"
+                
+                # Ensure normalized column exists in DB
+                cursor = conn.cursor()
+                try:
+                    cursor.execute(f"ALTER TABLE {self.table_name} ADD COLUMN {normalized_column} TEXT")
+                except sqlite3.OperationalError as e:
+                    if "duplicate column name" not in str(e).lower():
+                        raise e
                 
                 # Apply mapping
                 def apply_mapping(value):
@@ -1439,11 +1507,16 @@ class UnifiedDataNormalizer:
                 mapping_rate = (mapped_values / total_values * 100) if total_values > 0 else 0
                 
                 print(f"✅ {column}: {mapped_values}/{total_values} values mapped ({mapping_rate:.1f}%)")
+                
+                # Write back using row-level UPDATEs (safe for both full and incremental)
+                for _, row in df.iterrows():
+                    norm_val = row.get(normalized_column, '')
+                    cursor.execute(
+                        f"UPDATE {self.table_name} SET {normalized_column} = ? WHERE InformantID = ?",
+                        (norm_val, row['InformantID']),
+                    )
             
-            # Write back to database
-            df.to_sql(self.table_name, conn, if_exists="replace", index=False)
             conn.commit()
-            
             print(f"✅ Language mappings applied to database")
             
         finally:
@@ -1524,7 +1597,7 @@ class UnifiedDataNormalizer:
         print("2. Re-run in apply mode to update the database")
 
 
-def run_cleansing(mode="apply", fill_empty_with_na=False):
+def run_cleansing(mode="apply", fill_empty_with_na=False, informant_ids=None):
     """
     Public entry point for the data cleansing stage.
 
@@ -1532,6 +1605,8 @@ def run_cleansing(mode="apply", fill_empty_with_na=False):
     ----------
     mode : "update" | "apply"
     fill_empty_with_na : bool
+    informant_ids : list[str] | None
+        If provided, only normalize these InformantIDs (for incremental updates).
     """
     print()
     print("=" * 80)
@@ -1543,6 +1618,9 @@ def run_cleansing(mode="apply", fill_empty_with_na=False):
     if mode == "update":
         normalizer.update_all_mappings()
     else:
-        normalizer.apply_all_mappings(fill_empty_with_na=fill_empty_with_na)
+        normalizer.apply_all_mappings(
+            fill_empty_with_na=fill_empty_with_na,
+            informant_ids=informant_ids,
+        )
 
     print("  ✅ Data cleansing completed successfully")

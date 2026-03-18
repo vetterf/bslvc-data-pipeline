@@ -69,10 +69,17 @@ def clean(data):
     data = data.assign(InformantID=data.index)
     data = data.dropna(subset=["InformantID"])
 
-    collectionCountry = re.search(r"^[A-Za-z]+", data["InformantID"].iloc[0])[0]
-    collectionYear = re.search(r"^[A-Za-z]+\d+", data["InformantID"].iloc[0])[0]
-    collectionYear = re.search(r"\d+", collectionYear)[0]
-    collectionYear = "20" + collectionYear
+    collectionCountry_match = re.search(r"^[A-Za-z]+", data["InformantID"].iloc[0])
+    collectionCountry = collectionCountry_match[0] if collectionCountry_match else ""
+
+    collectionYear_match = re.search(r"^[A-Za-z]+(\d+)", data["InformantID"].iloc[0])
+    if collectionYear_match:
+        collectionYear = "20" + collectionYear_match.group(1)
+    else:
+        # Fallback: try to find any digits in the ID
+        digits_match = re.search(r"\d+", data["InformantID"].iloc[0])
+        collectionYear = "20" + digits_match[0] if digits_match else ""
+
     data["CountryCollection"] = collectionCountry
 
     data["Date"] = ""
@@ -228,6 +235,11 @@ def etl_process(sql_queries, files, conn):
     for file in files:
         etl(sql_queries, file, conn)
 
+    _trim_and_update_metadata(conn, sql_queries, len(files), "created")
+
+
+def _trim_and_update_metadata(conn, sql_queries, n_files, verb):
+    """Trim whitespace from Informants text columns and update metadata."""
     # Strip trailing whitespace from all text columns in Informants
     try:
         cur = conn.cursor()
@@ -240,7 +252,7 @@ def etl_process(sql_queries, files, conn):
     except sqlite3.Error as error:
         print(f"  warning: could not trim Informants columns: {error}")
 
-    # Create metadata table
+    # Create/update metadata table
     try:
         cur = conn.cursor()
         if "08_create_metadata_table" in sql_queries:
@@ -249,12 +261,80 @@ def etl_process(sql_queries, files, conn):
             total_informants = cur.fetchone()[0]
             cur.execute(
                 "UPDATE DatabaseMetadata SET TotalInformants = ?, Notes = ? WHERE ID = 1",
-                (total_informants, f"Database created with {len(files)} data files"),
+                (total_informants, f"Database {verb} with {n_files} data files"),
             )
             conn.commit()
             print(f"  metadata updated: {total_informants} informants processed")
     except sqlite3.Error as error:
         print(f"  warning: could not update metadata: {error}")
+
+
+def etl_update_process(sql_queries, files, conn):
+    """Incremental ETL: add new participants to existing tables, skip duplicates.
+
+    Returns a list of newly added InformantIDs.
+    """
+    cur = conn.cursor()
+
+    # Get existing InformantIDs
+    cur.execute("SELECT InformantID FROM Informants")
+    existing_ids = {row[0] for row in cur.fetchall()}
+    print(f"  existing participants in database: {len(existing_ids)}")
+
+    new_ids_all = []
+
+    for file in files:
+        print(f"  reading: {file}")
+        if file.endswith(".xls") or file.endswith(".xlsx"):
+            data = extract_from_xlsx(file)
+        else:
+            data = extract_from_csv(file)
+        print("  file read successfully")
+
+        data = clean(data)
+        if data.empty:
+            print("  data is empty – skipping")
+            continue
+
+        # Filter out participants that already exist in the database
+        new_mask = ~data["InformantID"].isin(existing_ids)
+        skipped = (~new_mask).sum()
+        data = data[new_mask].copy()
+
+        if data.empty:
+            print(f"  all {skipped} participants already in database – skipping")
+            continue
+
+        new_ids = data["InformantID"].tolist()
+        new_ids_all.extend(new_ids)
+        print(f"  {len(new_ids)} new participants, {skipped} duplicates skipped")
+
+        try:
+            stage(data, conn, clear=True,
+                  createStagingQuery=sql_queries["01_create_staging_table_bslvc"])
+            print("  data loaded into staging table")
+
+            cur.executescript(sql_queries["04_staging_informant_to_table"])
+            cur.executescript(sql_queries["05_staging_lexical_to_table"])
+            cur.executescript(sql_queries["06_staging_grammar_spoken_to_table"])
+            cur.executescript(sql_queries["07_staging_grammar_written_to_table"])
+
+            conn.commit()
+            print("  new data loaded from staging into final tables")
+
+            # Add new IDs to the existing set so subsequent files also skip them
+            existing_ids.update(new_ids)
+        except sqlite3.Error as error:
+            print(f"  error: {error}")
+            conn.rollback()
+            print("  rolled back transaction")
+
+    if new_ids_all:
+        _trim_and_update_metadata(conn, sql_queries, len(files), "updated")
+    else:
+        print("  no new participants found in any file")
+
+    return new_ids_all
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -283,3 +363,35 @@ def run_etl():
         etl_process(sql_queries, filelist, conn)
 
     print("  ✅ ETL completed successfully")
+
+
+def run_etl_update():
+    """Incremental ETL: add new participants from data/input/ to existing SQLite DB.
+
+    Returns a list of newly added InformantIDs.
+    """
+    print()
+    print("=" * 80)
+    print("  STAGE: ETL UPDATE – Adding new participants to existing database")
+    print("=" * 80)
+
+    if not DB_PATH.exists():
+        print(f"  ⚠  Database not found at {DB_PATH}.")
+        print("     Run the full ETL first (--run etl) to create the database.")
+        return []
+
+    sql_queries = read_sql_files()
+    filelist = sorted(glob.glob(str(INPUT_DIR / "*.xlsx")))
+
+    if not filelist:
+        print(f"  ⚠  No .xlsx files found in {INPUT_DIR}. Skipping ETL update.")
+        return []
+
+    print(f"  found {len(filelist)} data file(s)")
+    print(f"  database: {DB_PATH}")
+
+    with sqlite3.connect(str(DB_PATH)) as conn:
+        new_ids = etl_update_process(sql_queries, filelist, conn)
+
+    print(f"  ✅ ETL update completed: {len(new_ids)} new participants added")
+    return new_ids
