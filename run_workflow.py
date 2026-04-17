@@ -220,14 +220,21 @@ def execute_pipeline(
     imputation_method="missforest",
     dry_run=False,
     update=False,
+    update_mode="skip",
 ):
     """Execute each stage in *pipeline* sequentially.
 
     When *update* is True, the ETL stage adds new participants to the
     existing database instead of recreating it.  Cleansing and imputation
     are restricted to the newly added participants.
+
+    *update_mode* controls how duplicates are handled:
+    ``'skip'`` (default) ignores participants already in the DB;
+    ``'overwrite'`` deletes their existing data and reimports them.
     """
     mode_label = "UPDATE (incremental)" if update else "FULL"
+    if update and update_mode == "overwrite":
+        mode_label += " – overwrite duplicates"
     print()
     print("━" * 80)
     print(f"  BSLVC Workflow – {mode_label}")
@@ -259,7 +266,7 @@ def execute_pipeline(
 
     for stage in pipeline:
         if stage == "etl" and update:
-            new_informant_ids = run_etl_update()
+            new_informant_ids = run_etl_update(update_mode=update_mode)
             if not new_informant_ids:
                 print()
                 print("━" * 80)
@@ -283,7 +290,7 @@ def execute_pipeline(
     print()
     print("━" * 80)
     if update and new_informant_ids:
-        print(f"  ✅ Update finished: {len(new_informant_ids)} new participants added.")
+        print(f"  ✅ Update finished: {len(new_informant_ids)} participants processed.")
     else:
         print("  ✅ All stages finished.")
     print("━" * 80)
@@ -315,23 +322,32 @@ def main():
               %(prog)s --run export                         Export only
               %(prog)s --dry-run --run etl                  Show plan
               %(prog)s --update                             Incremental update
+              %(prog)s --update --update-mode overwrite     Overwrite existing
               %(prog)s --update --imputation-method pmm     Update with PMM
         """),
     )
 
-    parser.add_argument(
+    mode_group = parser.add_mutually_exclusive_group(required=True)
+    mode_group.add_argument(
         "--run", nargs="+",
         choices=sorted(VALID_STEPS),
         metavar="STEP",
         help="Stage(s) to run.  Downstream dependencies are added automatically.  "
              f"Choices: {', '.join(sorted(VALID_STEPS))}",
     )
-    parser.add_argument(
+    mode_group.add_argument(
         "--update", action="store_true",
         help="Incremental update mode: add new participants from data/input/ "
              "to the existing database. Cleansing, imputation, and export "
              "are applied only to the newly added participants. "
              "Equivalent to --run etl with incremental load.",
+    )
+    parser.add_argument(
+        "--update-mode", choices=["skip", "overwrite"], default="skip",
+        help="How to handle participants that already exist in the database "
+             "during --update. 'skip' (default) ignores duplicates; "
+             "'overwrite' deletes existing data for those participants "
+             "and reimports them from the input files.",
     )
     parser.add_argument(
         "--cleansing-mode", choices=["update", "apply"], default="apply",
@@ -358,8 +374,8 @@ def main():
 
     args = parser.parse_args()
 
-    if not args.run and not args.update:
-        parser.error("one of --run or --update is required")
+    if args.update_mode != "skip" and not args.update:
+        parser.error("--update-mode is only valid with --update")
 
     if args.update:
         pipeline = ["etl", "cleansing", "export", "imputation", "export"]
@@ -370,6 +386,7 @@ def main():
             imputation_method=args.imputation_method,
             dry_run=args.dry_run,
             update=True,
+            update_mode=args.update_mode,
         )
     else:
         pipeline = build_pipeline(args.run)

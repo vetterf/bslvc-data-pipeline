@@ -269,10 +269,14 @@ def _trim_and_update_metadata(conn, sql_queries, n_files, verb):
         print(f"  warning: could not update metadata: {error}")
 
 
-def etl_update_process(sql_queries, files, conn):
-    """Incremental ETL: add new participants to existing tables, skip duplicates.
+def etl_update_process(sql_queries, files, conn, *, update_mode="skip"):
+    """Incremental ETL: add new participants to existing tables.
 
-    Returns a list of newly added InformantIDs.
+    *update_mode* controls duplicate handling:
+    ``'skip'`` – ignore participants already in the DB.
+    ``'overwrite'`` – delete existing data for those participants and reimport.
+
+    Returns a list of InformantIDs that were (re)imported.
     """
     cur = conn.cursor()
 
@@ -282,6 +286,13 @@ def etl_update_process(sql_queries, files, conn):
     print(f"  existing participants in database: {len(existing_ids)}")
 
     new_ids_all = []
+
+    # Tables that hold per-participant data (order: children first for FK safety)
+    _PARTICIPANT_TABLES = [
+        "LexicalItemsImputed", "SpokenItemsImputed", "WrittenItemsImputed",
+        "LexicalItems", "SpokenItems", "WrittenItems",
+        "Informants",
+    ]
 
     for file in files:
         print(f"  reading: {file}")
@@ -297,17 +308,42 @@ def etl_update_process(sql_queries, files, conn):
             continue
 
         # Filter out participants that already exist in the database
-        new_mask = ~data["InformantID"].isin(existing_ids)
-        skipped = (~new_mask).sum()
-        data = data[new_mask].copy()
+        duplicate_mask = data["InformantID"].isin(existing_ids)
+        n_duplicates = duplicate_mask.sum()
 
-        if data.empty:
-            print(f"  all {skipped} participants already in database – skipping")
-            continue
+        if update_mode == "overwrite" and n_duplicates > 0:
+            # Delete existing data for duplicates so they get reimported
+            dup_ids = data.loc[duplicate_mask, "InformantID"].tolist()
+            placeholders = ",".join("?" * len(dup_ids))
+            for tbl in _PARTICIPANT_TABLES:
+                try:
+                    conn.execute(
+                        f"DELETE FROM {tbl} WHERE InformantID IN ({placeholders})",
+                        dup_ids,
+                    )
+                except sqlite3.OperationalError:
+                    pass  # table may not exist yet (e.g. imputed tables)
+            conn.commit()
+            print(f"  {n_duplicates} existing participants deleted for reimport")
+            existing_ids -= set(dup_ids)
+            # keep all rows – duplicates will be reimported
+            new_ids = data["InformantID"].tolist()
+            skipped = 0
+        else:
+            # skip mode: drop duplicates
+            data = data[~duplicate_mask].copy()
+            skipped = n_duplicates
 
-        new_ids = data["InformantID"].tolist()
+            if data.empty:
+                print(f"  all {skipped} participants already in database – skipping")
+                continue
+
+            new_ids = data["InformantID"].tolist()
         new_ids_all.extend(new_ids)
-        print(f"  {len(new_ids)} new participants, {skipped} duplicates skipped")
+        if skipped:
+            print(f"  {len(new_ids)} new participants, {skipped} duplicates skipped")
+        else:
+            print(f"  {len(new_ids)} participants to import")
 
         try:
             stage(data, conn, clear=True,
@@ -365,7 +401,7 @@ def run_etl():
     print("  ✅ ETL completed successfully")
 
 
-def run_etl_update():
+def run_etl_update(*, update_mode="skip"):
     """Incremental ETL: add new participants from data/input/ to existing SQLite DB.
 
     Returns a list of newly added InformantIDs.
@@ -391,7 +427,7 @@ def run_etl_update():
     print(f"  database: {DB_PATH}")
 
     with sqlite3.connect(str(DB_PATH)) as conn:
-        new_ids = etl_update_process(sql_queries, filelist, conn)
+        new_ids = etl_update_process(sql_queries, filelist, conn, update_mode=update_mode)
 
     print(f"  ✅ ETL update completed: {len(new_ids)} new participants added")
     return new_ids

@@ -1,0 +1,212 @@
+  Starting imputation at 2026-04-16 09:11:17.264775
+  Database: /run/media/fabian/FV/bslvc-data-pipeline/output/BSLVC_sqlite.db
+  Method:   R missForest
+  Configuration:
+    Method:             R missForest
+    Grammar cutoff:     50  (applied in R script)
+    Lexical cutoff:     25  (applied in R script)
+    Seed:               211191
+  Calling R missForest: Rscript BSLVC_imputation_unified.R /run/media/fabian/FV/bslvc-data-pipeline/output missForest
+  Separate spoken/written: False
+  (R output follows)
+
+  [R] [1] "Starting imputation at 2026-04-16 09:11:19.039425"
+  [R] [1] "Log file: /run/media/fabian/FV/bslvc-data-pipeline/output/imputation_missforest_20260416_091119.txt"
+  [R] [1] "Data directory: /run/media/fabian/FV/bslvc-data-pipeline/output"
+  [R] [1] ""
+  [R] [1] "=== CONFIGURATION ==="
+  [R] [1] "Method: missForest"
+  [R] [1] "Separate spoken/written: FALSE"
+  [R] [1] "Use variety as predictor: TRUE"
+  [R] [1] "Max variety categories: 53"
+  [R] [1] "Min variety size (grammar): 15"
+  [R] [1] "Min variety size (lexical): 50"
+  [R] [1] "Grammar cutoff: 50"
+  [R] [1] "Lexical cutoff: 25"
+  [R] [1] "Parallel cores: 3"
+  [R] [1] "Random seed: 211191"
+  [R] [1] "Upload to database: TRUE"
+  [R] [1] "Database path: /run/media/fabian/FV/bslvc-data-pipeline/output/BSLVC_sqlite.db"
+  [R] [1] ""
+  [R] [1] "\n"
+  [R] [1] "================================================================================"
+  [R] [1] "                      GRAMMAR DATA IMPUTATION                                   "
+  [R] [1] "================================================================================"
+  [R] [1] "\n"
+  [R] [1] "=== LOADING GRAMMAR DATA ==="
+  [R] [1] "Loaded Grammar data with 1510 rows and 390 columns"
+  [R] [1] "Excluded 313 AI-GPT (simulated) participants from grammar imputation (will be re-appended)"
+  [R] [1] "Remaining participants: 1197"
+  [R] [1] "Spoken items (A1 to F23): 138"
+  [R] [1] "Written items (G1 to N25): 207"
+  [R] [1] "Total grammar items: 345"
+  [R] [1] "\n=== APPLYING CUTOFF (50 missing values) ==="
+  [R] [1] "Participants with <= 50 missing values: 1021"
+  [R] [1] "Participants with > 50 missing values: 176"
+  [R] [1] "Filtered to 1021 participants"
+  [R] [1] "\n=== IMPUTING ALL GRAMMAR ITEMS TOGETHER ==="
+  [R] [1] "  Variety grouping for Grammar All :"
+  [R] [1] "    Original varieties: 45"
+  [R] [1] "    Small varieties (n < 15 ): 34"
+  [R] [1] "    Participants grouped into 'Other': 59"
+  [R] [1] "    Final variety count: 12"
+  [R] [1] "  ✓ Added variety predictor with 12 unique varieties"
+  [R] [1] "\n=== RUNNING missForest for Grammar All ==="
+  [R]   parallelizing computation of the random forest model objects
+  [R]   missForest iteration 1 in progress...done!
+  [R]     estimated error(s): 0.6157416 
+  [R]     difference(s): 0.008837533 
+  [R]     time: 255.531 seconds
+  [R] 
+  [R]   missForest iteration 2 in progress...done!
+  [R]     estimated error(s): 0.6144645 
+  [R]     difference(s): 0.006091727 
+  [R]     time: 270.026 seconds
+  [R] 
+  [R]   missForest iteration 3 in progress...done!
+  [R]     estimated error(s): 0.6131095 
+  [R]     difference(s): 0.005834131 
+  [R]     time: 254.068 seconds
+  [R] 
+  [R]   missForest iteration 4 in progress...done!
+  [R]     estimated error(s): 0.6152046 
+  [R]     difference(s): 0.005936037 
+  [R]     time: 272.55 seconds
+  [R] 
+  [R] [1] "missForest completed in 17.54 minutes"
+  [R] [1] "OOB error: 0.6131"
+  [R] [1] "\n=== POST-PROCESSING ==="
+  [R] [1] "Number of values capped to [0, 5] range: 344"
+  [R] [1] "Re-appended 313 AI-GPT participants with original grammar values"
+  [R] [1] "\n=== SAVING GRAMMAR RESULTS ==="
+  [R] [1] "Grammar imputed data saved to: /run/media/fabian/FV/bslvc-data-pipeline/output/BSLVC_GRAMMAR_IMPUTED.rds"
+  [R] [1] "\nGrammar imputation summary:"
+  [R] [1] "  Runtime: 17.54 minutes"
+  [R] [1] "  OOB error: 0.6131"
+  [R] [1] "\n"
+  [R] [1] "================================================================================"
+  [R] [1] "                      LEXICAL DATA IMPUTATION                                   "
+  [R] [1] "================================================================================"
+  [R] [1] "\n"
+  [R] [1] "=== LOADING LEXICAL DATA ==="
+  [R] [1] "Loaded Lexical data with 6476 rows and 112 columns"
+  [R] [1] "Excluded 313 AI-GPT (simulated) participants from lexical imputation (will be re-appended)"
+  [R] [1] "Lexical items (aDropInTheOcean to Anyway): 68"
+  [R] [1] "\n=== APPLYING CUTOFF (25 missing values) ==="
+  [R] [1] "Participants with <= 25 missing values: 6022"
+  [R] [1] "Participants with > 25 missing values: 141"
+  [R] [1] "Filtered to 6022 participants"
+  [R] [1] "\n=== IMPUTING LEXICAL DATA ==="
+  [R] [1] "Converting lexical columns to numeric..."
+  [R] [1] "Lexical columns converted to numeric"
+  [R] [1] "  Variety grouping for Lexical :"
+  [R] [1] "    Original varieties: 78"
+  [R] [1] "    Small varieties (n < 50 ): 60"
+  [R] [1] "    Participants grouped into 'Other': 216"
+  [R] [1] "    Final variety count: 19"
+  [R] [1] "  ✓ Added variety predictor with 19 unique varieties"
+  [R] [1] "\n=== RUNNING missForest for Lexical ==="
+  [R]   parallelizing computation of the random forest model objects
+  [R]   missForest iteration 1 in progress...done!
+  [R]     estimated error(s): 0.6810532 0 
+  [R]     difference(s): 0.01319616 0 
+  [R]     time: 431.089 seconds
+  [R] 
+  [R]   missForest iteration 2 in progress...done!
+  [R]     estimated error(s): 0.6773351 0 
+  [R]     difference(s): 0.0008635182 0 
+  [R]     time: 432.565 seconds
+  [R] 
+  [R]   missForest iteration 3 in progress...done!
+  [R]     estimated error(s): 0.6768013 0 
+  [R]     difference(s): 0.0007155529 0 
+  [R]     time: 428.475 seconds
+  [R] 
+  [R]   missForest iteration 4 in progress...done!
+  [R]     estimated error(s): 0.6770868 0 
+  [R]     difference(s): 0.0006950468 0 
+  [R]     time: 412.912 seconds
+  [R] 
+  [R]   missForest iteration 5 in progress...done!
+  [R]     estimated error(s): 0.6769742 0 
+  [R]     difference(s): 0.0006925631 0 
+  [R]     time: 409.733 seconds
+  [R] 
+  [R]   missForest iteration 6 in progress...done!
+  [R]     estimated error(s): 0.6768727 0 
+  [R]     difference(s): 0.0006929535 0 
+  [R]     time: 409.777 seconds
+  [R] 
+  [R] [1] "missForest completed in 42.08 minutes"
+  [R] [1] "OOB error: 0.6770" "OOB error: 0.0000"
+  [R] [1] "\n=== POST-PROCESSING ==="
+  [R] [1] "Number of values capped to [-2, 2] range: 1"
+  [R] [1] "Excluded 313 AI-GPT participants exceeding lexical cutoff"
+  [R] [1] "No AI-GPT participants passed the lexical cutoff — none re-appended"
+  [R] [1] "\n=== SAVING LEXICAL RESULTS ==="
+  [R] [1] "Lexical imputed data saved to: /run/media/fabian/FV/bslvc-data-pipeline/output/BSLVC_LEXICAL_IMPUTED.rds"
+  [R] [1] "\nLexical imputation summary:"
+  [R] [1] "  Runtime: 42.08 minutes"
+  [R] [1] "  OOB error (numeric): 0.6770"
+  [R] [1] "  OOB error (categorical): 0.0000"
+  [R] [1] "\n"
+  [R] [1] "================================================================================"
+  [R] [1] "                          IMPUTATION FINAL SUMMARY                              "
+  [R] [1] "================================================================================"
+  [R] [1] "\n"
+  [R] [1] "CONFIGURATION:"
+  [R] [1] "  Method: missForest"
+  [R] [1] "  Separate spoken/written: FALSE"
+  [R] [1] "  Use variety as predictor: TRUE"
+  [R] [1] "  Grammar cutoff: 50"
+  [R] [1] "  Lexical cutoff: 25"
+  [R] [1] ""
+  [R] [1] "GRAMMAR IMPUTATION:"
+  [R] [1] "  Participants: 1333"
+  [R] [1] "  Items: 345"
+  [R] [1] "  Runtime: 17.54 minutes"
+  [R] [1] "  OOB error: 0.6131"
+  [R] [1] ""
+  [R] [1] "LEXICAL IMPUTATION:"
+  [R] [1] "  Participants: 6021"
+  [R] [1] "  Items: 68"
+  [R] [1] "  Runtime: 42.08 minutes"
+  [R] [1] "  OOB error (numeric): 0.6770"
+  [R] [1] "  OOB error (categorical): 0.0000"
+  [R] [1] ""
+  [R] [1] "TOTAL:"
+  [R] [1] "  Total runtime: 59.62 minutes"
+  [R] [1] ""
+  [R] [1] "OUTPUT FILES:"
+  [R] [1] "  - BSLVC_GRAMMAR_IMPUTED.rds"
+  [R] [1] "  - BSLVC_LEXICAL_IMPUTED.rds"
+  [R] [1] ""
+  [R] [1] "Method Notes:"
+  [R] [1] "- missForest provides OOB errors for quality assessment"
+  [R] [1] "- Treats grammar data as factors during imputation"
+  [R] [1] "- Uses parallel processing with random forests"
+  [R] [1] "- Variety used as predictor when < 53 categories (missForest limit)"
+  [R] [1] "================================================================================\n"
+  [R] [1] "\n"
+  [R] [1] "================================================================================"
+  [R] [1] "                      UPLOADING TO DATABASE                                     "
+  [R] [1] "================================================================================"
+  [R] [1] "\n"
+  [R] [1] "Connecting to database: /run/media/fabian/FV/bslvc-data-pipeline/output/BSLVC_sqlite.db"
+  [R] [1] "Found 0 existing spoken records to update"
+  [R] [1] "Found 0 existing written records to update"
+  [R] [1] "Found 0 existing lexical records to update"
+  [R] [1] "\nInserting new records..."
+  [R] [1] "Inserted 1334 spoken records"
+  [R] [1] "Inserted 1334 written records"
+  [R] [1] "Inserted 6022 lexical records"
+  [R] [1] "\nDatabase transaction committed successfully"
+  [R] [1] "Database connection closed"
+  [R] [1] "\nDatabase upload completed successfully"
+  [R] [1] "\nImputation finished at 2026-04-16 10:11:07.064032"
+  [R] [1] "Log saved to: /run/media/fabian/FV/bslvc-data-pipeline/output/imputation_missforest_20260416_091119.txt"
+
+  ✅ R missForest completed successfully
+
+  Total imputation runtime: 3589.9s
+  Imputation finished at 2026-04-16 10:11:07.137016

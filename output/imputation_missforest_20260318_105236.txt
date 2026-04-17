@@ -1,0 +1,55 @@
+[1] "Starting imputation at 2026-03-18 10:52:36.966768"
+[1] "Log file: output/imputation_missforest_20260318_105236.txt"
+[1] "Data directory: output"
+[1] ""
+[1] "=== CONFIGURATION ==="
+[1] "Method: missForest"
+[1] "Separate spoken/written: FALSE"
+[1] "Use variety as predictor: TRUE"
+[1] "Max variety categories: 53"
+[1] "Min variety size (grammar): 15"
+[1] "Min variety size (lexical): 50"
+[1] "Grammar cutoff: 50"
+[1] "Lexical cutoff: 25"
+[1] "Parallel cores: 3"
+[1] "Random seed: 211191"
+[1] "Upload to database: TRUE"
+[1] "Database path: output/BSLVC_sqlite.db"
+[1] ""
+[1] "\n"
+[1] "================================================================================"
+[1] "                      GRAMMAR DATA IMPUTATION                                   "
+[1] "================================================================================"
+[1] "\n"
+[1] "=== LOADING GRAMMAR DATA ==="
+[1] "Loaded Grammar data with 1197 rows and 390 columns"
+[1] "Excluded 0 participants with ND for A1 or G1"
+[1] "Remaining participants: 1197"
+[1] "Spoken items (A1 to F23): 138"
+[1] "Written items (G1 to N25): 207"
+[1] "Total grammar items: 345"
+[1] "\n=== APPLYING CUTOFF (50 missing values) ==="
+[1] "Participants with <= 50 missing values: 1021"
+[1] "Participants with > 50 missing values: 176"
+[1] "Filtered to 1021 participants"
+[1] "\n=== IMPUTING ALL GRAMMAR ITEMS TOGETHER ==="
+[1] "  Variety grouping for Grammar All :"
+[1] "    Original varieties: 45"
+[1] "    Small varieties (n < 15 ): 34"
+[1] "    Participants grouped into 'Other': 59"
+[1] "    Final variety count: 12"
+[1] "  ✓ Added variety predictor with 12 unique varieties"
+[1] "\n=== RUNNING missForest for Grammar All ==="
+  parallelizing computation of the random forest model objects
+  missForest iteration 1 in progress...randomForest 4.7-1.2
+Type rfNews() to see new features/changes/bug fixes.
+
+Attache Paket: ‘randomForest’
+
+Das folgende Objekt ist maskiert ‘package:ggplot2’:
+
+    margin
+
+Lade nötiges Paket: rngtools
+
+Ausführung angehalten
