@@ -408,12 +408,18 @@ print("=== LOADING GRAMMAR DATA ===")
 grammar_data <- readRDS(file.path(DATA_DIR, "BSLVC_GRAMMAR.rds"))
 print(paste("Loaded Grammar data with", nrow(grammar_data), "rows and", ncol(grammar_data), "columns"))
 
-excludeIDs <- grammar_data[(grammar_data$A1 == "ND" | grammar_data$G1 == "ND")]$InformantID
-grammar_data <- grammar_data[!grammar_data$InformantID %in% excludeIDs, ]
+# Exclude AI-GPT (simulated) participants -- they must not inform imputation
+ai_gpt_mask_grammar <- grepl("^gpt", grammar_data$InformantID, ignore.case = TRUE)
+variety_mask <- grepl("^AI-GPT", grammar_data$MainVariety)
+variety_mask[is.na(variety_mask)] <- FALSE
+ai_gpt_mask_grammar <- ai_gpt_mask_grammar | variety_mask
+grammar_ai_gpt <- grammar_data[ai_gpt_mask_grammar, ]
+grammar_data   <- grammar_data[!ai_gpt_mask_grammar, ]
+print(paste("Excluded", nrow(grammar_ai_gpt), "AI-GPT (simulated) participants from grammar imputation (will be re-appended)"))
+
 keepCols <- colnames(grammar_data)[!colnames(grammar_data) %in% c("GrammarWrittenFillingInFor", "GrammarSpokenFillingInFor")]
 grammar_data <- grammar_data[, ..keepCols]
 
-print(paste("Excluded", length(excludeIDs), "participants with ND for A1 or G1"))
 print(paste("Remaining participants:", nrow(grammar_data)))
 
 all_cols <- colnames(grammar_data)
@@ -439,6 +445,7 @@ print(sprintf("\n=== APPLYING CUTOFF (%d missing values) ===", CONFIG$GRAMMAR_CU
 
 for (col in grammar_all_items) {
   grammar_data[grammar_data[[col]] == "NA", (col) := NA]
+  grammar_data[grammar_data[[col]] == "ND", (col) := NA]
 }
 
 grammar_data$NA_count <- rowSums(is.na(grammar_data[, grammar_all_items, with = FALSE]))
@@ -577,6 +584,34 @@ if (CONFIG$SEPARATE_SPOKEN_WRITTEN) {
   grammar_oob <- all_result$oob_error
 }
 
+# Re-append AI-GPT participants with their original grammar values
+# Apply the same ND→NA conversion and cutoff so high-missingness AI-GPT are excluded
+if (nrow(grammar_ai_gpt) > 0) {
+  ai_gpt_cols <- intersect(c("InformantID", grammar_all_items), colnames(grammar_ai_gpt))
+  ai_gpt_grammar <- grammar_ai_gpt[, ..ai_gpt_cols]
+  for (col in grammar_all_items) {
+    if (col %in% names(ai_gpt_grammar)) {
+      ai_gpt_grammar[ai_gpt_grammar[[col]] == "NA", (col) := NA]
+      ai_gpt_grammar[ai_gpt_grammar[[col]] == "ND", (col) := NA]
+      ai_gpt_grammar[[col]] <- suppressWarnings(as.numeric(ai_gpt_grammar[[col]]))
+    }
+  }
+  ai_gpt_grammar$NA_count <- rowSums(is.na(ai_gpt_grammar[, ..grammar_all_items]))
+  n_before <- nrow(ai_gpt_grammar)
+  ai_gpt_grammar <- ai_gpt_grammar[ai_gpt_grammar$NA_count <= CONFIG$GRAMMAR_CUTOFF, ]
+  ai_gpt_grammar$NA_count <- NULL
+  n_excluded <- n_before - nrow(ai_gpt_grammar)
+  if (n_excluded > 0) {
+    print(paste("Excluded", n_excluded, "AI-GPT participants exceeding grammar cutoff"))
+  }
+  if (nrow(ai_gpt_grammar) > 0) {
+    grammar_imputed <- rbind(grammar_imputed, ai_gpt_grammar, fill = TRUE)
+    print(paste("Re-appended", nrow(ai_gpt_grammar), "AI-GPT participants with original grammar values"))
+  } else {
+    print("No AI-GPT participants passed the grammar cutoff — none re-appended")
+  }
+}
+
 print("\n=== SAVING GRAMMAR RESULTS ===")
 output_suffix <- ifelse(CONFIG$OUTPUT_SUFFIX == "", "", paste0("_", CONFIG$OUTPUT_SUFFIX))
 output_file <- file.path(DATA_DIR, paste0("BSLVC_GRAMMAR_IMPUTED", output_suffix, ".rds"))
@@ -608,6 +643,15 @@ print("=== LOADING LEXICAL DATA ===")
 lexical_data <- readRDS(file.path(DATA_DIR, "BSLVC_LEXICAL.rds"))
 print(paste("Loaded Lexical data with", nrow(lexical_data), "rows and", ncol(lexical_data), "columns"))
 
+# Exclude AI-GPT (simulated) participants -- they must not inform imputation
+ai_gpt_mask_lexical <- grepl("^gpt", lexical_data$InformantID, ignore.case = TRUE)
+variety_mask_lex <- grepl("^AI-GPT", lexical_data$MainVariety)
+variety_mask_lex[is.na(variety_mask_lex)] <- FALSE
+ai_gpt_mask_lexical <- ai_gpt_mask_lexical | variety_mask_lex
+lexical_ai_gpt <- lexical_data[ai_gpt_mask_lexical, ]
+lexical_data   <- lexical_data[!ai_gpt_mask_lexical, ]
+print(paste("Excluded", nrow(lexical_ai_gpt), "AI-GPT (simulated) participants from lexical imputation (will be re-appended)"))
+
 all_cols_lex <- colnames(lexical_data)
 
 if (LEXICAL_START %in% all_cols_lex && LEXICAL_END %in% all_cols_lex) {
@@ -624,6 +668,7 @@ print(sprintf("\n=== APPLYING CUTOFF (%d missing values) ===", CONFIG$LEXICAL_CU
 
 for (col in lexical_all_items) {
   lexical_data[lexical_data[[col]] == "NA", (col) := NA]
+  lexical_data[lexical_data[[col]] == "ND", (col) := NA]
 }
 
 lexical_data$NA_count <- rowSums(is.na(lexical_data[, lexical_all_items, with = FALSE]))
@@ -681,6 +726,34 @@ lexical_imputed$InformantID <- informant_ids_lexical
 
 lexical_runtime <- lexical_result$runtime_mins
 lexical_oob <- lexical_result$oob_error
+
+# Re-append AI-GPT participants with their original lexical values
+# Apply the same ND→NA conversion and cutoff so high-missingness AI-GPT are excluded
+if (nrow(lexical_ai_gpt) > 0) {
+  ai_gpt_lex_cols <- intersect(c("InformantID", lexical_all_items), colnames(lexical_ai_gpt))
+  ai_gpt_lexical <- lexical_ai_gpt[, ..ai_gpt_lex_cols]
+  for (col in lexical_all_items) {
+    if (col %in% names(ai_gpt_lexical)) {
+      ai_gpt_lexical[ai_gpt_lexical[[col]] == "NA", (col) := NA]
+      ai_gpt_lexical[ai_gpt_lexical[[col]] == "ND", (col) := NA]
+      ai_gpt_lexical[[col]] <- suppressWarnings(as.numeric(ai_gpt_lexical[[col]]))
+    }
+  }
+  ai_gpt_lexical$NA_count <- rowSums(is.na(ai_gpt_lexical[, ..lexical_all_items]))
+  n_before <- nrow(ai_gpt_lexical)
+  ai_gpt_lexical <- ai_gpt_lexical[ai_gpt_lexical$NA_count <= CONFIG$LEXICAL_CUTOFF, ]
+  ai_gpt_lexical$NA_count <- NULL
+  n_excluded <- n_before - nrow(ai_gpt_lexical)
+  if (n_excluded > 0) {
+    print(paste("Excluded", n_excluded, "AI-GPT participants exceeding lexical cutoff"))
+  }
+  if (nrow(ai_gpt_lexical) > 0) {
+    lexical_imputed <- rbind(lexical_imputed, ai_gpt_lexical, fill = TRUE)
+    print(paste("Re-appended", nrow(ai_gpt_lexical), "AI-GPT participants with original lexical values"))
+  } else {
+    print("No AI-GPT participants passed the lexical cutoff — none re-appended")
+  }
+}
 
 print("\n=== SAVING LEXICAL RESULTS ===")
 output_file_lex <- file.path(DATA_DIR, paste0("BSLVC_LEXICAL_IMPUTED", output_suffix, ".rds"))

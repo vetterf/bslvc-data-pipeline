@@ -1472,11 +1472,13 @@ def _prepare_prefilled_rds_for_r(db_path: Path, new_informant_ids: list[str], lo
     grammar_df.to_csv(str(grammar_csv), index=False, sep=";", quoting=csv_mod.QUOTE_ALL)
     lexical_df.to_csv(str(lexical_csv), index=False, sep=";", quoting=csv_mod.QUOTE_ALL)
 
-    # Re-export as RDS via R
+    # Re-export as RDS via R (must be data.table, not plain data.frame,
+    # because the R imputation scripts use data.table syntax)
     r_code = f"""
-    grammar <- read.csv("{grammar_csv}", sep=";", check.names=FALSE)
+    library(data.table)
+    grammar <- fread("{grammar_csv}", sep=";", quote='"')
     saveRDS(grammar, "{OUTPUT_DIR / 'BSLVC_GRAMMAR.rds'}")
-    lexical <- read.csv("{lexical_csv}", sep=";", check.names=FALSE)
+    lexical <- fread("{lexical_csv}", sep=";", quote='"')
     saveRDS(lexical, "{OUTPUT_DIR / 'BSLVC_LEXICAL.rds'}")
     cat("Prefilled RDS files written\\n")
     """
