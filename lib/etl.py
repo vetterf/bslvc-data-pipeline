@@ -7,12 +7,15 @@ and loads into the SQLite database at data/BSLVC_sqlite.db.
 Ported from bslvc_ETL/etl.py + bslvc_ETL/main.py.
 """
 
-import pandas as pd
-import re
-import sqlite3
 import glob
 import os
+import re
+import shutil
+import sqlite3
+from datetime import datetime
 from pathlib import Path
+
+import pandas as pd
 
 from lib import SQL_DIR, COLUMN_NAMES_CSV, DATA_DIR, DB_PATH, INPUT_DIR, OUTPUT_DIR
 
@@ -377,8 +380,20 @@ def etl_update_process(sql_queries, files, conn, *, update_mode="skip"):
 #  Public entry point
 # ═══════════════════════════════════════════════════════════════════════════
 
+def _archive_input_files(filelist: list[str], started_at: datetime) -> None:
+    """Move processed input files to data/input/Done/<YYYYMMDD_HH_MM_SS>/."""
+    archive_dir = INPUT_DIR / "Done" / started_at.strftime("%Y%m%d_%H_%M_%S")
+    archive_dir.mkdir(parents=True, exist_ok=True)
+    for fpath in filelist:
+        dest = archive_dir / Path(fpath).name
+        shutil.move(fpath, str(dest))
+    print(f"  archived {len(filelist)} file(s) → {archive_dir}")
+
+
 def run_etl():
     """Run the full ETL process: read xlsx from data/input/, load into SQLite."""
+    started_at = datetime.now()
+
     print()
     print("=" * 80)
     print("  STAGE: ETL – Loading Excel data into SQLite")
@@ -398,6 +413,7 @@ def run_etl():
     with sqlite3.connect(str(DB_PATH)) as conn:
         etl_process(sql_queries, filelist, conn)
 
+    _archive_input_files(filelist, started_at)
     print("  ✅ ETL completed successfully")
 
 
@@ -406,6 +422,8 @@ def run_etl_update(*, update_mode="skip"):
 
     Returns a list of newly added InformantIDs.
     """
+    started_at = datetime.now()
+
     print()
     print("=" * 80)
     print("  STAGE: ETL UPDATE – Adding new participants to existing database")
@@ -429,5 +447,6 @@ def run_etl_update(*, update_mode="skip"):
     with sqlite3.connect(str(DB_PATH)) as conn:
         new_ids = etl_update_process(sql_queries, filelist, conn, update_mode=update_mode)
 
+    _archive_input_files(filelist, started_at)
     print(f"  ✅ ETL update completed: {len(new_ids)} new participants added")
     return new_ids

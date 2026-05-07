@@ -30,6 +30,7 @@ CREATE TABLE bslvc_staging_table (
 	[YearsLivedOtherEnglish] NVARCHAR(50) NULL,
 	[CommentsTimeline] TEXT NULL,
 	[MainVariety] TEXT NULL,
+	[Variety_Type] TEXT NULL,
 	[AdditionalVarieties] TEXT NULL,
 	[YearsLivedInMainVariety] NVARCHAR(50) NULL,
 	[RatioMainVariety] REAL NULL,

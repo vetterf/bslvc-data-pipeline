@@ -1,0 +1,85 @@
+MainVariety,Variety_Type
+AI-GPT-England,AI-ENL
+AI-GPT-Germany,AI-EFL
+AI-GPT-India,AI-ESL
+AI-GPT-US,AI-ENL
+Albania,EFL
+Australia,ENL
+Bangladesh,ESL
+Bosnia and Herzegovina,EFL
+Brazil,EFL
+Bulgaria,EFL
+Canada,ENL
+Chile,EFL
+China,EFL
+Colombia,EFL
+Congo,EFL
+Croatia,EFL
+Cuba,EFL
+Cyprus,ESL
+Czech Republic,EFL
+Czechia,EFL
+Denmark,EFL
+Dominican Republic,EFL
+England,ENL
+Estonia,EFL
+Ethiopia,ESL
+France,EFL
+Germany,EFL
+Gibraltar,ESL
+Greece,EFL
+Guernsey,ENL
+Hawaii,ENL
+India,ESL
+Iran,EFL
+Ireland,ENL
+Isle of Man,ENL
+Israel,EFL
+Italy,EFL
+Jersey,ENL
+Kenya,ESL
+Kosovo,EFL
+Kuwait,EFL
+Libya,EFL
+Malawi,ESL
+Malaysia,ESL
+Malta,ENL
+Mexico,EFL
+Morocco,EFL
+Netherlands,EFL
+New Zealand,ENL
+Nigeria,ESL
+North Macedonia,EFL
+Northern Ireland,ENL
+Norway,EFL
+Pakistan,ESL
+Philippines,ESL
+Poland,EFL
+Portugal,EFL
+Puerto Rico,EFL
+Romania,EFL
+Russia,EFL
+Scotland,ENL
+Serbia,EFL
+Seweden,EFL
+Slovakia,EFL
+Slovenia,EFL
+South Africa,ESL
+South Korea,EFL
+Spain,EFL
+Spain (Balearic Islands),EFL
+Sweden,EFL
+Switzerland,EFL
+Thailand,EFL
+Tunisia,EFL
+Turkey,EFL
+UAE,EFL
+UK,ENL
+UNCLEAR,UNCLEAR
+Uganda,ESL
+Ukraine,EFL
+US,ENL
+Uzbekistan,EFL
+Venezuela,EFL
+Vietnam,EFL
+Wales,ENL

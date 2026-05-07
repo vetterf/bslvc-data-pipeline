@@ -42,16 +42,16 @@ from lib import DATA_DIR, DB_PATH, INPUT_DIR, OUTPUT_DIR, R_SCRIPTS_DIR
 #  Pipeline construction
 # ═══════════════════════════════════════════════════════════════════════════════
 
-VALID_STEPS = {"convert", "etl", "cleansing", "meta", "imputation", "export"}
+VALID_STEPS = {"convert", "etl", "cleansing", "meta", "imputation", "export", "cleanup"}
 
 # Each step maps to its full dependency chain (downstream).
 STEP_CHAINS = {
     "convert":    ["convert"],
-    "etl":        ["etl", "cleansing", "meta", "export", "imputation", "export"],
-    "cleansing":  ["cleansing", "export"],
-    "meta":       ["meta", "export"],
-    "imputation": ["imputation", "export"],
-    "export":     ["export"],
+    "etl":        ["etl", "cleansing", "meta", "export", "imputation", "export", "cleanup"],
+    "cleansing":  ["cleansing", "export", "cleanup"],
+    "meta":       ["meta", "export", "cleanup"],
+    "imputation": ["imputation", "export", "cleanup"],
+    "export":     ["export", "cleanup"],
 }
 
 
@@ -78,6 +78,41 @@ def build_pipeline(requested_steps: list[str]) -> list[str]:
         pipeline.append("export")
 
     return pipeline
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Stage: CLEANUP STAGING TABLE
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def run_cleanup():
+    """Delete all rows from the staging table after ETL processing."""
+    from lib.etl import read_sql_files
+
+    print()
+    print("=" * 80)
+    print("  STAGE: CLEANUP STAGING TABLE")
+    print("=" * 80)
+
+    if not DB_PATH.exists():
+        print(f"  ⚠  Database not found at {DB_PATH}. Skipping cleanup.")
+        return
+
+    sql_queries = read_sql_files()
+    if "10_cleanup_staging" not in sql_queries:
+        print("  ⚠  Cleanup SQL not found. Skipping.")
+        return
+
+    with sqlite3.connect(str(DB_PATH)) as conn:
+        cur = conn.cursor()
+        try:
+            cur.executescript(sql_queries["10_cleanup_staging"])
+            conn.commit()
+            print("  staging table cleared")
+        except sqlite3.Error as e:
+            print(f"  ❌ Cleanup failed: {e}")
+            return
+
+    print("  ✅ Cleanup completed successfully")
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -175,6 +210,7 @@ def run_export():
         result = subprocess.run(
             ["Rscript", str(r_script), str(OUTPUT_DIR)],
             capture_output=True, text=True,
+            cwd=str(SCRIPT_DIR),
         )
         if result.returncode == 0:
             for line in result.stdout.strip().splitlines():
@@ -255,6 +291,7 @@ def execute_pipeline(
 
     dispatch = {
         "convert":    run_convert,
+        "cleanup":    run_cleanup,
         "etl":        run_etl,
         "meta":       run_meta,
         "export":     run_export,

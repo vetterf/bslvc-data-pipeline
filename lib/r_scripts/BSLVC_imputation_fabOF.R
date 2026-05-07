@@ -84,13 +84,6 @@ LEXICAL_END   <- "Anyway"
 ################################################################################
 
 library(data.table)
-
-# Install fabOF if not available
-if (!requireNamespace("fabOF", quietly = TRUE)) {
-  cat("fabOF not found — installing from GitHub...\n")
-  if (!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")
-  devtools::install_github("phibuc/fabOF")
-}
 library(fabOF)
 library(ranger)    # required by fabOF
 

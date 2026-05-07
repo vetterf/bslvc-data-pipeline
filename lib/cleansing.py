@@ -62,7 +62,8 @@ CONFIG = {
         'primary_school': os.path.join(_M, 'primary_school_mapping.csv'),
         'secondary_school': os.path.join(_M, 'secondary_school_mapping.csv'),
         'qualifications': os.path.join(_M, 'qualification_mapping.csv'),
-        'languages': os.path.join(_M, 'language_mapping.csv')
+        'languages': os.path.join(_M, 'language_mapping.csv'),
+        'variety_type': os.path.join(_M, 'variety_type_mapping.csv')
     },
     'manual_override_files': {
         'gender': os.path.join(_M, 'gender_mapping_manual.csv'),
@@ -70,7 +71,8 @@ CONFIG = {
         'secondary_school': os.path.join(_M, 'secondary_school_mapping_manual.csv'),
         'qualifications': os.path.join(_M, 'qualification_mapping_manual.csv'),
         'qualifications_by_id': os.path.join(_M, 'qualification_mapping_manual_InformantID_Occupation.csv'),
-        'languages': os.path.join(_M, 'language_mapping_manual.csv')
+        'languages': os.path.join(_M, 'language_mapping_manual.csv'),
+        'variety_type': os.path.join(_M, 'variety_type_mapping.csv')
     }
 }
 
@@ -166,6 +168,13 @@ class UnifiedDataNormalizer:
                 'manual_file': self.config['manual_override_files']['languages'],
                 'original_col': 'Original_Language',
                 'mapped_col': 'Normalized_Language'
+            },
+            {
+                'name': 'Variety Type',
+                'auto_file': self.config['output_files']['variety_type'],
+                'manual_file': self.config['manual_override_files']['variety_type'],
+                'original_col': 'MainVariety',
+                'mapped_col': 'Variety_Type'
             }
         ]
         
@@ -343,6 +352,12 @@ class UnifiedDataNormalizer:
                 'file': self.config['manual_override_files']['languages'],
                 'original_col': 'Original_Language',
                 'mapped_col': 'Normalized_Language'
+            },
+            {
+                'name': 'Variety Type',
+                'file': self.config['manual_override_files']['variety_type'],
+                'original_col': 'MainVariety',
+                'mapped_col': 'Variety_Type'
             }
         ]
         
@@ -440,13 +455,19 @@ class UnifiedDataNormalizer:
         self.update_language_mapping()
         print()
         
-        # 5. Sync manual mapping files
-        print("5️⃣  SYNCING MANUAL MAPPING FILES")
+        # 5. Variety type mapping
+        print("5️⃣  VARIETY TYPE MAPPING")
+        print("-" * 40)
+        self.update_variety_type_mapping()
+        print()
+        
+        # 6. Sync manual mapping files
+        print("6️⃣  SYNCING MANUAL MAPPING FILES")
         print("-" * 40)
         self.sync_manual_mapping_files()
         
-        # 6. Check for unmapped values
-        print("6️⃣  CHECKING FOR UNMAPPED VALUES")
+        # 7. Check for unmapped values
+        print("7️⃣  CHECKING FOR UNMAPPED VALUES")
         print("-" * 40)
         self.check_empty_mappings()
         
@@ -551,6 +572,12 @@ class UnifiedDataNormalizer:
         print("4️⃣  APPLYING LANGUAGE MAPPING")
         print("-" * 40)
         self.apply_language_mapping(fill_empty_with_na=fill_empty_with_na, informant_ids=informant_ids)
+        print()
+        
+        # 5. Apply variety type mapping
+        print("5️⃣  APPLYING VARIETY TYPE MAPPING")
+        print("-" * 40)
+        self.apply_variety_type_mapping(informant_ids=informant_ids)
         print()
         
         # Summary
@@ -1187,26 +1214,6 @@ class UnifiedDataNormalizer:
                 
                 print(f"✅ Updated {updated_count} records in {column} → {normalized_column}")
             
-            # Special handling for main 'Qualifications' column (legacy support)
-            # Also create 'highest_qualification' as an alias for Qualifications_normalized
-            if 'Qualifications' in qualification_columns:
-                try:
-                    cursor.execute(f"ALTER TABLE {self.table_name} ADD COLUMN highest_qualification TEXT")
-                    print("Added 'highest_qualification' column (legacy alias)")
-                except sqlite3.OperationalError as e:
-                    if "duplicate column name" not in str(e).lower():
-                        raise e
-                
-                # Copy from Qualifications_normalized to highest_qualification
-                id_filter = self._setup_id_filter(conn, informant_ids)
-                cursor.execute(f"""
-                    UPDATE {self.table_name}
-                    SET highest_qualification = Qualifications_normalized
-                    WHERE Qualifications_normalized IS NOT NULL{id_filter}
-                """)
-                if informant_ids is not None:
-                    self._cleanup_id_filter(conn)
-            
             # Apply InformantID-specific mappings if available
             id_mapping_file = self.config['manual_override_files']['qualifications_by_id']
             if os.path.exists(id_mapping_file):
@@ -1220,21 +1227,11 @@ class UnifiedDataNormalizer:
                     
                     id_updates = 0
                     for _, row in id_mapping_df.iterrows():
-                        # Apply to highest_qualification (main column)
                         cursor.execute("""
                             UPDATE Informants 
-                            SET highest_qualification = ? 
+                            SET Qualifications_normalized = ? 
                             WHERE InformantID = ?
                         """, (row['Mapped_Category'], row['InformantID']))
-                        
-                        # Also update Qualifications_normalized if it exists
-                        if 'Qualifications' in qualification_columns:
-                            cursor.execute("""
-                                UPDATE Informants 
-                                SET Qualifications_normalized = ? 
-                                WHERE InformantID = ?
-                            """, (row['Mapped_Category'], row['InformantID']))
-                        
                         id_updates += cursor.rowcount
                     print(f"Applied {len(id_mapping_df)} InformantID-specific overrides")
             
@@ -1243,8 +1240,8 @@ class UnifiedDataNormalizer:
                 id_filter = self._setup_id_filter(conn, informant_ids)
                 cursor.execute(f"""
                     UPDATE {self.table_name} 
-                    SET highest_qualification = 'Secondary Education'
-                    WHERE highest_qualification IS NULL 
+                    SET Qualifications_normalized = 'Secondary Education'
+                    WHERE Qualifications_normalized IS NULL 
                     AND secondary_school_normalized IS NOT NULL
                     AND secondary_school_normalized != ''{id_filter}
                 """)
@@ -1522,6 +1519,84 @@ class UnifiedDataNormalizer:
         finally:
             conn.close()
     
+    # ===== VARIETY TYPE MAPPING =====
+    
+    def update_variety_type_mapping(self):
+        """Sync variety_type_mapping.csv with any new MainVariety values in the database."""
+        mapping_file = self.config['output_files']['variety_type']
+        
+        if not os.path.exists(mapping_file):
+            print(f"⚠️  Mapping file not found: {mapping_file}")
+            return
+        
+        conn = sqlite3.connect(self.db_path)
+        try:
+            df_mv = pd.read_sql_query(
+                f"SELECT DISTINCT MainVariety FROM {self.table_name} "
+                "WHERE MainVariety IS NOT NULL ORDER BY MainVariety",
+                conn,
+            )
+        finally:
+            conn.close()
+        
+        db_values = set(df_mv['MainVariety'].astype(str))
+        mapping_df = pd.read_csv(mapping_file, keep_default_na=False)
+        existing_values = set(mapping_df['MainVariety'].astype(str))
+        
+        new_values = db_values - existing_values
+        if new_values:
+            print(f"🆕 Found {len(new_values)} new MainVariety values to add to mapping:")
+            for v in sorted(new_values):
+                print(f"      • {v}")
+            new_rows = pd.DataFrame({'MainVariety': sorted(new_values), 'Variety_Type': ''})
+            mapping_df = pd.concat([mapping_df, new_rows], ignore_index=True).sort_values('MainVariety')
+            mapping_df.to_csv(mapping_file, index=False)
+            print(f"✅ Updated {mapping_file} – please fill in Variety_Type for new entries")
+        else:
+            print(f"✅ No new MainVariety values found. Mapping file is up to date.")
+    
+    def apply_variety_type_mapping(self, informant_ids=None):
+        """Apply variety_type_mapping.csv to the Informants table."""
+        mapping_file = self.config['manual_override_files']['variety_type']
+        
+        if not os.path.exists(mapping_file):
+            print(f"⚠️  Mapping file not found: {mapping_file}. Skipping variety type mapping.")
+            return
+        
+        mapping_df = pd.read_csv(mapping_file, keep_default_na=False)
+        
+        # Build dict: MainVariety → Variety_Type (skip rows with empty Variety_Type)
+        mapping = {
+            row['MainVariety']: row['Variety_Type']
+            for _, row in mapping_df.iterrows()
+            if str(row.get('Variety_Type', '')).strip() != ''
+        }
+        
+        if not mapping:
+            print("⚠️  No mappings found in variety_type_mapping.csv. Skipping.")
+            return
+        
+        conn = sqlite3.connect(self.db_path)
+        try:
+            id_filter = self._setup_id_filter(conn, informant_ids)
+            cur = conn.cursor()
+            updated = 0
+            for main_variety, variety_type in mapping.items():
+                sql = (
+                    f"UPDATE {self.table_name} SET Variety_Type = ? "
+                    f"WHERE MainVariety = ?{id_filter}"
+                )
+                cur.execute(sql, (variety_type, main_variety))
+                updated += cur.rowcount
+            conn.commit()
+            print(f"✅ Variety_Type set for {updated} informant(s) across {len(mapping)} MainVariety value(s).")
+        except sqlite3.Error as e:
+            print(f"❌ Error applying variety type mapping: {e}")
+            conn.rollback()
+        finally:
+            self._cleanup_id_filter(conn)
+            conn.close()
+    
     # ===== SUMMARY METHODS =====
     
     def print_update_summary(self):
@@ -1580,9 +1655,6 @@ class UnifiedDataNormalizer:
         
         for qual_col in qualification_columns:
             print(f"✅ {qual_col}_normalized")
-        
-        if 'Qualifications' in qualification_columns:
-            print("✅ highest_qualification (legacy alias for Qualifications_normalized)")
         
         for lang_col in self.config['columns']['languages']:
             print(f"✅ {lang_col}_normalized")

@@ -1,71 +1,96 @@
 """
 LimeSurvey Conversion Module
 =============================
-Converts LimeSurvey CSV exports into the transposed XLSX format
-expected by the existing ETL pipeline.
+Converts LimeSurvey CSV exports (``results-surveyNNN.csv``) into the
+transposed XLSX format expected by the ETL pipeline.
 
-Handles three survey variants:
-  - Ireland (lexical only): PI06 checkboxes for Irish/English
-  - Germany lexical: PI06 dropdown, EP06[SQ001-6] combined parent/partner
-  - Germany full (grammar + lexical): PI06 checkboxes for many languages,
-    PI07m/PI07f, EP06/EP07/EP08/EP09, grammar spoken SSA-SSF, grammar
-    written WSG-WSN
+Workflow
+--------
+1. Place the CSV export from LimeSurvey in ``data/conversion/input/``.
+2. Run ``python run_workflow.py --run convert``.
+3. **First run** (no mapping file yet): a stub mapping file is created at
+   ``data/conversion/<surveyNNN>_mapping.csv`` with auto-detected column
+   assignments. Review / adjust that file, then re-run.
+4. **Subsequent runs**: the mapping file drives the conversion. The resulting
+   XLSX is written to ``data/conversion/output/`` and the CSV is moved to
+   ``data/conversion/input/Done/<timestamp>/``.
 
-The column mapping is loaded from data/mappings/limesurvey_column_mapping.csv.
+Mapping file format (semicolon-separated)
+------------------------------------------
+  question_code ; csv_column ; target_row ; transform
+
+``question_code``
+    Code extracted from the LimeSurvey column header (e.g. ``PI01``).
+``csv_column``
+    Full original column header – for reference only.
+``target_row``
+    Row label in the output XLSX as defined by the template, **or** one
+    of the special values below.  Leave empty to mark the column as
+    unmapped; the corresponding template rows will be filled with ``ND``.
+``transform``
+    How the raw CSV value is converted (empty = plain copy):
+
+    ``other``              – append as free-text to the preceding base field
+                             that shares the same ``target_row``.
+    ``lang_checkbox:LABEL``– yes/no checkbox; if "Yes", contribute LABEL to
+                             the semicolon-joined list for ``target_row``.
+    ``lang_other``         – free-text, appended to the lang list.
+    ``qual_checkbox:LABEL``– yes/no checkbox for a qualification category.
+    ``qual_other``         – free-text qualification (appended).
+    ``grammar_value``      – map AO01-AO06 (or legacy No-one…Everyone) → 0-5.
+    ``lexical_value``      – map LIA1/LIA2/LIA3/LIA4/LIA5/LIA6 → -2/-1/0/1/2/NX;
+                             if the target row label ends with `` -``, the
+                             numeric result is multiplied by -1 (reversed item).
+                             Empty answers are left as empty (NA in the DB).
+    ``fixed:<value>``      – always output the given literal value, regardless
+                             of the CSV content (e.g. ``fixed:1`` for Signature).
+    ``skip``               – ignore this column entirely.
+
+Derived rows (no mapping entry needed)
+---------------------------------------
+``Ratio``
+    Computed as *Years lived outside of home country / Age*.
+    If *Years lived outside* is empty → ``1``.
+    If *Age* is missing or zero, or on any error → ``NA``.
 """
 
 import re
+import shutil
 import pandas as pd
 from pathlib import Path
 
 from lib import DATA_DIR, INPUT_DIR, MAPPINGS_DIR
 
 
+# ── Directory layout ─────────────────────────────────────────────────────────
+CONVERSION_DIR = DATA_DIR / "conversion"
+CONVERSION_INPUT_DIR = CONVERSION_DIR / "input"
+CONVERSION_OUTPUT_DIR = CONVERSION_DIR / "output"
+TEMPLATE_XLSX = CONVERSION_DIR / "template.xlsx"
+
+# Legacy export directory (kept for backwards compatibility)
 LIMESURVEY_DIR = INPUT_DIR / "Limesurvey_export"
-MAPPING_CSV = MAPPINGS_DIR / "limesurvey_column_mapping.csv"
 
-# EP04 qualification labels by subquestion code
-_EP04_LABELS = {
-    "SQ001": "Apprenticeship",
-    "SQ002": "Vocational classes",
-    "SQ007": "General secondary education",
-    "SQ003": "Bachelor",
-    "SQ004": "Master's",
-    "SQ005": "PhD",
-    "SQ006": "Other",
-}
-
-# PI06 language checkbox labels per survey variant
-_PI06_LANG_LABELS_IRELAND = {
-    "SQ006": "English",
-    "SQ001": "Irish",
-}
-
-_PI06_LANG_LABELS_DE_FULL = {
-    "SQ001SQ001": "German",
-    "SQ002": "English",
-    "SQ003": "French",
-    "SQ004": "Italian",
-    "SQ005": "Spanish",
-    "SQ006": "Hungarian",
-    "SQ007": "Polish",
-    "SQ008": "Czech",
-}
-
-# PI07m / PI07f checkbox labels (Germany full survey)
-_PI07_LANG_LABELS = {
-    "SQ001SQ001": "German",
-    "SQ002": "English",
-    "SQ003": "French",
-    "SQ004": "Italian",
-    "SQ005": "Spanish",
-    "SQ006": "Hungarian",
-    "SQ007": "Polish",
-    "SQ008": "Czech",
+# LimeSurvey lexical answer codes → numeric scale
+_LEXICAL_VALUE_MAP = {
+    "LIA1": "-2",
+    "LIA2": "-1",
+    "LIA3": "0",
+    "LIA4": "1",
+    "LIA5": "2",
+    "LIA6": "NX",
 }
 
 # Grammar answer text → numeric scale
 _GRAMMAR_VALUE_MAP = {
+    # LimeSurvey answer codes
+    "AO01": "5",
+    "AO02": "4",
+    "AO03": "3",
+    "AO04": "2",
+    "AO05": "1",
+    "AO06": "0",
+    # Legacy text labels (kept for backwards compatibility)
     "No-one": "0",
     "Few": "1",
     "Some": "2",
@@ -74,635 +99,710 @@ _GRAMMAR_VALUE_MAP = {
     "Everyone": "5",
 }
 
+# ── Auto-detect for R syntax file exports (underscore column notation) ────
+# Column codes here match what the R syntax file assigns via names(data)[N].
+_AUTO_DETECT_R: list[tuple[str, str, str]] = [
+    ("id",                    "",                                             "skip"),
+    ("submitdate",            "",                                             "skip"),
+    ("lastpage",              "",                                             "skip"),
+    ("startlanguage",         "",                                             "skip"),
+    ("seed",                  "",                                             "skip"),
+    ("startdate",             "",                                             "skip"),
+    ("datestamp",             "",                                             "skip"),
+    ("CF01",                  "",                                             "skip"),
+    ("PI01",                  "Age",                                          ""),
+    ("PI02",                  "Gender",                                       ""),
+    ("PI02_other",            "Gender",                                       "other"),
+    ("PI03",                  "Nationality",                                  ""),
+    ("PI03_other",            "Nationality",                                  "other"),
+    ("PI04",                  "Ethnic self-identification",                   ""),
+    ("PI05",                  "Country or region you identify with",          ""),
+    ("PI06_SQ001SQ001",       "Languages used at home while  growing up",    "lang_checkbox:German"),
+    ("PI06_SQ002",            "Languages used at home while  growing up",    "lang_checkbox:English"),
+    ("PI06_SQ003",            "Languages used at home while  growing up",    "lang_checkbox:French"),
+    ("PI06_SQ004",            "Languages used at home while  growing up",    "lang_checkbox:Italian"),
+    ("PI06_SQ005",            "Languages used at home while  growing up",    "lang_checkbox:Spanish"),
+    ("PI06_SQ006",            "Languages used at home while  growing up",    "lang_checkbox:Hungarian"),
+    ("PI06_SQ007",            "Languages used at home while  growing up",    "lang_checkbox:Polish"),
+    ("PI06_SQ008",            "Languages used at home while  growing up",    "lang_checkbox:Czech"),
+    ("PI06_SQ009",            "Languages used at home while  growing up",    "lang_checkbox:Irish"),
+    ("PI06_other",            "Languages used at home while  growing up",    "lang_other"),
+    ("PI07m_SQ001SQ001",      "Native Lg. Mother",                           "lang_checkbox:German"),
+    ("PI07m_SQ002",           "Native Lg. Mother",                           "lang_checkbox:English"),
+    ("PI07m_SQ003",           "Native Lg. Mother",                           "lang_checkbox:French"),
+    ("PI07m_SQ004",           "Native Lg. Mother",                           "lang_checkbox:Italian"),
+    ("PI07m_SQ005",           "Native Lg. Mother",                           "lang_checkbox:Spanish"),
+    ("PI07m_SQ006",           "Native Lg. Mother",                           "lang_checkbox:Hungarian"),
+    ("PI07m_SQ007",           "Native Lg. Mother",                           "lang_checkbox:Polish"),
+    ("PI07m_SQ008",           "Native Lg. Mother",                           "lang_checkbox:Czech"),
+    ("PI07m_SQ009",           "Native Lg. Mother",                           "lang_checkbox:Irish"),
+    ("PI07m_other",           "Native Lg. Mother",                           "lang_other"),
+    ("PI07f_SQ001SQ001",      "Native Lg. Father",                           "lang_checkbox:German"),
+    ("PI07f_SQ002",           "Native Lg. Father",                           "lang_checkbox:English"),
+    ("PI07f_SQ003",           "Native Lg. Father",                           "lang_checkbox:French"),
+    ("PI07f_SQ004",           "Native Lg. Father",                           "lang_checkbox:Italian"),
+    ("PI07f_SQ005",           "Native Lg. Father",                           "lang_checkbox:Spanish"),
+    ("PI07f_SQ006",           "Native Lg. Father",                           "lang_checkbox:Hungarian"),
+    ("PI07f_SQ007",           "Native Lg. Father",                           "lang_checkbox:Polish"),
+    ("PI07f_SQ008",           "Native Lg. Father",                           "lang_checkbox:Czech"),
+    ("PI07f_SQ009",           "Native Lg. Father",                           "lang_checkbox:Irish"),
+    ("PI07f_other",           "Native Lg. Father",                           "lang_other"),
+    ("PI08",                  "Years lived outside of home country",         ""),
+    ("PI08Copy",              "Years lived in home country",                 ""),
+    ("PI09",                  "",                                             "skip"),
+    ("PI10",                  "Timeline Comments",                            ""),
+    ("PI11",                  "Years lived in other English-speaking countries", ""),
+    ("PI12",                  "",                                             "skip"),
+    ("PI12_other",            "",                                             "skip"),
+    ("HC2",                   "",                                             "skip"),
+    ("EP01",                  "Primary school",                               ""),
+    ("EP01_other",            "Primary school",                              "other"),
+    ("EP02",                  "Secondary school",                             ""),
+    ("EP02_other",            "Secondary school",                            "other"),
+    ("EP03",                  "Name and Place of high school",                ""),
+    ("EP04_SQ001",            "Qualifications",                              "qual_checkbox:Apprenticeship"),
+    ("EP04_SQ002",            "Qualifications",                              "qual_checkbox:Vocational classes"),
+    ("EP04_SQ007",            "Qualifications",                              "qual_checkbox:General secondary education"),
+    ("EP04_SQ003",            "Qualifications",                              "qual_checkbox:Bachelor"),
+    ("EP04_SQ004",            "Qualifications",                              "qual_checkbox:Master's"),
+    ("EP04_SQ005",            "Qualifications",                              "qual_checkbox:PhD"),
+    ("EP04_SQ006",            "Qualifications",                              "qual_checkbox:Other"),
+    ("EP04_other",            "Qualifications",                              "qual_other"),
+    ("EP05",                  "Current occupation",                           ""),
+    ("EP05_other",            "Current occupation",                          "other"),
+    ("EP06",                  "Qualification mother",                        ""),
+    ("EP06_other",            "Qualification mother",                        "other"),
+    ("EP07",                  "Qualification father",                        ""),
+    ("EP07_other",            "Qualification father",                        "other"),
+    ("EP08",                  "Qualification partner",                       ""),
+    ("EP08_other",            "Qualification partner",                       "other"),
+    ("EP09_SQ002",            "Occupation mother",                           ""),
+    ("EP09_SQ004",            "Occupation father",                           ""),
+    ("EP09_SQ006",            "Occupation partner",                          ""),
+    ("LI1C",                  "Comments",                                    "qual_other"),
+    ("L2C",                   "Comments",                                    "qual_other"),
+    ("L3C",                   "Comments",                                    "qual_other"),
+    ("L4C",                   "Comments",                                    "qual_other"),
+    ("G24Q42",                "",                                             "skip"),
+    # Fixed values (no CSV column needed)
+    ("_signature",            "Signature",                                   "fixed:1"),
+    # Lexical items  (LIA1-LIA6 codes are restored by run_limesurvey_syntax.R)
+    ("LI01_SQ001",            "a drop in the ocean -",                       "lexical_value"),
+    ("LI01_SQ002",            "a tap",                                       "lexical_value"),
+    ("LI01_SQ003",            "aluminium",                                   "lexical_value"),
+    ("LI01_SQ004",            "anticlockwise -",                             "lexical_value"),
+    ("LI01_SQ005",            "aubergine",                                   "lexical_value"),
+    ("LI01_SQ006",            "autumn",                                      "lexical_value"),
+    ("LI01_SQ007",            "backwards",                                   "lexical_value"),
+    ("LI01_SQ008",            "bicentenary -",                               "lexical_value"),
+    ("LI01_SQ009",            "biscuit",                                     "lexical_value"),
+    ("LI01_SQ010",            "bookings -",                                  "lexical_value"),
+    ("LI01_SQ011",            "boot",                                        "lexical_value"),
+    ("LI01_SQ012",            "car park -",                                  "lexical_value"),
+    ("LI01_SQ013",            "centre",                                      "lexical_value"),
+    ("LI01_SQ014",            "chemist's -",                                 "lexical_value"),
+    ("LI01_SQ015",            "ill -",                                       "lexical_value"),
+    ("LI01_SQ016",            "potato chips",                                "lexical_value"),
+    ("LI01_SQ017",            "chips",                                       "lexical_value"),
+    ("LI02_SQ001",            "cinema -",                                    "lexical_value"),
+    ("LI02_SQ002",            "colour",                                      "lexical_value"),
+    ("LI02_SQ003",            "cupboard -",                                  "lexical_value"),
+    ("LI02_SQ004",            "driving licence",                             "lexical_value"),
+    ("LI02_SQ005",            "dummy -",                                     "lexical_value"),
+    ("LI02_SQ006",            "dustbin",                                     "lexical_value"),
+    ("LI02_SQ007",            "fish fingers -",                              "lexical_value"),
+    ("LI02_SQ008",            "football",                                    "lexical_value"),
+    ("LI02_SQ009",            "forwards -",                                  "lexical_value"),
+    ("LI02_SQ010",            "globalisation",                               "lexical_value"),
+    ("LI02_SQ011",            "glocalisation -",                             "lexical_value"),
+    ("LI02_SQ012",            "holiday",                                     "lexical_value"),
+    ("LI02_SQ013",            "liberalisation",                              "lexical_value"),
+    ("LI02_SQ014",            "jacket potato",                               "lexical_value"),
+    ("LI02_SQ015",            "laund(e)rette -",                             "lexical_value"),
+    ("LI02_SQ016",            "potato crisps -",                             "lexical_value"),
+    ("LI02_SQ017",            "crisps -",                                    "lexical_value"),
+    ("LI02_SQ018",            "rubbish",                                     "lexical_value"),
+    ("LI03_SQ001",            "to licence -",                                "lexical_value"),
+    ("LI03_SQ002",            "lift",                                        "lexical_value"),
+    ("LI03_SQ003",            "localisation -",                              "lexical_value"),
+    ("LI03_SQ004",            "lorry",                                       "lexical_value"),
+    ("LI03_SQ005",            "maths -",                                     "lexical_value"),
+    ("LI03_SQ006",            "mobile phone",                                "lexical_value"),
+    ("LI03_SQ007",            "modernisation -",                             "lexical_value"),
+    ("LI03_SQ008",            "nappies",                                     "lexical_value"),
+    ("LI03_SQ009",            "organisation -",                              "lexical_value"),
+    ("LI03_SQ010",            "parcel",                                      "lexical_value"),
+    ("LI03_SQ011",            "pavement -",                                  "lexical_value"),
+    ("LI03_SQ012",            "petrol",                                      "lexical_value"),
+    ("LI03_SQ013",            "petrol station -",                            "lexical_value"),
+    ("LI03_SQ014",            "postman",                                     "lexical_value"),
+    ("LI03_SQ015",            "pushchair -",                                 "lexical_value"),
+    ("LI03_SQ016",            "railway",                                     "lexical_value"),
+    ("LI03_SQ017",            "realisation -",                               "lexical_value"),
+    ("LI04_SQ001",            "roundabout",                                  "lexical_value"),
+    ("LI04_SQ002",            "rubber -",                                    "lexical_value"),
+    ("LI04_SQ003",            "shopping trolley -",                          "lexical_value"),
+    ("LI04_SQ004",            "sport",                                       "lexical_value"),
+    ("LI04_SQ005",            "storm in a teacup -",                         "lexical_value"),
+    ("LI04_SQ006",            "subway",                                      "lexical_value"),
+    ("LI04_SQ007",            "to let -",                                    "lexical_value"),
+    ("LI04_SQ008",            "torch",                                       "lexical_value"),
+    ("LI04_SQ009",            "touch wood -",                                "lexical_value"),
+    ("LI04_SQ010",            "trainers",                                    "lexical_value"),
+    ("LI04_SQ011",            "whilst -",                                    "lexical_value"),
+    ("LI04_SQ012",            "windscreen",                                  "lexical_value"),
+    ("LI04_SQ013",            "a book about  chemistry -",                   "lexical_value"),
+    ("LI04_SQ014",            "compare X to Y -",                            "lexical_value"),
+    ("LI04_SQ015",            "typical of -",                                "lexical_value"),
+    ("LI04_SQ016",            "Anyway",                                      "lexical_value"),
+    # Grammar spoken: SSA_SSA1 … SSF_SSF23
+    *[(f"SS{L}_SS{L}{n}", f"{L}{n}", "grammar_value")
+      for L in "ABCDEF" for n in range(1, 24)],
+    # Grammar written: WSG_WSG1 … WSN_WSN25
+    *[(f"WSG_WSG{n}", f"G{n}", "grammar_value") for n in range(1, 27)],
+    *[(f"WSH_WSH{n}", f"H{n}", "grammar_value") for n in range(1, 27)],
+    *[(f"WSI_WSI{n}", f"I{n}", "grammar_value") for n in range(1, 27)],
+    *[(f"WSJ_WSJ{n}", f"J{n}", "grammar_value") for n in range(1, 27)],
+    *[(f"WSK_WSK{n}", f"K{n}", "grammar_value") for n in range(1, 4)],
+    ("WSK_WSK4a",             "K4a",                                         "grammar_value"),
+    ("WSK_WSK4b",             "K4b",                                         "grammar_value"),
+    *[(f"WSK_WSK{n}", f"K{n}", "grammar_value") for n in range(5, 27)],
+    *[(f"WSL_WSL{n}", f"L{n}", "grammar_value") for n in range(1, 27)],
+    *[(f"WSM_WSM{n}", f"M{n}", "grammar_value") for n in range(1, 26)],
+    *[(f"WSN_WSN{n}", f"N{n}", "grammar_value") for n in range(1, 26)],
+]
+
+_AUTO_DETECT_R_MAP: dict[str, tuple[str, str]] = {
+    code: (target, transform) for code, target, transform in _AUTO_DETECT_R
+}
+
+# R script that extracts the labeled / LIA-restored intermediate CSV
+_R_SYNTAX_RUNNER = (
+    Path(__file__).parent / "r_scripts" / "run_limesurvey_syntax.R"
+)
+
 
 # ═══════════════════════════════════════════════════════════════════════════
 #  Helpers
 # ═══════════════════════════════════════════════════════════════════════════
 
-def _extract_question_code(header: str) -> str:
-    """Extract the question code from a LimeSurvey column header.
+def _survey_r_id_from_path(csv_path: Path) -> str:
+    """Extract 'surveyNNN_r' from 'survey_998353_R_data_file.csv'."""
+    m = re.search(r'survey_?(\d+)', csv_path.stem, re.IGNORECASE)
+    return f"survey{m.group(1)}_r" if m else f"{csv_path.stem}_r"
 
-    Headers are formatted as:
-      'QuestionCode. Questiontext'
-      'QuestionCode[Subquestion]. Questiontext'
 
-    Returns the part before the first '. ' (dot-space).
-    Strips any leading/trailing quotes.
+def _r_syntax_file_for(data_csv: Path) -> Path | None:
+    """Find the R syntax file that matches a given R data CSV.
+
+    Expects the two files to live in the same directory and share the same
+    survey number, e.g.  ``survey_998353_R_data_file.csv``  →
+    ``survey_998353_R_syntax_file.R``.
     """
-    header = header.strip().strip('"')
-    match = re.match(r'^([^.]+)\.\s', header)
-    if match:
-        return match.group(1).strip()
-    # Fallback: return the whole header stripped
-    return header.strip()
+    m = re.search(r'survey_?(\d+)', data_csv.stem, re.IGNORECASE)
+    if not m:
+        return None
+    candidate = data_csv.parent / f"survey_{m.group(1)}_R_syntax_file.R"
+    return candidate if candidate.exists() else None
 
 
-def _load_mapping() -> dict[str, str]:
-    """Load the question_code → target_column mapping from CSV.
+def _mapping_path(survey_id: str) -> Path:
+    return CONVERSION_DIR / f"{survey_id}_mapping.csv"
 
-    Returns a dict: { question_code: target_column }.
+
+def _load_template_rows() -> list[str]:
+    """Read all row labels from the template XLSX (first column)."""
+    tpl = pd.read_excel(str(TEMPLATE_XLSX), header=None, dtype=str)
+    return [str(v) if str(v) != "nan" else "" for v in tpl.iloc[:, 0]]
+
+
+def _clean_val(val) -> str:
+    """Normalize a raw cell value to a plain string (empty if NaN/nan)."""
+    s = str(val).strip() if pd.notna(val) else ""
+    return "" if s.lower() == "nan" else s
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+#  Stub mapping generation
+# ═══════════════════════════════════════════════════════════════════════════
+
+def _generate_r_stub_mapping(syntax_file: Path, mapping_file: Path) -> None:
+    """Create a mapping CSV for the R-syntax-file conversion path.
+
+    Parses the R syntax file to extract all ``names(data)[N] <- "code"``
+    assignments, then auto-detects known column patterns using
+    ``_AUTO_DETECT_R_MAP``.  Unknown columns are marked ``skip``; the user
+    can change them as needed.
     """
-    mapping = {}
-    df = pd.read_csv(str(MAPPING_CSV), sep=";", dtype=str)
-    for _, row in df.iterrows():
-        mapping[row["question_code"]] = row["target_column"]
-    return mapping
+    import re as _re
+
+    # Parse all column codes in order from the syntax file
+    col_codes: list[str] = []
+    with syntax_file.open(encoding="utf-8-sig", errors="replace") as fh:
+        for line in fh:
+            m = _re.search(r'names\(data\)\[\d+\]\s*<-\s*"([^"]+)"', line)
+            if m:
+                col_codes.append(m.group(1))
+
+    rows = []
+    for code in col_codes:
+        target, transform = _AUTO_DETECT_R_MAP.get(code, ("", "skip"))
+        rows.append({
+            "question_code": code,
+            "csv_column":    code,   # R CSV header == code, reference only
+            "target_row":    target,
+            "transform":     transform,
+        })
+
+    out = pd.DataFrame(rows, columns=["question_code", "csv_column",
+                                      "target_row", "transform"])
+
+    # Synthetic fixed-value row (Signature)
+    synthetic = pd.DataFrame([
+        {"question_code": "_signature", "csv_column": "",
+         "target_row": "Signature", "transform": "fixed:1"},
+    ], columns=["question_code", "csv_column", "target_row", "transform"])
+    out = pd.concat([out, synthetic], ignore_index=True)
+
+    mapping_file.parent.mkdir(parents=True, exist_ok=True)
+    with mapping_file.open("w") as fh:
+        fh.write("# prefix: XX26   ← EDIT THIS (e.g. DE26, IR25)\n")
+        fh.write("# NOTE: This mapping is for the R syntax file export path.\n")
+        fh.write("#       question_code values match R column names (underscores, not brackets).\n")
+        fh.write("#       Ratio is computed automatically (Years outside / Age).\n")
+        fh.write("#       Lexical items use transform=lexical_value (LIA1..LIA6 → -2..2/NX).\n")
+        out.to_csv(fh, sep=";", index=False)
+    print(f"  📄 Stub R mapping file created: {mapping_file}")
+    print(f"     ({len(col_codes)} columns auto-detected from syntax file)")
 
 
-def _combine_other(base_val, other_val) -> str:
-    """Combine a base value with an 'other' value if non-empty."""
-    base = str(base_val).strip() if pd.notna(base_val) else ""
-    other = str(other_val).strip() if pd.notna(other_val) else ""
-    if other:
-        return f"{base}: {other}".strip(": ") if base else other
-    return base
+def _load_mapping(mapping_file: Path) -> pd.DataFrame:
+    """Load the survey-specific mapping CSV."""
+    return pd.read_csv(str(mapping_file), sep=";", dtype=str,
+                       comment="#").fillna("")
 
 
-def _combine_language_checkboxes(row: pd.Series, code_to_col: dict,
-                                 base_code: str = "PI06",
-                                 lang_labels: dict | None = None) -> str:
-    """Combine PI06 (or similar) checkbox columns into a languages string.
+# ═══════════════════════════════════════════════════════════════════════════
+#  Conversion
+# ═══════════════════════════════════════════════════════════════════════════
 
-    Parameters
-    ----------
-    base_code : The question base code (e.g. 'PI06', 'PI07m', 'PI07f').
-    lang_labels : dict mapping subquestion codes to language names.
+def _apply_row(row: pd.Series, entries: list[dict], code_to_col: dict,
+               target_row: str = "") -> str:
+    """Compute the output value for one template row from its mapping entries.
+
+    ``entries`` is a list of mapping rows all sharing the same target_row.
     """
-    if lang_labels is None:
-        lang_labels = _PI06_LANG_LABELS_IRELAND
+    transform_types = {e["transform"] for e in entries}
 
-    langs = []
-    for sq_code, lang_label in lang_labels.items():
-        full_code = f"{base_code}[{sq_code}]"
-        if full_code in code_to_col:
-            val = row.get(code_to_col[full_code], "")
-            if str(val).strip().lower() == "yes":
-                langs.append(lang_label)
+    # ── Fixed value (no CSV column needed) ────────────────────────────────
+    if any(t.startswith("fixed:") for t in transform_types):
+        for e in entries:
+            if e["transform"].startswith("fixed:"):
+                return e["transform"][len("fixed:"):]
+        return ""
 
-    other_code = f"{base_code}[other]"
-    if other_code in code_to_col:
-        other_val = str(row.get(code_to_col[other_code], "")).strip()
-        if other_val and other_val.lower() != "nan":
-            langs.append(other_val)
+    # ── Lexical value ─────────────────────────────────────────────────────
+    if "lexical_value" in transform_types:
+        for e in entries:
+            if e["transform"] == "lexical_value" and e["question_code"] in code_to_col:
+                raw = _clean_val(row.get(code_to_col[e["question_code"]]))
+                if not raw:
+                    return ""  # empty → NA
+                mapped = _LEXICAL_VALUE_MAP.get(raw, raw)
+                if mapped == "NX":
+                    return "NX"
+                # Reversed items: target row label ends with " -"
+                if target_row.rstrip().endswith("-"):
+                    try:
+                        return str(int(mapped) * -1)
+                    except (ValueError, TypeError):
+                        pass
+                return mapped
+        return ""
 
-    return "; ".join(langs) if langs else ""
+    # ── Grammar value (raw read; numeric mapping applied by caller) ──────
+    if "grammar_value" in transform_types:
+        for e in entries:
+            if e["transform"] == "grammar_value" and e["question_code"] in code_to_col:
+                return _clean_val(row.get(code_to_col[e["question_code"]]))
+        return ""
 
+    # ── Language checkboxes ───────────────────────────────────────────────
+    if any(t.startswith("lang_checkbox:") for t in transform_types):
+        langs = []
+        for e in entries:
+            t = e["transform"]
+            code = e["question_code"]
+            if t.startswith("lang_checkbox:") and code in code_to_col:
+                label = t[len("lang_checkbox:"):]
+                if _clean_val(row.get(code_to_col[code])).lower() == "yes":
+                    langs.append(label)
+            elif t == "lang_other" and code in code_to_col:
+                v = _clean_val(row.get(code_to_col[code]))
+                if v:
+                    langs.append(v)
+        return "; ".join(langs)
 
-def _combine_language_dropdown(row: pd.Series, code_to_col: dict) -> str:
-    """Combine Germany PI06 dropdown + comment into a language string."""
-    base_code = "PI06"
-    comment_code = "PI06[comment]"
-
-    base = ""
-    if base_code in code_to_col:
-        base = str(row.get(code_to_col[base_code], "")).strip()
-        if base.lower() == "nan":
-            base = ""
-
-    comment = ""
-    if comment_code in code_to_col:
-        comment = str(row.get(code_to_col[comment_code], "")).strip()
-        if comment.lower() == "nan":
-            comment = ""
-
-    if comment:
-        return f"{base}; {comment}".strip("; ") if base else comment
-    return base
-
-
-def _combine_qualifications(row: pd.Series, code_to_col: dict) -> str:
-    """Combine Germany EP04 checkbox qualifications into a single string.
-
-    Looks for EP04[SQ001]-EP04[SQ006] (plus SQ007). Each has a yes/no value
-    and an optional comment suffix. Collects those marked 'Yes'.
-    """
-    quals = []
-    for sq_code, label in _EP04_LABELS.items():
-        full_code = f"EP04[{sq_code}]"
-        comment_code = f"EP04[{sq_code}comment]"
-
-        if full_code in code_to_col:
-            val = str(row.get(code_to_col[full_code], "")).strip()
-            if val.lower() in ("yes", "y"):
-                # Check for a comment
-                comment = ""
-                if comment_code in code_to_col:
-                    comment = str(row.get(code_to_col[comment_code], "")).strip()
-                    if comment.lower() == "nan":
-                        comment = ""
-                if comment:
-                    quals.append(f"{label} ({comment})")
-                else:
+    # ── Qualification checkboxes ──────────────────────────────────────────
+    if any(t.startswith("qual_checkbox:") for t in transform_types):
+        quals = []
+        other_parts = []
+        for e in entries:
+            t = e["transform"]
+            code = e["question_code"]
+            if t.startswith("qual_checkbox:") and code in code_to_col:
+                label = t[len("qual_checkbox:"):]
+                if _clean_val(row.get(code_to_col[code])).lower() in ("yes", "y"):
                     quals.append(label)
+            elif t == "qual_other" and code in code_to_col:
+                v = _clean_val(row.get(code_to_col[code]))
+                if v:
+                    other_parts.append(v)
+        all_parts = quals + other_parts
+        return "; ".join(all_parts)
 
-    return "; ".join(quals) if quals else ""
+    # ── Base + other (combine_other pattern) ──────────────────────────────
+    base_entries = [e for e in entries if e["transform"] == ""]
+    other_entries = [e for e in entries if e["transform"] == "other"]
+    if base_entries or other_entries:
+        base = ""
+        for e in base_entries:
+            if e["question_code"] in code_to_col:
+                base = _clean_val(row.get(code_to_col[e["question_code"]]))
+                break
+        other = ""
+        for e in other_entries:
+            if e["question_code"] in code_to_col:
+                other = _clean_val(row.get(code_to_col[e["question_code"]]))
+                break
+        if other:
+            return f"{base}: {other}".strip(": ") if base else other
+        return base
 
+    # ── qual_other only (lexical comments collected) ──────────────────────
+    if transform_types == {"qual_other"}:
+        parts = []
+        for e in entries:
+            if e["question_code"] in code_to_col:
+                v = _clean_val(row.get(code_to_col[e["question_code"]]))
+                if v:
+                    parts.append(v)
+        return " | ".join(parts)
 
-def _combine_lexical_comments(row: pd.Series, code_to_col: dict) -> str:
-    """Combine LI1C, L2C, L3C, L4C into a single CommentsLexical string."""
-    parts = []
-    for code in ("LI1C", "L2C", "L3C", "L4C"):
-        if code in code_to_col:
-            val = str(row.get(code_to_col[code], "")).strip()
-            if val and val.lower() != "nan":
-                parts.append(val)
-    return " | ".join(parts) if parts else ""
+    return ""
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-#  Main conversion
+#  R syntax file conversion path
 # ═══════════════════════════════════════════════════════════════════════════
 
-def convert_limesurvey(csv_path: str | Path, informant_prefix: str,
-                       survey_type: str = "lexical") -> Path:
-    """Convert a LimeSurvey CSV export to the transposed XLSX format.
+def convert_limesurvey_r(
+    data_csv: str | Path,
+    syntax_file: str | Path,
+    informant_prefix: str,
+) -> Path | None:
+    """Convert a LimeSurvey R-export pair to the transposed XLSX format.
+
+    Workflow
+    --------
+    1. The R syntax file is executed via ``Rscript`` (using
+       ``lib/r_scripts/run_limesurvey_syntax.R``).  This produces an
+       intermediate CSV with R-style column names (e.g. ``PI01``,
+       ``SSA_SSA1``, ``LI01_SQ001``) and human-readable labels for grammar
+       items.  Lexical columns are restored to their raw ``LIA1``-``LIA6``
+       codes so the direction-preserving ``lexical_value`` transform works
+       correctly.
+    2. The intermediate CSV is consumed by the same mapping/transform logic
+       used by :func:`convert_limesurvey`.  The mapping file uses R column
+       codes in the ``question_code`` column.
 
     Parameters
     ----------
-    csv_path : path to the LimeSurvey CSV export file.
-    informant_prefix : prefix for InformantIDs, e.g. 'IR25' or 'DE24'.
-        Will be used to generate IDs like 'IR25-0001', 'IR25-0002', …
-    survey_type : 'lexical' or 'grammar'. Affects the output filename.
+    data_csv :
+        Path to the LimeSurvey R data CSV
+        (e.g. ``survey_998353_R_data_file.csv``).
+    syntax_file :
+        Path to the matching R syntax file
+        (e.g. ``survey_998353_R_syntax_file.R``).
+    informant_prefix :
+        Prefix for InformantIDs, e.g. ``'DE26'``.
 
     Returns
     -------
-    Path to the generated XLSX file in data/input/.
+    Path to the generated XLSX, or ``None`` if conversion was skipped
+    (e.g. because a mapping stub was just generated).
     """
-    csv_path = Path(csv_path)
-    print(f"\n  Converting LimeSurvey export: {csv_path.name}")
-    print(f"  Informant prefix: {informant_prefix}")
+    import subprocess
+    import tempfile
 
-    # ── Read CSV and build code→column-index mapping ──────────────────────
-    df = pd.read_csv(str(csv_path), dtype=str)
+    data_csv    = Path(data_csv)
+    syntax_file = Path(syntax_file)
+    survey_r_id = _survey_r_id_from_path(data_csv)
+    mapping_file = _mapping_path(survey_r_id)
 
-    # Build a dict: question_code → original CSV column name
-    code_to_col: dict[str, str] = {}
-    for col in df.columns:
-        code = _extract_question_code(col)
-        code_to_col[code] = col
+    print(f"\n  Data CSV:    {data_csv.name}")
+    print(f"  Syntax file: {syntax_file.name}")
+    print(f"  Survey ID:   {survey_r_id}")
+    print(f"  Prefix:      {informant_prefix}")
 
-    # ── Load mapping ──────────────────────────────────────────────────────
-    mapping = _load_mapping()
+    # ── Guard: mapping file must exist ────────────────────────────────────
+    if not mapping_file.exists():
+        _generate_r_stub_mapping(syntax_file, mapping_file)
+        print(f"  ⚠  No R mapping file found for {survey_r_id}.")
+        print(f"     A stub has been created at:")
+        print(f"       {mapping_file}")
+        print(f"     Review and adjust target_row / transform columns,")
+        print(f"     then re-run the conversion.")
+        return None
 
-    # ── Detect survey variant ─────────────────────────────────────────────
-    has_pi06_sq001sq001 = "PI06[SQ001SQ001]" in code_to_col  # Germany full
-    has_pi06_checkboxes = ("PI06[SQ006]" in code_to_col
-                           or "PI06[SQ001]" in code_to_col)
-    has_pi06_dropdown = ("PI06" in code_to_col
-                         and not has_pi06_checkboxes
-                         and not has_pi06_sq001sq001)
-    has_ep04 = "EP04[SQ001]" in code_to_col  # Germany qualifications
-    has_pi08copy = "PI08Copy" in code_to_col  # Ireland years-in-country
-    has_grammar = "SSA[SSA1]" in code_to_col  # Grammar sections present
-    has_pi07m = "PI07m[SQ002]" in code_to_col  # Germany full mother lang
-    has_ep09 = "EP09[SQ002]" in code_to_col  # Germany full parent occup
+    print(f"  Mapping:     {mapping_file.name}")
 
-    if has_pi06_sq001sq001:
-        variant = "Germany_full"
-    elif has_pi06_dropdown:
-        variant = "Germany"
-    else:
-        variant = "Ireland"
-    print(f"  Detected survey variant: {variant}")
-    if has_grammar:
-        print(f"  Grammar sections detected (spoken + written)")
+    # ── Step 1: Run R syntax file to produce intermediate CSV ─────────────
+    with tempfile.NamedTemporaryFile(suffix=".csv", delete=False) as tmp:
+        intermediate_csv = Path(tmp.name)
 
-    # ── Define the xlsx row labels in order ───────────────────────────────
-    # The order follows the existing xlsx files exactly
-    sociodem_rows = [
-        "Age",
-        "Gender",
-        "Nationality",
-        "Ethnic self-identification",
-        "Country or region you identify with",
-        "Languages used at home while  growing up",
-        "Native Lg. Mother",
-        "Native Lg. Father",
-        "Primary school",
-        "Secondary school",
-        "Name and Place of high school",
-        "Qualifications",
-        "Current occupation",
-        "Qualification mother",
-        "Occupation mother",
-        "Qualification father",
-        "Occupation father",
-        "Qualification partner",
-        "Occupation partner",
-        "Years lived outside of home country",
-        "Timeline Comments",
-        "Years lived in home country",
-        "Ratio",
-        "Years lived in other English-speaking countries",
-        "Comments",
-        "Signature",
-        "Main Variety",
-        "Additional Varieties",
-        "Years lived in Main Variety",
-        "Ratio Main Variety",
-    ]
+    print(f"  Running R syntax file …")
+    result = subprocess.run(
+        ["Rscript", "--no-save", "--no-restore",
+         str(_R_SYNTAX_RUNNER),
+         str(data_csv.resolve()),
+         str(syntax_file.resolve()),
+         str(intermediate_csv)],
+        capture_output=True,
+        text=True,
+    )
+    # Echo R output
+    for line in (result.stdout + result.stderr).splitlines():
+        if line.strip():
+            print(f"    {line}")
 
-    lexical_rows = [
-        "a drop in the ocean -",
-        "a tap",
-        "aluminium",
-        "anticlockwise -",
-        "aubergine",
-        "autumn",
-        "backwards",
-        "bicentenary -",
-        "biscuit",
-        "bookings -",
-        "boot",
-        "car park -",
-        "centre",
-        "chemist's -",
-        "ill -",
-        "potato chips",
-        "chips",
-        "cinema -",
-        "colour",
-        "cupboard -",
-        "driving licence",
-        "dummy -",
-        "dustbin",
-        "fish fingers -",
-        "football",
-        "forwards -",
-        "globalisation",
-        "glocalisation -",
-        "holiday",
-        "liberalisation",
-        "jacket potato",
-        "laund(e)rette -",
-        "potato crisps -",
-        "crisps -",
-        "to licence -",
-        "lift",
-        "localisation -",
-        "lorry",
-        "maths -",
-        "mobile phone",
-        "modernisation -",
-        "nappies",
-        "organisation -",
-        "parcel",
-        "pavement -",
-        "petrol",
-        "petrol station -",
-        "postman",
-        "pushchair -",
-        "railway",
-        "realisation -",
-        "roundabout",
-        "rubber -",
-        "rubbish",
-        "shopping trolley -",
-        "sport",
-        "storm in a teacup -",
-        "subway",
-        "to let -",
-        "torch",
-        "touch wood -",
-        "trainers",
-        "whilst -",
-        "windscreen",
-        "a book about  chemistry -",
-        "compare X to Y -",
-        "typical of -",
-        "Anyway",
-    ]
+    if result.returncode != 0:
+        print(f"  ❌ R script failed (exit code {result.returncode})")
+        intermediate_csv.unlink(missing_ok=True)
+        return None
 
-    all_rows = sociodem_rows + ["", "Lexical sets"] + lexical_rows + ["", "Comments"]
-
-    # ── Grammar row lists (only used when grammar sections present) ───────
-    grammar_spoken_rows = []
-    grammar_written_rows = []
-    if has_grammar:
-        # Spoken: A1-A23, B1-B23, C1-C23, D1-D23, E1-E23, F1-F23
-        for letter in "ABCDEF":
-            for n in range(1, 24):
-                grammar_spoken_rows.append(f"{letter}{n}")
-
-        # Written: G1-G26, H1-H26, I1-I26, J1-J26,
-        #          K1-K3,K4a,K4b,K5-K26,
-        #          L1-L26, M1-M25, N1-N25
-        for letter in "GHIJ":
-            for n in range(1, 27):
-                grammar_written_rows.append(f"{letter}{n}")
-        # K has K4a and K4b instead of K4
-        for n in range(1, 4):
-            grammar_written_rows.append(f"K{n}")
-        grammar_written_rows.append("K4a")
-        grammar_written_rows.append("K4b")
-        for n in range(5, 27):
-            grammar_written_rows.append(f"K{n}")
-        # L: 1-26
-        for n in range(1, 27):
-            grammar_written_rows.append(f"L{n}")
-        # M: 1-25
-        for n in range(1, 26):
-            grammar_written_rows.append(f"M{n}")
-        # N: 1-25
-        for n in range(1, 26):
-            grammar_written_rows.append(f"N{n}")
-
-        all_rows = (sociodem_rows
-                    + ["", "Lexical sets"] + lexical_rows
-                    + ["", "Comments"]
-                    + ["", "Grammar section 1"]
-                    + grammar_spoken_rows
-                    + ["", "Grammar section 2"]
-                    + grammar_written_rows)
-
-    # Build the reverse mapping: target_column → question_code
-    target_to_code: dict[str, str] = {}
-    for qcode, target in mapping.items():
-        if not target.startswith("_"):
-            target_to_code[target] = qcode
-
-    # ── Process each respondent ───────────────────────────────────────────
+    # ── Step 2: Read intermediate CSV ─────────────────────────────────────
+    df = pd.read_csv(str(intermediate_csv), dtype=str)
+    intermediate_csv.unlink(missing_ok=True)
     n_respondents = len(df)
-    print(f"  Processing {n_respondents} respondents")
+    print(f"  Respondents: {n_respondents}")
 
-    result_data = {}  # { informant_id: { row_label: value } }
+    # For the intermediate CSV, column name IS the question code directly.
+    # Build code→col map (trivial identity mapping, but keeps _apply_row reusable).
+    code_to_col: dict[str, str] = {col: col for col in df.columns}
+
+    # ── Step 3: Load mapping ──────────────────────────────────────────────
+    mapping_df = _load_mapping(mapping_file)
+
+    active = mapping_df[
+        (mapping_df["transform"] != "skip") &
+        (mapping_df["target_row"].str.strip() != "")
+    ].copy()
+
+    from collections import defaultdict
+    target_entries: dict[str, list[dict]] = defaultdict(list)
+    for _, mrow in active.iterrows():
+        target_entries[mrow["target_row"]].append({
+            "question_code": mrow["question_code"],
+            "transform":     mrow["transform"],
+        })
+
+    # ── Step 4: Load template row order ───────────────────────────────────
+    template_rows = _load_template_rows()
+    data_rows = template_rows[1:]
+
+    _SEPARATORS = {"", "Lexical sets", "Comments",
+                   "Grammar section 1", "Grammar section 2"}
+
+    # ── Step 5: Process each respondent ───────────────────────────────────
+    result_data: dict[str, dict[str, str]] = {}
 
     for idx, (_, row) in enumerate(df.iterrows()):
         informant_id = f"{informant_prefix}-{idx + 1:04d}"
         record: dict[str, str] = {}
 
-        # ── Simple 1:1 mapped columns ────────────────────────────────────
-        for target, qcode in target_to_code.items():
-            if qcode in code_to_col:
-                val = str(row.get(code_to_col[qcode], "")).strip()
-                if val.lower() == "nan":
-                    val = ""
-                record[target] = val
+        for target_row in data_rows:
+            if target_row in _SEPARATORS:
+                continue
 
-        # ── Gender: combine with other ───────────────────────────────────
-        record["Gender"] = _combine_other(
-            row.get(code_to_col.get("PI02", ""), ""),
-            row.get(code_to_col.get("PI02[other]", ""), ""),
-        )
+            if target_row in target_entries:
+                entries = target_entries[target_row]
+                val = _apply_row(row, entries, code_to_col, target_row)
 
-        # ── Nationality: combine with other ──────────────────────────────
-        nat_val = row.get(code_to_col.get("PI03", ""), "")
-        nat_other = row.get(code_to_col.get("PI03[other]", ""), "")
-        record["Nationality"] = _combine_other(nat_val, nat_other)
+                if any(e["transform"] == "grammar_value" for e in entries):
+                    val = _GRAMMAR_VALUE_MAP.get(val, val)
 
-        # ── Languages at home ────────────────────────────────────────────
-        if has_pi06_sq001sq001:
-            record["Languages used at home while  growing up"] = (
-                _combine_language_checkboxes(row, code_to_col,
-                                            "PI06", _PI06_LANG_LABELS_DE_FULL)
-            )
-        elif has_pi06_checkboxes:
-            record["Languages used at home while  growing up"] = (
-                _combine_language_checkboxes(row, code_to_col,
-                                            "PI06", _PI06_LANG_LABELS_IRELAND)
-            )
-        elif has_pi06_dropdown:
-            record["Languages used at home while  growing up"] = (
-                _combine_language_dropdown(row, code_to_col)
-            )
+                # Empty grammar or lexical values → NA
+                if not val and any(
+                    e["transform"] in ("grammar_value", "lexical_value")
+                    for e in entries
+                ):
+                    val = "NA"
 
-        # ── Mother's / Father's native language ─────────────────────────
-        if has_pi07m:
-            record["Native Lg. Mother"] = _combine_language_checkboxes(
-                row, code_to_col, "PI07m", _PI07_LANG_LABELS)
-            record["Native Lg. Father"] = _combine_language_checkboxes(
-                row, code_to_col, "PI07f", _PI07_LANG_LABELS)
+                record[target_row] = val
+            else:
+                record[target_row] = "NA" if target_row == "Additional Varieties" else "ND"
 
-        # ── Primary school: combine with other ───────────────────────────
-        record["Primary school"] = _combine_other(
-            row.get(code_to_col.get("EP01", ""), ""),
-            row.get(code_to_col.get("EP01[other]", ""), ""),
-        )
+        # Compute Ratio (Years outside / Age)
+        years_outside = record.get("Years lived outside of home country", "")
+        age = record.get("Age", "")
+        if not years_outside:
+            record["Ratio"] = "1"
+        elif not age:
+            record["Ratio"] = "NA"
+        else:
+            try:
+                ratio = 1 - float(years_outside) / float(age)
+                record["Ratio"] = str(round(ratio, 2))
+            except (ValueError, ZeroDivisionError):
+                record["Ratio"] = "NA"
 
-        # ── Secondary school (Germany only) ──────────────────────────────
-        if "EP02" in code_to_col:
-            record["Secondary school"] = _combine_other(
-                row.get(code_to_col.get("EP02", ""), ""),
-                row.get(code_to_col.get("EP02[other]", ""), ""),
-            )
+        # Compute Years lived in home country (Age − Years outside)
+        if not age:
+            record["Years lived in home country"] = "NA"
+        else:
+            try:
+                age_f = float(age)
+                outside_f = float(years_outside) if years_outside else 0.0
+                record["Years lived in home country"] = str(round(age_f - outside_f, 4))
+            except (ValueError, ZeroDivisionError):
+                record["Years lived in home country"] = "NA"
 
-        # ── Qualifications ───────────────────────────────────────────────
-        if has_ep04:
-            record["Qualifications"] = _combine_qualifications(row, code_to_col)
+        # Compute Years lived in Main Variety (Age − Years outside)
+        # and Ratio Main Variety (Years in Main Variety / Age)
+        if not age:
+            record["Years lived in Main Variety"] = "NA"
+            record["Ratio Main Variety"] = "NA"
+        else:
+            try:
+                age_f = float(age)
+                outside_f = float(years_outside) if years_outside else 0.0
+                years_main = age_f - outside_f
+                record["Years lived in Main Variety"] = str(round(years_main, 4))
+                record["Ratio Main Variety"] = str(round(years_main / age_f, 4))
+            except (ValueError, ZeroDivisionError):
+                record["Years lived in Main Variety"] = "NA"
+                record["Ratio Main Variety"] = "NA"
 
-        # ── Occupation: combine with other ───────────────────────────────
-        record["Current occupation"] = _combine_other(
-            row.get(code_to_col.get("EP05", ""), ""),
-            row.get(code_to_col.get("EP05[other]", ""), ""),
-        )
-
-        # ── Timeline Comments from PI10 ──────────────────────────────────
-        if "PI10" in code_to_col:
-            val = str(row.get(code_to_col["PI10"], "")).strip()
-            record["Timeline Comments"] = "" if val.lower() == "nan" else val
-
-        # ── Years lived in home country (Ireland: PI08Copy) ──────────────
-        if has_pi08copy and "PI08Copy" in code_to_col:
-            val = str(row.get(code_to_col["PI08Copy"], "")).strip()
-            record["Years lived in home country"] = "" if val.lower() == "nan" else val
-
-        # ── Germany full: EP06/EP07/EP08 with [other] ────────────────────
-        if has_ep09:
-            # Qualification mother (EP06 dropdown + other)
-            if "EP06" in code_to_col and "EP06[SQ001]" not in code_to_col:
-                record["Qualification mother"] = _combine_other(
-                    row.get(code_to_col.get("EP06", ""), ""),
-                    row.get(code_to_col.get("EP06[other]", ""), ""),
-                )
-            # Qualification father (EP07 dropdown + other)
-            if "EP07" in code_to_col:
-                record["Qualification father"] = _combine_other(
-                    row.get(code_to_col.get("EP07", ""), ""),
-                    row.get(code_to_col.get("EP07[other]", ""), ""),
-                )
-            # Qualification partner (EP08 dropdown + other)
-            if "EP08" in code_to_col:
-                record["Qualification partner"] = _combine_other(
-                    row.get(code_to_col.get("EP08", ""), ""),
-                    row.get(code_to_col.get("EP08[other]", ""), ""),
-                )
-            # Occupations from EP09 subquestions
-            for sq, target in [("SQ002", "Occupation mother"),
-                                ("SQ004", "Occupation father"),
-                                ("SQ006", "Occupation partner")]:
-                ep09_code = f"EP09[{sq}]"
-                if ep09_code in code_to_col:
-                    val = str(row.get(code_to_col[ep09_code], "")).strip()
-                    record[target] = "" if val.lower() == "nan" else val
-
-        # ── Years in English-speaking countries (PI11) ───────────────────
-        if "PI11" in code_to_col:
-            val = str(row.get(code_to_col["PI11"], "")).strip()
-            record["Years lived in other English-speaking countries"] = (
-                "" if val.lower() == "nan" else val
-            )
-
-        # ── CommentsLexical ──────────────────────────────────────────────
-        comments = _combine_lexical_comments(row, code_to_col)
-        record["Comments"] = comments
-
-        # ── Grammar values: convert text labels to numeric ───────────────
-        if has_grammar:
-            # GrammarSpokenFillingInFor from HC2
-            if "HC2" in code_to_col:
-                val = str(row.get(code_to_col["HC2"], "")).strip()
-                record["GrammarSpokenFillingInFor"] = (
-                    "" if val.lower() == "nan" else val
-                )
-
-            for label in grammar_spoken_rows + grammar_written_rows:
-                if label in record:
-                    raw = record[label]
-                    record[label] = _GRAMMAR_VALUE_MAP.get(raw, raw)
-
-        # ── Empty columns that don't come from the survey ────────────────
-        for col in ("Signature", "Main Variety", "Additional Varieties",
-                     "Years lived in Main Variety", "Ratio Main Variety",
-                     "Ratio", "Years lived in other English-speaking countries"):
-            record.setdefault(col, "")
-
-        # Ensure no 'nan' strings remain
-        for key in record:
-            if str(record[key]).lower() == "nan":
-                record[key] = ""
+        for k in record:
+            if record[k].lower() == "nan":
+                record[k] = ""
 
         result_data[informant_id] = record
 
-    # ── Build the transposed output DataFrame ─────────────────────────────
-    # Column 0 = "Informant ID" (row labels), then one column per respondent
+    # ── Step 6: Build transposed DataFrame ───────────────────────────────
     informant_ids = list(result_data.keys())
-
     output_rows = []
-    for row_label in all_rows:
-        row_values = [row_label]
-        if row_label == "" or row_label in ("Lexical sets", "Comments",
-                                             "Grammar section 1",
-                                             "Grammar section 2"):
-            # Separator/header rows: empty values
-            row_values.extend([""] * n_respondents)
+    for row_label in template_rows:
+        row_vals = [row_label if row_label != "" else ""]
+        if row_label in _SEPARATORS or row_label == "Informant ID":
+            row_vals.extend([""] * n_respondents)
         else:
             for iid in informant_ids:
-                row_values.append(result_data[iid].get(row_label, ""))
-        output_rows.append(row_values)
+                row_vals.append(result_data[iid].get(row_label, "ND"))
+        output_rows.append(row_vals)
 
     columns = ["Informant ID"] + informant_ids
     out_df = pd.DataFrame(output_rows, columns=columns)
+    out_df = out_df.fillna("").replace("nan", "")
 
-    # Replace 'nan' strings and actual NaN with empty strings
-    out_df = out_df.fillna("")
-    out_df = out_df.replace("nan", "")
-
-    # ── Write XLSX ────────────────────────────────────────────────────────
-    out_name = f"{informant_prefix}_{survey_type}_online.xlsx"
-    out_path = INPUT_DIR / out_name
+    # ── Step 7: Write XLSX ────────────────────────────────────────────────
+    out_name = f"{informant_prefix}_all_data_final.xlsx"
+    CONVERSION_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    out_path = CONVERSION_OUTPUT_DIR / out_name
     out_df.to_excel(str(out_path), index=False, engine="openpyxl")
 
-    print(f"  ✅ Written {n_respondents} respondents to {out_path.name}")
-    grammar_info = ""
-    if has_grammar:
-        grammar_info = (f" + {len(grammar_spoken_rows)} grammar spoken"
-                        f" + {len(grammar_written_rows)} grammar written")
-    print(f"     Rows: {len(all_rows)} ({len(sociodem_rows)} sociodem + "
-          f"{len(lexical_rows)} lexical{grammar_info})")
+    n_mapped = len([r for r in data_rows if r not in _SEPARATORS
+                    and r in target_entries])
+    n_nd = len([r for r in data_rows if r not in _SEPARATORS
+                and r not in target_entries])
+    print(f"  ✅ Written to {out_path.name}")
+    print(f"     Rows: {len(template_rows)-1} template rows  "
+          f"({n_mapped} mapped, {n_nd} filled with ND)")
+
+    # ── Step 8: Archive input files ───────────────────────────────────────
+    from datetime import datetime
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    done_dir = CONVERSION_INPUT_DIR / "Done" / timestamp
+    done_dir.mkdir(parents=True, exist_ok=True)
+    shutil.move(str(data_csv),    str(done_dir / data_csv.name))
+    shutil.move(str(syntax_file), str(done_dir / syntax_file.name))
+    print(f"  📁 Input files archived to {done_dir.relative_to(DATA_DIR.parent)}/")
 
     return out_path
 
 
 def convert_all_limesurvey_exports() -> list[Path]:
-    """Find and convert all LimeSurvey CSV exports in the export directory.
+    """Find and convert all LimeSurvey R-export pairs in data/conversion/input/.
 
-    Looks for Lexical*.csv and Grammar*.csv files.
-    Detects the country from the filename and infers a prefix.
-    Returns a list of generated XLSX paths.
+    Each pair consists of ``survey_NNN_R_data_file.csv`` and the matching
+    ``survey_NNN_R_syntax_file.R`` in the same directory.
+
+    The informant prefix is read from the mapping file's ``# prefix:`` comment.
+
+    Returns a list of successfully generated XLSX paths.
     """
     print()
     print("=" * 80)
     print("  STAGE: Convert LimeSurvey exports → XLSX")
     print("=" * 80)
 
-    if not LIMESURVEY_DIR.exists():
-        print(f"  ⚠  No LimeSurvey export directory found at {LIMESURVEY_DIR}")
+    if not CONVERSION_INPUT_DIR.exists():
+        print(f"  ⚠  Input directory not found: {CONVERSION_INPUT_DIR}")
         return []
 
-    csv_files = sorted(
-        set(LIMESURVEY_DIR.glob("Lexical*.csv"))
-        | set(LIMESURVEY_DIR.glob("Grammar*.csv"))
+    if not TEMPLATE_XLSX.exists():
+        print(f"  ❌ Template XLSX not found: {TEMPLATE_XLSX}")
+        return []
+
+    r_data_files = sorted(
+        f for f in CONVERSION_INPUT_DIR.glob("*.csv")
+        if re.search(r'survey_\d+_R_data_file', f.name, re.IGNORECASE)
     )
-    if not csv_files:
-        print(f"  ⚠  No Lexical*.csv or Grammar*.csv files found in "
-              f"{LIMESURVEY_DIR}")
+
+    if not r_data_files:
+        print(f"  ⚠  No R data files (survey_*_R_data_file.csv) found in {CONVERSION_INPUT_DIR}")
         return []
 
-    print(f"  Found {len(csv_files)} LimeSurvey export(s)")
+    print(f"  Found {len(r_data_files)} R data file(s)")
 
-    generated = []
-    for csv_file in csv_files:
-        # Infer prefix and survey type from filename
-        prefix = _infer_prefix(csv_file)
-        survey_type = "grammar" if csv_file.stem.lower().startswith("grammar") else "lexical"
-        out_path = convert_limesurvey(csv_file, prefix, survey_type)
-        generated.append(out_path)
+    generated: list[Path] = []
+    skipped:   list[str]  = []
 
+    for data_csv in r_data_files:
+        syntax_file = _r_syntax_file_for(data_csv)
+        if syntax_file is None:
+            print(f"  ⚠  No matching R syntax file for {data_csv.name} – skipping")
+            skipped.append(data_csv.name)
+            continue
+
+        survey_r_id  = _survey_r_id_from_path(data_csv)
+        mapping_file = _mapping_path(survey_r_id)
+        prefix       = _read_prefix_from_mapping(mapping_file)
+
+        out_path = convert_limesurvey_r(data_csv, syntax_file, prefix)
+        if out_path is not None:
+            generated.append(out_path)
+        else:
+            skipped.append(data_csv.name)
+
+    print()
+    if generated:
+        print(f"  ✅ Converted: {len(generated)} file(s)")
+    if skipped:
+        print(f"  ⚠  Skipped (stub generated / no syntax file): {len(skipped)} file(s)")
+        for name in skipped:
+            print(f"       {name}")
     return generated
 
 
-def _infer_prefix(csv_path: Path) -> str:
-    """Infer a country+year InformantID prefix from the CSV filename.
-
-    For 'Lexical_Germany_results-survey367676.csv' → 'DE25'
-    For 'Lexical_results-survey367676.csv' → 'IR25'
-    For 'Grammar_Germany_results.csv' → 'DE25'
-    Other patterns: extract the country name and use current year.
-    """
-    stem = csv_path.stem.lower()
-
-    # Known country keywords → code mapping
-    country_codes = {
-        "germany": "DE",
-        "ireland": "IR",
-        "australia": "AU",
-        "canada": "CA",
-        "denmark": "DK",
-        "spain": "ES",
-        "gibraltar": "GI",
-        "hawaii": "HA",
-        "india": "IN",
-        "jersey": "JE",
-        "malta": "MT",
-        "newzealand": "NZ",
-        "philippines": "PH",
-        "puertorico": "PR",
-        "scotland": "SC",
-        "slovenia": "SL",
-        "sweden": "SW",
-        "uk": "UK",
-        "us": "US",
-    }
-
-    detected_code = None
-    for keyword, code in country_codes.items():
-        if keyword in stem.replace("_", "").replace("-", ""):
-            detected_code = code
-            break
-
-    if detected_code is None:
-        # Try to extract from filename pattern Lexical_XYZ_results
-        # or Grammar_XYZ_results
-        match = re.search(r"(?:lexical|grammar)_(\w+?)_results", stem)
-        if match:
-            detected_code = match.group(1)[:2].upper()
-        else:
-            # Fallback for 'Lexical_results-...' (no country in name)
-            detected_code = "IR"  # default to Ireland
-
-    # Use current year (last two digits)
-    import datetime
-    year_short = datetime.datetime.now().strftime("%y")
-
-    prefix = f"{detected_code}{year_short}"
-    return prefix
+def _read_prefix_from_mapping(mapping_file: Path) -> str:
+    """Read the informant prefix from a ``# prefix: XX26`` comment line."""
+    if not mapping_file.exists():
+        return "XX26"
+    with mapping_file.open() as fh:
+        for line in fh:
+            m = re.match(r"#\s*prefix\s*:\s*(\S+)", line.strip())
+            if m:
+                return m.group(1)
+    return "XX26"

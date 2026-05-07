@@ -29,7 +29,7 @@ import numpy as np
 import pandas as pd
 from sklearn.linear_model import Ridge
 
-from lib import DB_PATH, OUTPUT_DIR, R_SCRIPTS_DIR
+from lib import BASE_DIR, DB_PATH, OUTPUT_DIR, R_SCRIPTS_DIR
 
 # ── constants ───────────────────────────────────────────────────────────────
 
@@ -1219,6 +1219,7 @@ def _run_missforest_via_r(
             ["Rscript", str(r_script), str(OUTPUT_DIR), "missForest"],
             capture_output=True,
             text=True,
+            cwd=str(BASE_DIR),
         )
 
         # Log R stdout
@@ -1275,7 +1276,7 @@ def _run_fabof_via_r(
     log.log("  (R output follows)\n")
 
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True)
+        result = subprocess.run(cmd, capture_output=True, text=True, cwd=str(BASE_DIR))
 
         if result.stdout:
             for line in result.stdout.splitlines():
@@ -1486,6 +1487,7 @@ def _prepare_prefilled_rds_for_r(db_path: Path, new_informant_ids: list[str], lo
         result = subprocess.run(
             ["Rscript", "-e", r_code],
             capture_output=True, text=True,
+            cwd=str(BASE_DIR),
         )
         if result.returncode == 0:
             log.log("  Pre-filled RDS files written for R imputation")
