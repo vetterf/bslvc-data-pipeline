@@ -82,12 +82,17 @@ A*,No/Other Qualification
 A-Level,Secondary Education
 A-Level's,Secondary Education
 A-Levels,Secondary Education
+"A-Levels
+(Post-
+Secondary)",Secondary Education
+"A-Levels
+Undergraduate",Higher Education
 A-Levels (Post-Secondary),Secondary Education
 A-Levels Undergraduate,Higher Education
 A-Levels in general studies,Secondary Education
 "A-Levels, Bachelor, Master's",Higher Education
 "A-Levels, O-Levels",Secondary Education
-"A-Levels, Ships Master Ticket",Higher Education
+"A-Levels, Ships Master Ticket",Secondary Education
 A-level,Secondary Education
 A-level standard,Secondary Education
 A-levels,Secondary Education
@@ -99,6 +104,8 @@ AAT-A-Levels,Professional/Vocational
 ABC,Professional/Vocational
 ACCA,Professional/Vocational
 ACI Dealing Certificate,Professional/Vocational
+"ACIB
+(Banking)",Professional/Vocational
 ACIB (Banking),Professional/Vocational
 ACII,Professional/Vocational
 ADN,Higher Education
@@ -128,10 +135,12 @@ Accountant training,Work-Based Learning
 "Accountant, pharmacy assistant",Professional/Vocational
 Accounting,Professional/Vocational
 Administrator,Professional/Vocational
-Advanced Level,Secondary Education
+"Advanced
+Level",Secondary Education
 Advanced Diploma,Secondary Education
 Advanced Higher,Secondary Education
 "Advanced Higher, Master's",Higher Education
+Advanced Level,Secondary Education
 Advanced Level,Secondary Education
 Advanced Level Qualification,Secondary Education
 Advanced Levels,Secondary Education
@@ -145,17 +154,20 @@ Anasthesia,No/Other Qualification
 Appenticeship Engineering,Work-Based Learning
 Apprentice,Work-Based Learning
 Apprenticeship,Work-Based Learning
-Apprenticeship Bachelor,Higher Education
+"Apprenticeship
+Bachelor",Higher Education
 Apprenticeship (Higher ? in land ? University of Malta),Work-Based Learning
 Apprenticeship (Plumber),Work-Based Learning
 Apprenticeship (advanced diploma in business),Work-Based Learning
 Apprenticeship (beauty therapist / makeup artist),Work-Based Learning
 Apprenticeship (chef),Work-Based Learning
 Apprenticeship (trade school),Work-Based Learning
+Apprenticeship Bachelor,Higher Education
 Apprenticeship Social work,Work-Based Learning
 Apprenticeship as Auto Electrician,Work-Based Learning
 Apprenticeship at retail),Work-Based Learning
 Apprenticeship interior designer,Work-Based Learning
+Apprenticeship or vocational classes,Work-Based Learning
 "Apprenticeship, Secondary school",Work-Based Learning
 Apprenticeship: Finance and Insurance,Work-Based Learning
 Apprenticeship: nurse,Work-Based Learning
@@ -163,6 +175,8 @@ Apprenticeship: saleswoman,Work-Based Learning
 Apprenticeship: technical education,Work-Based Learning
 Apprenticeship; Bachelor,Higher Education
 Apprenticeship; Master's,Higher Education
+Apprenticeship; Vocational classes; General secondary education,Secondary Education
+Apprenticeship; Vocational classes; General secondary education; Bachelor; Master's; PhD,Higher Education
 Apprenticeships,Work-Based Learning
 Architect,Professional/Vocational
 Architecture degree,Higher Education
@@ -243,7 +257,8 @@ BTEC National Diploma Dental Technician,Professional/Vocational
 BWL University Graduate,Higher Education
 Babysitter,No/Other Qualification
 Bachelor,Higher Education
-Bachelor CELTA,Higher Education
+"Bachelor
+CELTA",Higher Education
 "Bachelor (, Cambridge Business Diploma, IELTS 8.5)",Higher Education
 Bachelor (Accountancy),Higher Education
 Bachelor (Actuarial Science),Higher Education
@@ -266,6 +281,7 @@ Bachelor (post-graduate diploma),Higher Education
 "Bachelor (sixth year studies, Physics degree)",Higher Education
 Bachelor (specialist in Food Technology),Higher Education
 Bachelor - Primary School teaching,Higher Education
+Bachelor CELTA,Higher Education
 Bachelor Degree,Higher Education
 Bachelor Hon.,Higher Education
 Bachelor Medicine,Higher Education
@@ -311,6 +327,10 @@ Bachelor: European studies and Italian,Higher Education
 Bachelor: Philosophy and Economics,Higher Education
 Bachelor: medical  course MD,Higher Education
 Bachelor; Master's,Higher Education
+Bachelor; Master's; PhD,Higher Education
+Bachelor; Medicine MBBCh,Higher Education
+Bachelor; Medicine MBBS,Higher Education
+Bachelor; Teacher's degree,Higher Education
 Bachelors,Higher Education
 Bachelors Degree,Higher Education
 Bachelors degree,Higher Education
@@ -327,6 +347,7 @@ Bankkauffrau,Professional/Vocational
 Barber,Work-Based Learning
 Barts,No/Other Qualification
 Basic education,Secondary Education
+Bavarian State Exam,Higher Education
 Bawer,No/Other Qualification
 Beautician,Work-Based Learning
 Beautician degree,Work-Based Learning
@@ -376,6 +397,7 @@ Certificate of Higher Education,Higher Education
 Certification,Professional/Vocational
 Certified Public Accountant,Professional/Vocational
 Charted accountant,Professional/Vocational
+Chartered Accountant,Professional/Vocational
 Chef,Work-Based Learning
 Chemistry Engineer,Higher Education
 "Child protection, referee",No/Other Qualification
@@ -401,8 +423,11 @@ College student,Higher Education
 Collge Degree,Higher Education
 Comapny's Chief Financial Officier,No/Other Qualification
 Commerce degree,Higher Education
+"Completed
+Secondary
+School",Secondary Education
+Completed High School,Secondary Education
 Completed Secondary School,Secondary Education
-Completed High School,Higher Education
 Completed Work Training as Bank Assistant,Work-Based Learning
 Completed vocational training,Professional/Vocational
 Compliance,No/Other Qualification
@@ -429,6 +454,8 @@ Degree Graphic Design/Illustration,Higher Education
 Degree Law,Higher Education
 Degree Optometry,Higher Education
 Degree at I TS,Higher Education
+"Degree from
+Montesouri",Secondary Education
 Degree from Montesouri,Secondary Education
 Degree in Medicine,Higher Education
 Degree in Professional Teaching,Higher Education
@@ -461,6 +488,7 @@ Diplom FH,Higher Education
 Diplom Grafikdesign English,Higher Education
 Diplom Informatics,Higher Education
 Diplom Ingenieur,Higher Education
+Diplom Ingenieur (FH),Higher Education
 Diplom Soz. Päd.,Higher Education
 Diplom Textiltechnik,Higher Education
 Diplom engineer,Higher Education
@@ -479,13 +507,16 @@ Diploma Soz.Päd.,Higher Education
 Diploma degree,Higher Education
 Diploma from Southampon University,Higher Education
 Diploma general Studies,Higher Education
-Diploma in Public Administration,Higher Education
+"Diploma in
+Public
+Administration",Vocational/Professional
 Diploma in Banking,Higher Education
 Diploma in Child Education,Higher Education
 Diploma in Design Foundation,Higher Education
 Diploma in Engineering,Higher Education
 Diploma in IT,Higher Education
 Diploma in Management Studies,Higher Education
+Diploma in Public Administration,Vocational/Professional
 Diploma in legal services/certificate in financial services,Higher Education
 Diploma in mathematics,Higher Education
 Diploma in secretarial studies,Higher Education
@@ -500,6 +531,7 @@ Diplomkaufmann,Higher Education
 Diplomverwaltungsfachwirt,Higher Education
 Diplomverwaltungsfachwirtin,Higher Education
 Director,Professional/Vocational
+Do not have a partner,NA
 Doc (ongoing),Higher Education
 Doctor,Higher Education
 Doctor (medical),Higher Education
@@ -514,6 +546,7 @@ Doctor/Staatsexamen,Higher Education
 Doctoral,Higher Education
 Doctoral (medicine),Higher Education
 Doctoral degree,Higher Education
+Doctorant,Higher Education
 Doctorat,Higher Education
 Doctorate,Higher Education
 Doctorate in education,Higher Education
@@ -530,6 +563,7 @@ Dr. phil.,Higher Education
 Dr.'s Degree,Higher Education
 Driver Training,Work-Based Learning
 Dropped out of school at fourteen,No/Other Qualification
+ESO,No/Other Qualification
 Early Years Course,Secondary Education
 Economy,No/Other Qualification
 Edinburgh School certificate,Secondary Education
@@ -542,22 +576,24 @@ Electrical Engineer,Professional/Vocational
 Electrician,Professional/Vocational
 Electrician Degree,Higher Education
 Electrition,Professional/Vocational
-Elementary,Secondary Education
-Elementary School,Secondary Education
-Elementary school,Secondary Education
-Engineer,Professional/Vocational
+Elementary,No/Other Qualification       
+Elementary School,No/Other Qualification
+Elementary school,No/Other Qualification
+Engineer,Higher Education
 Engineering,Higher Education
 Engineering Course,Higher Education
 Engineering Degree,Higher Education
 Engineering apprentice,Work-Based Learning
 Engineering degree,Higher Education
-English Teacher,Professional/Vocational
+English Teacher,Higher Education
 English degree,Higher Education
 Entrepreneur,No/Other Qualification
-Environment Engineer,Professional/Vocational
-Environmental Health,No/Other Qualification
+"Entry requirement for university (e.g., A-levels, high school)",Secondary Education
+Environment Engineer,Higher Education
+Environmental Health,Higher Education
 Erstes Staatsexamen,Higher Education
 Estate Agent,No/Other Qualification
+FP,No/Other Qualification
 FRICS,Professional/Vocational
 Fach-Abi,Secondary Education
 Fach-Abi & Bachelor,Higher Education
@@ -628,6 +664,12 @@ General Certificate of Education,Secondary Education
 General Certificate of Secondary Education,Secondary Education
 General certificate of secondary education,Secondary Education
 General education,Secondary Education
+General secondary education,Secondary Education
+General secondary education; Bachelor,Higher Education
+General secondary education; Bachelor; BA Teachers education,Higher Education
+General secondary education; Bachelor; Master's,Higher Education
+General secondary education; State exam,Higher Education
+General secondary education; football referee,Secondary Education
 Geography degree,Higher Education
 Geologcal Chief,No/Other Qualification
 Gimnazija Piran,Secondary Education
@@ -639,6 +681,8 @@ Grade 8,Secondary Education
 "Grade 8, Piano",Secondary Education
 Grade School,Secondary Education
 Grade school,Secondary Education
+"Grado 
+asociado",Higher Education
 Grado Asociado,Higher Education
 Grado Asociado,Higher Education
 Graduate,Higher Education
@@ -652,6 +696,9 @@ Grammar school degree,Secondary Education
 Grammer School,Secondary Education
 Grapes/vines,No/Other Qualification
 Gymnasium,Secondary Education
+"Gymnasium
+University
+Degree",Higher Education
 Gymnasium University Degree,Higher Education
 Gymnasium in Sweden,Secondary Education
 HGV class,Work-Based Learning
@@ -672,16 +719,21 @@ Hauptschulabschluss,Secondary Education
 Hauptschule,Secondary Education
 Higehst level at secondary school: four highers,Secondary Education
 High School,Secondary Education
-High School Diploma,Secondary Education
+"High School 
+Diploma",Secondary Education
 High School (Year 10),Secondary Education
 High School / USMC,Professional/Vocational
 High School / USN,Professional/Vocational
 High School Degree and ongoing Bachelor,Higher Education
 High School Diploma,Secondary Education
-High School Diploma Degree in Adminstration,Higher Education
+High School Diploma,Secondary Education
+"High School Diploma 
+Degree in Adminstration",Secondary Education
 High School Diploma / CAE,Secondary Education
 High School Diploma / Mechanic,Work-Based Learning
+High School Diploma / classe préparatoire aux grandes écoles,Higher Education
 High School Diploma / classe pr�paratoire aux grandes �coles,Higher Education
+High School Diploma Degree in Adminstration,Professional/Vocational
 "High School Diploma, Bachelor, French baccalaureat",Higher Education
 "High School Diploma, Vocational Class: Electricity",Professional/Vocational
 "High School Diploma, Vocational classes: Auto Mechanics",Professional/Vocational
@@ -694,7 +746,9 @@ High School Diploma; CaE Certificate,Secondary Education
 High School Diploma; Work training,Work-Based Learning
 High School degree,Secondary Education
 High School diploma,Secondary Education
+High School diploma,Secondary Education
 High School graduate,Secondary Education
+High School graduation,Secondary Education
 High School of economics,Secondary Education
 High School student,Secondary Education
 High School student ??,Secondary Education
@@ -704,19 +758,23 @@ High School student ??,Secondary Education
 "High School, studies in US Air Force",Secondary Education
 "High School, vocational classes",Professional/Vocational
 High school,Secondary Education
-High School diploma,Secondary Education
+"High school 
+diploma",Secondary Education
 High school Diploma,Secondary Education
 High school Higher,Higher Education
 High school Standard grade,Secondary Education
 High school diploma,Secondary Education
+High school diploma,Secondary Education
 "High school diploma, Bachelor",Higher Education
 "High school diploma, some college",Higher Education
 High school diploma; work-hostess internship training,Work-Based Learning
+High school graduate,Secondary Education
 High school teacher,Higher Education
 "High school, secondary school",Secondary Education
 Higher,Secondary Education
 Higher Certificate,Higher Education
 Higher Diploma,Higher Education
+Higher Education,Higher Education
 Higher National Certificate,Professional/Vocational
 Higher National Certificate (HNC),Professional/Vocational
 Higher National Diploma,Professional/Vocational
@@ -726,6 +784,7 @@ Higher School Certificate,Professional/Vocational
 Higher Secondary,Secondary Education
 Higher Secondary Certificate,Professional/Vocational
 Higher diploma,Higher Education
+Higher education,Higher Education
 Higher secondary,Secondary Education
 "Higher, Bachelor",Higher Education
 "Higher, HND",Professional/Vocational
@@ -822,6 +881,9 @@ Honours degree,Higher Education
 Hotel manager,No/Other Qualification
 Housewife,No/Other Qualification
 Höhere Handelsschule,Work-Based Learning
+I don't have a partner,NA
+I don't know what they have in spain but he graduated university and studies phtography,Higher Education
+I have no partner,NA
 IATA tourism studies diploma,Professional/Vocational
 IHK Technician,Professional/Vocational
 ILAM Diploma,Professional/Vocational
@@ -936,6 +998,7 @@ MQF level 5,Professional/Vocational
 MQF level 7,Professional/Vocational
 MSc,Higher Education
 Machine Operator,Work-Based Learning
+Mag.phil,Higher Education
 Magister,Higher Education
 Magistrate,Higher Education
 "Malta College of Arts, Science and Technology",Higher Education
@@ -990,6 +1053,7 @@ Matric,Professional/Vocational
 Matriculation,Higher Education
 Matriculation Certificate,Higher Education
 "Matriculation Certificate, O-Levels",Higher Education
+Mature Course,Secondary Education
 Maturità (Italian qualififcation),Secondary Education
 Maurer Ausbildung,Work-Based Learning
 Mechanic,Work-Based Learning
@@ -1033,6 +1097,7 @@ Mittlere Reife,Secondary Education
 "Mittlere Reife, Ausbildung",Work-Based Learning
 Mittlere reife/ Vocational training,Professional/Vocational
 Motor Mechanic,Work-Based Learning
+N/a,NA
 NCVA level 2,Secondary Education
 ND,Professional/Vocational
 NDE,Professional/Vocational
@@ -1053,7 +1118,9 @@ Never went to school,No/Other Qualification
 Nil,No/Other Qualification
 Nine GCSEs,Secondary Education
 No education,No/Other Qualification
+No partner,NA
 No qualification,No/Other Qualification
+No/Other Qualification,No/Other Qualification
 Normal qualification,Secondary Education
 Nothing,No/Other Qualification
 Nurse,Professional/Vocational
@@ -1115,8 +1182,10 @@ Online diploma,No/Other Qualification
 Open Uni Degree,Higher Education
 Optician,Work-Based Learning
 Ordinary,Secondary Education
-Ordinary level,Secondary Education
+"Ordinary
+Level",Secondary Education
 Ordinary Levels,Secondary Education
+Ordinary level,Secondary Education
 Ordinary level,Secondary Education
 Other,No/Other Qualification
 Other (11th and Plus),Secondary Education
@@ -1193,13 +1262,18 @@ Post graduate,Higher Education
 Post graduate diploma,Higher Education
 Post office,No/Other Qualification
 Post secondary,Secondary Education
-Post-Secondary,Secondary Education
-Post-Secondary Level,Secondary Education
+"Post-
+Secondary",Secondary Education
+"Post-
+Secondary
+Level",Secondary Education
 Post- Secondary,Secondary Education
 Post-Grad Diploma,Higher Education
 Post-Graduate,Higher Education
 Post-Graduation,Higher Education
 Post-Secondary,Secondary Education
+Post-Secondary,Secondary Education
+Post-Secondary Level,Secondary Education
 Post-graduate,Higher Education
 Post-secondary,Secondary Education
 Post-secondary education,Secondary Education
@@ -1210,7 +1284,8 @@ Postgraduation,Higher Education
 Pre GCSEs,Secondary Education
 Pre-school teacher,Higher Education
 Primary,No/Other Qualification
-primary level,No/Other Qualification
+"Primary
+Level",No/Other Qualification
 Primary School,No/Other Qualification
 Primary school,No/Other Qualification
 Printing,No/Other Qualification
@@ -1220,6 +1295,8 @@ Professional Cert.,Professional/Vocational
 Professional Electrician Engineer,Professional/Vocational
 Professional Qualification,Professional/Vocational
 Professional School,Professional/Vocational
+Professional formatiob,Professional/Vocational
+Professional formation,Professional/Vocational
 Professional qualification,Professional/Vocational
 Professor,Higher Education
 Professorship,Higher Education
@@ -1293,19 +1370,28 @@ Scottish Vocational Qualifications,Professional/Vocational
 Seamstress(?) Certificate,Professional/Vocational
 Seconadry,Secondary Education
 Secondary,Secondary Education
-Secondary Level,Secondary Education
-Secondary School,Secondary Education
-Secondary School not finished,No/Other Qualification
+"Secondary
+Level",Secondary Education
+"Secondary
+School",Secondary Education
+"Secondary
+School
+not finished",Secondary Education
 Secondary Education,Secondary Education
 Secondary Leaving Certificate,Secondary Education
 Secondary Level,Secondary Education
+Secondary Level,Secondary Education
 Secondary Qualification,Secondary Education
+Secondary School,Secondary Education
 Secondary School,Secondary Education
 Secondary School Highers,Secondary Education
 Secondary School Level,Secondary Education
+Secondary School not finished,No/Other Qualification
 Secondary Shool,Secondary Education
+Secondary educatiom,Secondary Education
 Secondary education,Secondary Education
 Secondary school,Secondary Education
+Secondary studies,Secondary Education
 Secondary vocational,Professional/Vocational
 Secondary-school diploma,Secondary Education
 Secretarial,Professional/Vocational
@@ -1321,6 +1407,7 @@ Secreterial Course,Professional/Vocational
 Security,No/Other Qualification
 Senior Transactional Officer,No/Other Qualification
 Senior clerk,Professional/Vocational
+Seondary school,Secondary Education
 Sexondary,Secondary Education
 Shipyard,No/Other Qualification
 Shop Owner,No/Other Qualification
@@ -1353,6 +1440,7 @@ Standard Grade,Secondary Education
 Standard grade,Secondary Education
 Standard grades,Secondary Education
 Started Uni,Higher Education
+State Exam,Higher Education
 State School,Secondary Education
 State enrolled nursing,Professional/Vocational
 State registered nurse,Professional/Vocational
@@ -1360,6 +1448,7 @@ Student,Higher Education
 Studium,Higher Education
 Studium Lehramt Gym English and German,Higher Education
 Stukkateur-Meister,Professional/Vocational
+Superior grade,Secondary Education
 Surgical Assistant Course,Higher Education
 Surveying degree,Higher Education
 Swansea Certificate,Professional/Vocational
@@ -1376,11 +1465,15 @@ Teacher's Programme,Higher Education
 Teacher's Training College,Higher Education
 Teachers Degree,Higher Education
 Teaching Certificate,Higher Education
+Teaching Degree,Higher Education
 Teaching Diploma,Higher Education
 Teaching Qualification,Higher Education
 Teaching degree,Higher Education
 Teaching degree (Gym.),Higher Education
 Tech School,Professional/Vocational
+"Technical +
+Engineering
+School",Higher Education
 Technical + Engineering School,Professional/Vocational
 Technical College,Professional/Vocational
 Technical Degree,Professional/Vocational
@@ -1390,6 +1483,8 @@ Technical chef,Work-Based Learning
 Technician,Work-Based Learning
 Technician Degree,Higher Education
 Technikumabschluss Maschinenbau,Higher Education
+"Technology
+Course",Higher Education
 Technology Course,Professional/Vocational
 Telecommunications Technicians Diploma,Higher Education
 Tertiary,Higher Education
@@ -1499,6 +1594,7 @@ Vocational classes (Carpentry and Joinery),Professional/Vocational
 Vocational classes (City and Guilds 224 Electronic Services),Professional/Vocational
 "Vocational classes (College: painting and decorating, waitress and hotel management)",Professional/Vocational
 "Vocational classes (Drama), Work training, Highest level attained at secondary school, Bachelor, Drama + Performance",Higher Education
+"Vocational classes (English classes), Bachelor",Higher Education
 Vocational classes (GCSE's+ A-levels),Professional/Vocational
 Vocational classes (GCSE),Professional/Vocational
 Vocational classes (GCSE/ A-Levels),Professional/Vocational
@@ -1546,8 +1642,10 @@ Vocational classes / Apprenticeship,Professional/Vocational
 "Vocational classes, work training, highest level at secondary school: sixth year studies; Bachelor",Higher Education
 "Vocational classes, work training, highest level attained at secondary school",Professional/Vocational
 Vocational classes: Diploma in radiography,Professional/Vocational
+Vocational classes; General secondary education,Secondary Education
 Vocational classes; Highest level at secondary school: Advanced Higher; Bachelor,Higher Education
 Vocational classes; Work training (accounting),Professional/Vocational
+"Vocational classses (English classes), Bachelor",Higher Education
 "Vocational clsses (PDA/HND), Bachelor",Higher Education
 Vocational college,Professional/Vocational
 Vocational degree,Professional/Vocational
@@ -1557,6 +1655,7 @@ Vocational school (2 years),Professional/Vocational
 Vocational scjool,Professional/Vocational
 Vocational training,Professional/Vocational
 "Vocational, high school diploma",Professional/Vocational
+Vocationl training,Professional/Vocational
 Volkshochschulabschluss,Secondary Education
 Volksschule,Secondary Education
 Volljurist,Higher Education
@@ -1612,6 +1711,7 @@ Work training (shipping school),Work-Based Learning
 "Work training,High School Diploma,Bachelor,Masters, other (military)",Higher Education
 Work training/Other,Work-Based Learning
 Work training; Highest level at secondary school: Highers,Work-Based Learning
+Work-Based Learning,Work-Based Learning
 Workman,No/Other Qualification
 Yachtmaster Offshore (Commercial),Professional/Vocational
 Year 11,Secondary Education
@@ -1647,6 +1747,7 @@ college degree,Higher Education
 college technical,Professional/Vocational
 comprehensive school,Secondary Education
 cooking,No/Other Qualification
+cos?,No/Other Qualification
 craft school,Work-Based Learning
 degree,Higher Education
 degree in IT,Higher Education
@@ -1680,7 +1781,8 @@ half secondary school,Secondary Education
 head of division,No/Other Qualification
 high,Secondary Education
 high school,Secondary Education
-High school diploma,Secondary Education
+"high school 
+diploma",Secondary Education
 high school dipl,Secondary Education
 high school diploma,Secondary Education
 housewife,No/Other Qualification
@@ -1718,8 +1820,11 @@ mittlere Reife,Secondary Education
 musician/ teacher,Higher Education
 my own way,No/Other Qualification
 nil,No/Other Qualification
+no partner,NA
+no partner currently,NA
 non-readable,No/Other Qualification
 none,No/Other Qualification
+none (no partner),NA
 none/other?,No/Other Qualification
 nurse,Higher Education
 nursing course,Higher Education
@@ -1764,6 +1869,7 @@ post-graduate,Higher Education
 post-secondary,Secondary Education
 postman,No/Other Qualification
 primary,No/Other Qualification
+primary level,No/Other Qualification
 primary level,No/Other Qualification
 primary school,No/Other Qualification
 primary school?,No/Other Qualification

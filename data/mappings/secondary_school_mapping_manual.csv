@@ -1,6 +1,7 @@
 Original_School,Normalized_School,School_Type
+,NA,NA
 "(public,private)",Mixed,Secondary
-/,NA,Secondary
+/,NA,NA
 American School,NA,Secondary
 Anglican private school,Mixed,Secondary
 Catholic School,Church,Secondary
@@ -12,6 +13,7 @@ Country,State,Secondary
 Drop-out,NA,Secondary
 Dropped out,NA,Secondary
 GEPÅ  Gimnazija Piran,NA,Secondary
+GEPŠ Gimnazija Piran,NA,Secondary
 Government (fee paying),State,Secondary
 Governmental school in Kuwait,State,Secondary
 Govt. Boys Higher Secondary School,State,Secondary
@@ -26,6 +28,7 @@ Online diploma,Other,Secondary
 Other,Other,Secondary
 Private,Private,Secondary
 Private (International),Private,Secondary
+Private (fee-paying),Private,Secondary
 Private Catholic,Mixed,Secondary
 "Private, D.AV Public School",Private,Secondary
 "Private, but most of the fee pays the government",Private,Secondary

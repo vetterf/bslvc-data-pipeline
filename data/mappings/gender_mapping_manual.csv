@@ -1,5 +1,9 @@
 Original_Gender,Normalized_Gender
 ,NA
+Butch,Male
+Female,Female
+Male,Female
+Non-binary,Non-binary
 f,Female
 female,Female
 m,Male

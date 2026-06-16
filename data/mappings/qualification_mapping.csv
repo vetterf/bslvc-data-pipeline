@@ -162,6 +162,7 @@ Apprenticeship Social work,Work-Based Learning
 Apprenticeship as Auto Electrician,Work-Based Learning
 Apprenticeship at retail),Work-Based Learning
 Apprenticeship interior designer,Work-Based Learning
+Apprenticeship or vocational classes,Professional/Vocational
 "Apprenticeship, Secondary school",Work-Based Learning
 Apprenticeship: Finance and Insurance,Work-Based Learning
 Apprenticeship: nurse,Work-Based Learning
@@ -169,6 +170,8 @@ Apprenticeship: saleswoman,Work-Based Learning
 Apprenticeship: technical education,Professional/Vocational
 Apprenticeship; Bachelor,Higher Education
 Apprenticeship; Master's,Higher Education
+Apprenticeship; Vocational classes; General secondary education,Professional/Vocational
+Apprenticeship; Vocational classes; General secondary education; Bachelor; Master's; PhD,Higher Education
 Apprenticeships,Work-Based Learning
 Architect,No/Other Qualification
 Architecture degree,Higher Education
@@ -318,6 +321,10 @@ Bachelor: European studies and Italian,Higher Education
 Bachelor: Philosophy and Economics,Higher Education
 Bachelor: medical  course MD,Higher Education
 Bachelor; Master's,Higher Education
+Bachelor; Master's; PhD,Higher Education
+Bachelor; Medicine MBBCh,Higher Education
+Bachelor; Medicine MBBS,Higher Education
+Bachelor; Teacher's degree,Higher Education
 Bachelors,Higher Education
 Bachelors Degree,Higher Education
 Bachelors degree,Higher Education
@@ -334,6 +341,7 @@ Bankkauffrau,No/Other Qualification
 Barber,No/Other Qualification
 Barts,No/Other Qualification
 Basic education,No/Other Qualification
+Bavarian State Exam,No/Other Qualification
 Bawer,No/Other Qualification
 Beautician,No/Other Qualification
 Beautician degree,Higher Education
@@ -383,6 +391,7 @@ Certificate of Higher Education,Professional/Vocational
 Certification,Professional/Vocational
 Certified Public Accountant,No/Other Qualification
 Charted accountant,No/Other Qualification
+Chartered Accountant,Professional/Vocational
 Chef,No/Other Qualification
 Chemistry Engineer,No/Other Qualification
 "Child protection, referee",No/Other Qualification
@@ -471,6 +480,7 @@ Diplom FH,No/Other Qualification
 Diplom Grafikdesign English,No/Other Qualification
 Diplom Informatics,Secondary Education
 Diplom Ingenieur,No/Other Qualification
+Diplom Ingenieur (FH),No/Other Qualification
 Diplom Soz. Päd.,No/Other Qualification
 Diplom Textiltechnik,No/Other Qualification
 Diplom engineer,No/Other Qualification
@@ -512,6 +522,7 @@ Diplomkaufmann,No/Other Qualification
 Diplomverwaltungsfachwirt,No/Other Qualification
 Diplomverwaltungsfachwirtin,No/Other Qualification
 Director,No/Other Qualification
+Do not have a partner,No/Other Qualification
 Doc (ongoing),No/Other Qualification
 Doctor,No/Other Qualification
 Doctor (medical),No/Other Qualification
@@ -568,6 +579,7 @@ Engineering degree,Higher Education
 English Teacher,No/Other Qualification
 English degree,Higher Education
 Entrepreneur,No/Other Qualification
+"Entry requirement for university (e.g., A-levels, high school)",Higher Education
 Environment Engineer,No/Other Qualification
 Environmental Health,No/Other Qualification
 Erstes Staatsexamen,No/Other Qualification
@@ -643,6 +655,12 @@ General Certificate of Education,Professional/Vocational
 General Certificate of Secondary Education,Professional/Vocational
 General certificate of secondary education,Professional/Vocational
 General education,No/Other Qualification
+General secondary education,Secondary Education
+General secondary education; Bachelor,Higher Education
+General secondary education; Bachelor; BA Teachers education,Higher Education
+General secondary education; Bachelor; Master's,Higher Education
+General secondary education; State exam,Secondary Education
+General secondary education; football referee,Secondary Education
 Geography degree,Higher Education
 Geologcal Chief,No/Other Qualification
 Gimnazija Piran,No/Other Qualification
@@ -715,6 +733,7 @@ High School Diploma; Work training,Work-Based Learning
 High School degree,Higher Education
 High School diploma,Secondary Education
 High School graduate,Secondary Education
+High School graduation,Secondary Education
 High School of economics,Secondary Education
 High School student,Secondary Education
 High School student ??,Secondary Education
@@ -733,11 +752,13 @@ High school diploma,Secondary Education
 "High school diploma, Bachelor",Higher Education
 "High school diploma, some college",Professional/Vocational
 High school diploma; work-hostess internship training,Work-Based Learning
+High school graduate,Secondary Education
 High school teacher,Secondary Education
 "High school, secondary school",Secondary Education
 Higher,Secondary Education
 Higher Certificate,Professional/Vocational
 Higher Diploma,Secondary Education
+Higher Education,Secondary Education
 Higher National Certificate,Professional/Vocational
 Higher National Certificate (HNC),Professional/Vocational
 Higher National Diploma,Secondary Education
@@ -844,6 +865,9 @@ Honours degree,Higher Education
 Hotel manager,No/Other Qualification
 Housewife,No/Other Qualification
 Höhere Handelsschule,No/Other Qualification
+I don't have a partner,No/Other Qualification
+I don't know what they have in spain but he graduated university and studies phtography,Higher Education
+I have no partner,No/Other Qualification
 IATA tourism studies diploma,Secondary Education
 IHK Technician,No/Other Qualification
 ILAM Diploma,Secondary Education
@@ -958,6 +982,7 @@ MQF level 5,Secondary Education
 MQF level 7,Secondary Education
 MSc,No/Other Qualification
 Machine Operator,No/Other Qualification
+Mag.phil,No/Other Qualification
 Magister,No/Other Qualification
 Magistrate,No/Other Qualification
 "Malta College of Arts, Science and Technology",Professional/Vocational
@@ -1012,6 +1037,7 @@ Matric,No/Other Qualification
 Matriculation,Secondary Education
 Matriculation Certificate,Professional/Vocational
 "Matriculation Certificate, O-Levels",Professional/Vocational
+Mature Course,No/Other Qualification
 Maturità (Italian qualififcation),No/Other Qualification
 Maurer Ausbildung,No/Other Qualification
 Mechanic,No/Other Qualification
@@ -1055,6 +1081,7 @@ Mittlere Reife,No/Other Qualification
 "Mittlere Reife, Ausbildung",No/Other Qualification
 Mittlere reife/ Vocational training,Professional/Vocational
 Motor Mechanic,No/Other Qualification
+N/a,No/Other Qualification
 NCVA level 2,Secondary Education
 ND,No/Other Qualification
 NDE,No/Other Qualification
@@ -1075,7 +1102,9 @@ Never went to school,No/Other Qualification
 Nil,No/Other Qualification
 Nine GCSEs,Secondary Education
 No education,No/Other Qualification
+No partner,No/Other Qualification
 No qualification,No/Other Qualification
+No/Other Qualification,No/Other Qualification
 Normal qualification,No/Other Qualification
 Nothing,No/Other Qualification
 Nurse,No/Other Qualification
@@ -1389,6 +1418,7 @@ Standard Grade,Secondary Education
 Standard grade,Secondary Education
 Standard grades,Secondary Education
 Started Uni,No/Other Qualification
+State Exam,No/Other Qualification
 State School,No/Other Qualification
 State enrolled nursing,No/Other Qualification
 State registered nurse,Professional/Vocational
@@ -1413,6 +1443,7 @@ Teacher's Programme,No/Other Qualification
 Teacher's Training College,Professional/Vocational
 Teachers Degree,Higher Education
 Teaching Certificate,Professional/Vocational
+Teaching Degree,Higher Education
 Teaching Diploma,Secondary Education
 Teaching Qualification,No/Other Qualification
 Teaching degree,Higher Education
@@ -1587,6 +1618,7 @@ Vocational classes / Apprenticeship,Professional/Vocational
 "Vocational classes, work training, highest level at secondary school: sixth year studies; Bachelor",Higher Education
 "Vocational classes, work training, highest level attained at secondary school",Professional/Vocational
 Vocational classes: Diploma in radiography,Professional/Vocational
+Vocational classes; General secondary education,Professional/Vocational
 Vocational classes; Highest level at secondary school: Advanced Higher; Bachelor,Higher Education
 Vocational classes; Work training (accounting),Professional/Vocational
 "Vocational classses (English classes), Bachelor",Higher Education
@@ -1655,6 +1687,7 @@ Work training (shipping school),Work-Based Learning
 "Work training,High School Diploma,Bachelor,Masters, other (military)",Higher Education
 Work training/Other,Work-Based Learning
 Work training; Highest level at secondary school: Highers,Work-Based Learning
+Work-Based Learning,No/Other Qualification
 Workman,No/Other Qualification
 Yachtmaster Offshore (Commercial),Higher Education
 Year 11,No/Other Qualification
@@ -1763,8 +1796,11 @@ mittlere Reife,No/Other Qualification
 musician/ teacher,No/Other Qualification
 my own way,No/Other Qualification
 nil,No/Other Qualification
+no partner,No/Other Qualification
+no partner currently,No/Other Qualification
 non-readable,No/Other Qualification
 none,No/Other Qualification
+none (no partner),No/Other Qualification
 none/other?,No/Other Qualification
 nurse,No/Other Qualification
 nursing course,No/Other Qualification

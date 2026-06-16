@@ -36,14 +36,17 @@ Assamese,,Assamese
 Australian,,Australian
 Australian English (?),,English (?)
 Austrian; Maltese,,"Austrian, Maltese"
+Azerbaijani,,Azerbaijani
 Balti,,Balti
 Balti (Ladakhi),,Balti (Ladakhi)
+"Balti, Hindi",,"Balti, Hindi"
 "Balti,Hindi",,"Balti, Hindi"
 Bangulisi,,Bangulisi
 "Bangulisi, Sri Lankan, English",,"Bangulisi, Sri Lankan, English"
 Bayamón,,Bayamón
 Bengali,,Bengali
 "Bengali, Arabic",,"Bengali, Arabic"
+"Bengali, Dakhni",,"Bengali, Dakhni"
 "Bengali,Dakhni",,"Bengali, Dakhni"
 Bihari,,Bihari
 Bilingual,,Bilingual
@@ -76,8 +79,10 @@ Catalan (Son Servera),,Catalan (Son Servera)
 "Catalan, Spanish",,"Catalan, Spanish"
 Chichewa,,Chichewa
 Chinese,,Chinese
+"Chinese (Mandarin, Teochew)",,"Chinese (Mandarin, Teochew)"
 Chinese / Cantonese,,"Chinese, Cantonese"
 "Chinese, Cantonese",,"Chinese, Cantonese"
+"Chinese, English",,"Chinese, English"
 Chinese/English,,"Chinese, English"
 Chitumbuka,,Chitumbuka
 Corozal,,Corozal
@@ -86,6 +91,7 @@ Croatian,,Croatian
 "Croatian, Serbian",,"Croatian, Serbian"
 Cypriot,,Cypriot
 Czech,,Czech
+Czech; English,,"Czech, English"
 DE,,De
 Danish,,Danish
 "Danish, German",,"Danish, German"
@@ -94,6 +100,7 @@ Danish,,Danish
 "Danish, a little bit of German",,"Danish, A Little Bit Of German"
 Dogri,,Dogri
 Dutch,,Dutch
+Dutch(Flemish),,Dutch(Dutch)
 Eglish,,Eglish
 Egyptian,,Egyptian
 Emglish,,Emglish
@@ -184,8 +191,18 @@ Spanish",,"English, Spanish"
 "English, Gujurati",,"English, Gujurati"
 "English, Hawaiian",,"English, Hawaiian"
 "English, Hindi",,"English, Hindi"
+"English, Hindi, Dakhni, Telugu, Bengali",,"English, Hindi, Dakhni, Telugu, Bengali"
+"English, Hindi, Dogri",,"English, Hindi, Dogri"
+"English, Hindi, Haryanvi",,"English, Hindi, Haryanvi"
+"English, Hindi, Himachali",,"English, Hindi, Himachali"
+"English, Hindi, Kashmiri",,"English, Hindi, Kashmiri"
+"English, Hindi, Multani",,"English, Hindi, Multani"
+"English, Hindi, Paharhi",,"English, Hindi, Paharhi"
 "English, Hindi, Punjabi",,"English, Hindi, Punjabi"
+"English, Hindi, Punjabi, Poonchi, Urdu",,"English, Hindi, Punjabi, Poonchi, Urdu"
+"English, Hindi, Punjabi, Urdu",,"English, Hindi, Punjabi, Urdu"
 "English, Hindi,unspecified",,"English, Hindi, Unspecified"
+"English, Hungarian, Chinese",,"English, Hungarian, Chinese"
 "English, Irish",,"English, Irish"
 "English, Irish Gaelic",,"English, Irish Gaelic"
 "English, Italian",,"English, Italian"
@@ -201,6 +218,7 @@ Spanish",,"English, Spanish"
 "English, Maltese, Italian",,"English, Maltese, Italian"
 "English, Maltese, Italian, French",,"English, Maltese, Italian, French"
 "English, Mandarin",,"English, Mandarin"
+"English, Manipuri",,"English, Manipuri"
 "English, Native, French",,"English, Native, French"
 "English, Polish",,"English, Polish"
 "English, Portuguese",,"English, Portuguese"
@@ -283,12 +301,28 @@ English/Spanish,,"English, Spanish"
 English/Welsh,,"English, Welsh"
 English/little Welsh,,"English, Little Welsh"
 English; Czech,,"English, Czech"
+English; Filipino,,"English, Filipino"
+English; French,,"English, French"
+English; French; Lingala,,"English, French, Lingala"
+English; French; Spanish,,"English, French, Spanish"
 English; French; Vietnamese,,"English, French, Vietnamese"
 English; German,,"English, German"
+English; German; Dutch (Flemish...so the dutch variety they speak in Belgium),,"English, German, Dutch (Dutch...So The Dutch Variety They Speak In Belgium)"
+English; German; Italian,,"English, German, Italian"
+English; Hindi,,"English, Hindi"
+English; Irish,,"English, Irish"
+English; Irish; Cantonese,,"English, Irish, Cantonese"
+English; Italian,,"English, Italian"
+English; Malayalam,,"English, Malayalam"
 English; Malta,,"English, Malta"
 English; Maltese,,"English, Maltese"
 English; Maltese; French,,"English, Maltese, French"
 English; Maltese; Italian,,"English, Maltese, Italian"
+English; Mandarin,,"English, Mandarin"
+English; Polish,,"English, Polish"
+English; Portuguese,,"English, Portuguese"
+English; Russian,,"English, Russian"
+English; Spanish,,"English, Spanish"
 English; Turkish,,"English, Turkish"
 English; attended Irish medium primary school from age 4-11; was bilingual as a child,,"English, Attended Irish Medium Primary School From Age 4-11, Was Bilingual As A Child"
 English; father spoke German 50 % of the time,,"English, Father Spoke German 50 % Of The Time"
@@ -314,6 +348,8 @@ French / German,,"French, German"
 "French, Spanish",,"French, Spanish"
 "French, Swiss-German",,"French, Swiss-German"
 French. Italian,,French. Italian
+French; Gallo,,"French, Gallo"
+French; German,,"French, German"
 French; Maltese,,"French, Maltese"
 Ga,,Ga
 Gaelic,,Gaelic
@@ -336,8 +372,10 @@ German / Vietnamese / some English,,"German, Vietnamese, Some English"
 German / Yugoslavian,,"German, Yugoslavian"
 German / some Russian,,"German, Some Russian"
 German+Russian,,"German, Russian"
+"German, Arabic, Darija",,"German, Arabic, Darija"
 "German, Arabic/Algerian Accent (Darija)",,"German, Arabic, Algerian Accent (Darija)"
 "German, English",,"German, English"
+"German, English, Thai",,"German, English, Thai"
 "German, French, Danish, English",,"German, French, Danish, English"
 "German, Japanese",,"German, Japanese"
 "German, Russian",,"German, Russian"
@@ -355,8 +393,15 @@ German/Polish,,"German, Polish"
 German/Russian,,"German, Russian"
 German/Spanish,,"German, Spanish"
 German/Turkish,,"German, Turkish"
+German; Albanian,,"German, Albanian"
+"German; Azerbaijani, turkish, russian",,"German, Azerbaijani, Turkish, Russian"
+German; Croatian,,"German, Croatian"
 German; English,,"German, English"
+German; Hungarian,,"German, Hungarian"
 German; Maltese,,"German, Maltese"
+German; Serbian,,"German, Serbian"
+German; Serbocroatian,,"German, Serbocroatian"
+German; Spanish,,"German, Spanish"
 Gibraltarian,,Gibraltarian
 Gibraltarian (Yanito),,Gibraltarian (Yanito)
 Gibraltarian English,,Gibraltarian English
@@ -367,10 +412,12 @@ Greek,,Greek
 Greek; Maltese,,"Greek, Maltese"
 Greenlandic language,,Greenlandic Language
 Guernsey French,,Guernsey French
+"Gujarati, Hindi, English",,"Gujarati, Hindi, English"
 "Gujarati,Hindi,English",,"Gujarati, Hindi, English"
 Gujurati,,Gujurati
 Hamirpuri,,Hamirpuri
 Haryanvi,,Haryanvi
+"Haryanvi, Hindi",,"Haryanvi, Hindi"
 "Haryanvi,Hindi",,"Haryanvi, Hindi"
 Hawaiian,,Hawaiian
 Hebrew,,Hebrew
@@ -380,9 +427,21 @@ Hindi,,Hindi
 "Hindi
 English",,Hindi English
 Hindi (Khari Boli),,Hindi (Khari Boli)
+"Hindi, Assamese",,"Hindi, Assamese"
+"Hindi, Bhojpuri",,"Hindi, Bhojpuri"
+"Hindi, Dogri, Jammu",,"Hindi, Dogri, Jammu"
 "Hindi, English",,"Hindi, English"
+"Hindi, Haryanvi",,"Hindi, Haryanvi"
+"Hindi, Himachali",,"Hindi, Himachali"
 "Hindi, Himalchali",,"Hindi, Himalchali"
+"Hindi, Khari Boli",,"Hindi, Khari Boli"
+"Hindi, Kinnauri",,"Hindi, Kinnauri"
+"Hindi, Maithili",,"Hindi, Maithili"
+"Hindi, Pahadi",,"Hindi, Pahadi"
+"Hindi, Pahari",,"Hindi, Pahari"
 "Hindi, Punjabi",,"Hindi, Punjabi"
+"Hindi, Sirmauri-Tankari",,"Hindi, Sirmauri-Tankari"
+"Hindi, Tamil",,"Hindi, Tamil"
 "Hindi, unspecified",,"Hindi, Unspecified"
 "Hindi,Assamese",,"Hindi, Assamese"
 "Hindi,Bhojpuri",,"Hindi, Bhojpuri"
@@ -419,6 +478,7 @@ Italian and Maltese,,"Italian, Maltese"
 "Italian, Slovenian, German",,"Italian, Slovenian, German"
 "Italian, Venetian",,"Italian, Venetian"
 Italian/ English,,"Italian, English"
+Italian; Venetian dialect,,"Italian, Venetian Dialect"
 Italien,,Italien
 Japanese,,Japanese
 Jersey,,Jersey
@@ -437,6 +497,7 @@ Latvian,,Latvian
 Le Masurier (?),,Le Masurier (?)
 Lebanese,,Lebanese
 "Lingala, French",,"Lingala, French"
+Lithuanian,,Lithuanian
 Macedonian,,Macedonian
 Maghi,,Maghi
 Majorcan,,Majorcan
@@ -632,6 +693,7 @@ Spanish+English,,"Spanish, English"
 "Spanish/
 English",,"Spanish, English"
 Spanish/English,,"Spanish, English"
+Spanish; Romanian,,"Spanish, Romanian"
 Spansih,,Spansih
 Swahili / English,,"Swahili, English"
 Swedish,,Swedish
