@@ -7,7 +7,8 @@ venv/
 
 # ── Data files (input XLSX/CSV, output DB/CSV/RDS) ─────
 data/input/
-data/conversion/
+data/conversion/input/
+data/conversion/output/
 output/
 
 # ── IDE / OS ────────────────────────────────────────────

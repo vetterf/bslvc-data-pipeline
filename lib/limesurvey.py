@@ -66,7 +66,7 @@ from lib import DATA_DIR, INPUT_DIR, MAPPINGS_DIR
 CONVERSION_DIR = DATA_DIR / "conversion"
 CONVERSION_INPUT_DIR = CONVERSION_DIR / "input"
 CONVERSION_OUTPUT_DIR = CONVERSION_DIR / "output"
-TEMPLATE_XLSX = CONVERSION_DIR / "template.xlsx"
+TEMPLATE_XLSX = MAPPINGS_DIR / "template.xlsx"
 
 # Legacy export directory (kept for backwards compatibility)
 LIMESURVEY_DIR = INPUT_DIR / "Limesurvey_export"

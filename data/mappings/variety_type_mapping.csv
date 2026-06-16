@@ -4,9 +4,13 @@ AI-GPT-Germany,AI-EFL
 AI-GPT-India,AI-ESL
 AI-GPT-US,AI-ENL
 Albania,EFL
+Argentina,EFL
+Austria,EFL
 Australia,ENL
+Azerbaijan,EFL
 Bangladesh,ESL
 Bosnia and Herzegovina,EFL
+Bosnia-Herzegovina,EFL
 Brazil,EFL
 Bulgaria,EFL
 Canada,ENL
@@ -29,6 +33,7 @@ Germany,EFL
 Gibraltar,ESL
 Greece,EFL
 Guernsey,ENL
+Hungary, EFL
 Hawaii,ENL
 India,ESL
 Iran,EFL
@@ -43,7 +48,7 @@ Kuwait,EFL
 Libya,EFL
 Malawi,ESL
 Malaysia,ESL
-Malta,ENL
+Malta,ESL
 Mexico,EFL
 Morocco,EFL
 Netherlands,EFL
@@ -56,12 +61,11 @@ Pakistan,ESL
 Philippines,ESL
 Poland,EFL
 Portugal,EFL
-Puerto Rico,EFL
+Puerto Rico,ESL
 Romania,EFL
 Russia,EFL
 Scotland,ENL
 Serbia,EFL
-Seweden,EFL
 Slovakia,EFL
 Slovenia,EFL
 South Africa,ESL

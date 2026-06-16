@@ -1,0 +1,489 @@
+# prefix: AUT26;;;
+question_code;csv_column;target_row;transform
+id;id;;skip
+submitdate;submitdate;;skip
+lastpage;lastpage;;skip
+startlanguage;startlanguage;;skip
+seed;seed;;skip
+startdate;startdate;;skip
+datestamp;datestamp;;skip
+CF01;CF01;;skip
+PI01;PI01;Age;
+PI02;PI02;Gender;
+PI02_other;PI02_other;Gender;other
+PI03;PI03;Nationality;
+PI03_other;PI03_other;Nationality;other
+PI10;PI10;Timeline Comments;
+PI04;PI04;Ethnic self-identification;
+PI09;PI09;;skip
+PI11;PI11;Years lived in other English-speaking countries;
+PI08;PI08;Years lived outside of home country;
+PI05;PI05;Country or region you identify with;
+PI06_SQ008;PI06_SQ008;Languages used at home while  growing up;lang_checkbox:Czech
+PI06_SQ002;PI06_SQ002;Languages used at home while  growing up;lang_checkbox:English
+PI06_SQ003;PI06_SQ003;Languages used at home while  growing up;lang_checkbox:French
+PI06_SQ001SQ001;PI06_SQ001SQ001;Languages used at home while  growing up;lang_checkbox:German
+PI06_SQ006;PI06_SQ006;Languages used at home while  growing up;lang_checkbox:Hungarian
+PI06_SQ004;PI06_SQ004;Languages used at home while  growing up;lang_checkbox:Italian
+PI06_SQ005;PI06_SQ005;Languages used at home while  growing up;lang_checkbox:Spanish
+PI06_SQ007;PI06_SQ007;Languages used at home while  growing up;lang_checkbox:Polish
+PI06_other;PI06_other;Languages used at home while  growing up;lang_other
+PI07m_SQ008;PI07m_SQ008;Native Lg. Mother;lang_checkbox:Czech
+PI07m_SQ002;PI07m_SQ002;Native Lg. Mother;lang_checkbox:English
+PI07m_SQ003;PI07m_SQ003;Native Lg. Mother;lang_checkbox:French
+PI07m_SQ001SQ001;PI07m_SQ001SQ001;Native Lg. Mother;lang_checkbox:German
+PI07m_SQ006;PI07m_SQ006;Native Lg. Mother;lang_checkbox:Hungarian
+PI07m_SQ004;PI07m_SQ004;Native Lg. Mother;lang_checkbox:Italian
+PI07m_SQ005;PI07m_SQ005;Native Lg. Mother;lang_checkbox:Spanish
+PI07m_SQ007;PI07m_SQ007;Native Lg. Mother;lang_checkbox:Polish
+PI07m_other;PI07m_other;Native Lg. Mother;lang_other
+PI07f_SQ008;PI07f_SQ008;Native Lg. Father;lang_checkbox:Czech
+PI07f_SQ002;PI07f_SQ002;Native Lg. Father;lang_checkbox:English
+PI07f_SQ003;PI07f_SQ003;Native Lg. Father;lang_checkbox:French
+PI07f_SQ001SQ001;PI07f_SQ001SQ001;Native Lg. Father;lang_checkbox:German
+PI07f_SQ006;PI07f_SQ006;Native Lg. Father;lang_checkbox:Hungarian
+PI07f_SQ004;PI07f_SQ004;Native Lg. Father;lang_checkbox:Italian
+PI07f_SQ005;PI07f_SQ005;Native Lg. Father;lang_checkbox:Spanish
+PI07f_SQ007;PI07f_SQ007;Native Lg. Father;lang_checkbox:Polish
+PI07f_other;PI07f_other;Native Lg. Father;lang_other
+EP01;EP01;Primary school;
+EP01_other;EP01_other;Primary school;other
+EP02;EP02;Secondary school;
+EP02_other;EP02_other;Secondary school;other
+EP04_SQ001;EP04_SQ001;Qualifications;qual_checkbox:Apprenticeship
+EP04_SQ002;EP04_SQ002;Qualifications;qual_checkbox:Vocational classes
+EP04_SQ007;EP04_SQ007;Qualifications;qual_checkbox:General secondary education
+EP04_SQ003;EP04_SQ003;Qualifications;qual_checkbox:Bachelor
+EP04_SQ004;EP04_SQ004;Qualifications;qual_checkbox:Master's
+EP04_SQ005;EP04_SQ005;Qualifications;qual_checkbox:PhD
+EP04_other;EP04_other;Qualifications;qual_other
+EP05;EP05;Current occupation;
+EP05_other;EP05_other;Current occupation;other
+EP06;EP06;Qualification mother;
+EP06_other;EP06_other;Qualification mother;other
+EP07;EP07;Qualification father;
+EP07_other;EP07_other;Qualification father;other
+EP08;EP08;Qualification partner;
+EP08_other;EP08_other;Qualification partner;other
+G04Q47;G04Q47;;skip
+HC2;HC2;;skip
+SSA_SSA1;SSA_SSA1;A1;grammar_value
+SSA_SSA2;SSA_SSA2;A2;grammar_value
+SSA_SSA3;SSA_SSA3;A3;grammar_value
+SSA_SSA4;SSA_SSA4;A4;grammar_value
+SSA_SSA5;SSA_SSA5;A5;grammar_value
+SSA_SSA6;SSA_SSA6;A6;grammar_value
+SSA_SSA7;SSA_SSA7;A7;grammar_value
+SSA_SSA8;SSA_SSA8;A8;grammar_value
+SSA_SSA9;SSA_SSA9;A9;grammar_value
+SSA_SSA10;SSA_SSA10;A10;grammar_value
+SSA_SSA11;SSA_SSA11;A11;grammar_value
+SSA_SSA12;SSA_SSA12;A12;grammar_value
+SSA_SSA13;SSA_SSA13;A13;grammar_value
+SSA_SSA14;SSA_SSA14;A14;grammar_value
+SSA_SSA15;SSA_SSA15;A15;grammar_value
+SSA_SSA16;SSA_SSA16;A16;grammar_value
+SSA_SSA17;SSA_SSA17;A17;grammar_value
+SSA_SSA18;SSA_SSA18;A18;grammar_value
+SSA_SSA19;SSA_SSA19;A19;grammar_value
+SSA_SSA20;SSA_SSA20;A20;grammar_value
+SSA_SSA21;SSA_SSA21;A21;grammar_value
+SSA_SSA22;SSA_SSA22;A22;grammar_value
+SSA_SSA23;SSA_SSA23;A23;grammar_value
+SSB_SSB1;SSB_SSB1;B1;grammar_value
+SSB_SSB2;SSB_SSB2;B2;grammar_value
+SSB_SSB3;SSB_SSB3;B3;grammar_value
+SSB_SSB4;SSB_SSB4;B4;grammar_value
+SSB_SSB5;SSB_SSB5;B5;grammar_value
+SSB_SSB6;SSB_SSB6;B6;grammar_value
+SSB_SSB7;SSB_SSB7;B7;grammar_value
+SSB_SSB8;SSB_SSB8;B8;grammar_value
+SSB_SSB9;SSB_SSB9;B9;grammar_value
+SSB_SSB10;SSB_SSB10;B10;grammar_value
+SSB_SSB11;SSB_SSB11;B11;grammar_value
+SSB_SSB12;SSB_SSB12;B12;grammar_value
+SSB_SSB13;SSB_SSB13;B13;grammar_value
+SSB_SSB14;SSB_SSB14;B14;grammar_value
+SSB_SSB15;SSB_SSB15;B15;grammar_value
+SSB_SSB16;SSB_SSB16;B16;grammar_value
+SSB_SSB17;SSB_SSB17;B17;grammar_value
+SSB_SSB18;SSB_SSB18;B18;grammar_value
+SSB_SSB19;SSB_SSB19;B19;grammar_value
+SSB_SSB20;SSB_SSB20;B20;grammar_value
+SSB_SSB21;SSB_SSB21;B21;grammar_value
+SSB_SSB22;SSB_SSB22;B22;grammar_value
+SSB_SSB23;SSB_SSB23;B23;grammar_value
+SSC_SSC1;SSC_SSC1;C1;grammar_value
+SSC_SSC2;SSC_SSC2;C2;grammar_value
+SSC_SSC3;SSC_SSC3;C3;grammar_value
+SSC_SSC4;SSC_SSC4;C4;grammar_value
+SSC_SSC5;SSC_SSC5;C5;grammar_value
+SSC_SSC6;SSC_SSC6;C6;grammar_value
+SSC_SSC7;SSC_SSC7;C7;grammar_value
+SSC_SSC8;SSC_SSC8;C8;grammar_value
+SSC_SSC9;SSC_SSC9;C9;grammar_value
+SSC_SSC10;SSC_SSC10;C10;grammar_value
+SSC_SSC11;SSC_SSC11;C11;grammar_value
+SSC_SSC12;SSC_SSC12;C12;grammar_value
+SSC_SSC13;SSC_SSC13;C13;grammar_value
+SSC_SSC14;SSC_SSC14;C14;grammar_value
+SSC_SSC15;SSC_SSC15;C15;grammar_value
+SSC_SSC16;SSC_SSC16;C16;grammar_value
+SSC_SSC17;SSC_SSC17;C17;grammar_value
+SSC_SSC18;SSC_SSC18;C18;grammar_value
+SSC_SSC19;SSC_SSC19;C19;grammar_value
+SSC_SSC20;SSC_SSC20;C20;grammar_value
+SSC_SSC21;SSC_SSC21;C21;grammar_value
+SSC_SSC22;SSC_SSC22;C22;grammar_value
+SSC_SSC23;SSC_SSC23;C23;grammar_value
+SSD_SSD1;SSD_SSD1;D1;grammar_value
+SSD_SSD2;SSD_SSD2;D2;grammar_value
+SSD_SSD3;SSD_SSD3;D3;grammar_value
+SSD_SSD4;SSD_SSD4;D4;grammar_value
+SSD_SSD5;SSD_SSD5;D5;grammar_value
+SSD_SSD6;SSD_SSD6;D6;grammar_value
+SSD_SSD7;SSD_SSD7;D7;grammar_value
+SSD_SSD8;SSD_SSD8;D8;grammar_value
+SSD_SSD9;SSD_SSD9;D9;grammar_value
+SSD_SSD10;SSD_SSD10;D10;grammar_value
+SSD_SSD11;SSD_SSD11;D11;grammar_value
+SSD_SSD12;SSD_SSD12;D12;grammar_value
+SSD_SSD13;SSD_SSD13;D13;grammar_value
+SSD_SSD14;SSD_SSD14;D14;grammar_value
+SSD_SSD15;SSD_SSD15;D15;grammar_value
+SSD_SSD16;SSD_SSD16;D16;grammar_value
+SSD_SSD17;SSD_SSD17;D17;grammar_value
+SSD_SSD18;SSD_SSD18;D18;grammar_value
+SSD_SSD19;SSD_SSD19;D19;grammar_value
+SSD_SSD20;SSD_SSD20;D20;grammar_value
+SSD_SSD21;SSD_SSD21;D21;grammar_value
+SSD_SSD22;SSD_SSD22;D22;grammar_value
+SSD_SSD23;SSD_SSD23;D23;grammar_value
+SSE_SSE1;SSE_SSE1;E1;grammar_value
+SSE_SSE2;SSE_SSE2;E2;grammar_value
+SSE_SSE3;SSE_SSE3;E3;grammar_value
+SSE_SSE4;SSE_SSE4;E4;grammar_value
+SSE_SSE5;SSE_SSE5;E5;grammar_value
+SSE_SSE6;SSE_SSE6;E6;grammar_value
+SSE_SSE7;SSE_SSE7;E7;grammar_value
+SSE_SSE8;SSE_SSE8;E8;grammar_value
+SSE_SSE9;SSE_SSE9;E9;grammar_value
+SSE_SSE10;SSE_SSE10;E10;grammar_value
+SSE_SSE11;SSE_SSE11;E11;grammar_value
+SSE_SSE12;SSE_SSE12;E12;grammar_value
+SSE_SSE13;SSE_SSE13;E13;grammar_value
+SSE_SSE14;SSE_SSE14;E14;grammar_value
+SSE_SSE15;SSE_SSE15;E15;grammar_value
+SSE_SSE16;SSE_SSE16;E16;grammar_value
+SSE_SSE17;SSE_SSE17;E17;grammar_value
+SSE_SSE18;SSE_SSE18;E18;grammar_value
+SSE_SSE19;SSE_SSE19;E19;grammar_value
+SSE_SSE20;SSE_SSE20;E20;grammar_value
+SSE_SSE21;SSE_SSE21;E21;grammar_value
+SSE_SSE22;SSE_SSE22;E22;grammar_value
+SSE_SSE23;SSE_SSE23;E23;grammar_value
+SSF_SSF1;SSF_SSF1;F1;grammar_value
+SSF_SSF2;SSF_SSF2;F2;grammar_value
+SSF_SSF3;SSF_SSF3;F3;grammar_value
+SSF_SSF4;SSF_SSF4;F4;grammar_value
+SSF_SSF5;SSF_SSF5;F5;grammar_value
+SSF_SSF6;SSF_SSF6;F6;grammar_value
+SSF_SSF7;SSF_SSF7;F7;grammar_value
+SSF_SSF8;SSF_SSF8;F8;grammar_value
+SSF_SSF9;SSF_SSF9;F9;grammar_value
+SSF_SSF10;SSF_SSF10;F10;grammar_value
+SSF_SSF11;SSF_SSF11;F11;grammar_value
+SSF_SSF12;SSF_SSF12;F12;grammar_value
+SSF_SSF13;SSF_SSF13;F13;grammar_value
+SSF_SSF14;SSF_SSF14;F14;grammar_value
+SSF_SSF15;SSF_SSF15;F15;grammar_value
+SSF_SSF16;SSF_SSF16;F16;grammar_value
+SSF_SSF17;SSF_SSF17;F17;grammar_value
+SSF_SSF18;SSF_SSF18;F18;grammar_value
+SSF_SSF19;SSF_SSF19;F19;grammar_value
+SSF_SSF20;SSF_SSF20;F20;grammar_value
+SSF_SSF21;SSF_SSF21;F21;grammar_value
+SSF_SSF22;SSF_SSF22;F22;grammar_value
+SSF_SSF23;SSF_SSF23;F23;grammar_value
+LI01_SQ001;LI01_SQ001;a drop in the ocean -;lexical_value
+LI01_SQ002;LI01_SQ002;a tap;lexical_value
+LI01_SQ003;LI01_SQ003;aluminium;lexical_value
+LI01_SQ004;LI01_SQ004;anticlockwise -;lexical_value
+LI01_SQ005;LI01_SQ005;aubergine;lexical_value
+LI01_SQ006;LI01_SQ006;autumn;lexical_value
+LI01_SQ007;LI01_SQ007;backwards;lexical_value
+LI01_SQ008;LI01_SQ008;bicentenary -;lexical_value
+LI01_SQ009;LI01_SQ009;biscuit;lexical_value
+LI01_SQ010;LI01_SQ010;bookings -;lexical_value
+LI01_SQ011;LI01_SQ011;boot;lexical_value
+LI01_SQ012;LI01_SQ012;car park -;lexical_value
+LI01_SQ013;LI01_SQ013;centre;lexical_value
+LI01_SQ014;LI01_SQ014;chemist's -;lexical_value
+LI01_SQ015;LI01_SQ015;ill -;lexical_value
+LI01_SQ016;LI01_SQ016;potato chips;lexical_value
+LI01_SQ017;LI01_SQ017;chips;lexical_value
+LI1C;LI1C;Comments;qual_other
+LI02_SQ001;LI02_SQ001;cinema -;lexical_value
+LI02_SQ002;LI02_SQ002;colour;lexical_value
+LI02_SQ003;LI02_SQ003;cupboard -;lexical_value
+LI02_SQ004;LI02_SQ004;driving licence;lexical_value
+LI02_SQ005;LI02_SQ005;dummy -;lexical_value
+LI02_SQ006;LI02_SQ006;dustbin;lexical_value
+LI02_SQ007;LI02_SQ007;fish fingers -;lexical_value
+LI02_SQ008;LI02_SQ008;football;lexical_value
+LI02_SQ009;LI02_SQ009;forwards -;lexical_value
+LI02_SQ010;LI02_SQ010;globalisation;lexical_value
+LI02_SQ011;LI02_SQ011;glocalisation -;lexical_value
+LI02_SQ012;LI02_SQ012;holiday;lexical_value
+LI02_SQ013;LI02_SQ013;liberalisation;lexical_value
+LI02_SQ014;LI02_SQ014;jacket potato;lexical_value
+LI02_SQ015;LI02_SQ015;laund(e)rette -;lexical_value
+LI02_SQ016;LI02_SQ016;potato crisps -;lexical_value
+LI02_SQ017;LI02_SQ017;crisps -;lexical_value
+LI02_SQ018;LI02_SQ018;rubbish;lexical_value
+L2C;L2C;Comments;qual_other
+LI03_SQ001;LI03_SQ001;to licence -;lexical_value
+LI03_SQ002;LI03_SQ002;lift;lexical_value
+LI03_SQ003;LI03_SQ003;localisation -;lexical_value
+LI03_SQ004;LI03_SQ004;lorry;lexical_value
+LI03_SQ005;LI03_SQ005;maths -;lexical_value
+LI03_SQ006;LI03_SQ006;mobile phone;lexical_value
+LI03_SQ007;LI03_SQ007;modernisation -;lexical_value
+LI03_SQ008;LI03_SQ008;nappies;lexical_value
+LI03_SQ009;LI03_SQ009;organisation -;lexical_value
+LI03_SQ010;LI03_SQ010;parcel;lexical_value
+LI03_SQ011;LI03_SQ011;pavement -;lexical_value
+LI03_SQ012;LI03_SQ012;petrol;lexical_value
+LI03_SQ013;LI03_SQ013;petrol station -;lexical_value
+LI03_SQ014;LI03_SQ014;postman;lexical_value
+LI03_SQ015;LI03_SQ015;pushchair -;lexical_value
+LI03_SQ016;LI03_SQ016;railway;lexical_value
+LI03_SQ017;LI03_SQ017;realisation -;lexical_value
+L3C;L3C;Comments;qual_other
+LI04_SQ001;LI04_SQ001;roundabout;lexical_value
+LI04_SQ002;LI04_SQ002;rubber -;lexical_value
+LI04_SQ003;LI04_SQ003;shopping trolley -;lexical_value
+LI04_SQ004;LI04_SQ004;sport;lexical_value
+LI04_SQ005;LI04_SQ005;storm in a teacup -;lexical_value
+LI04_SQ006;LI04_SQ006;subway;lexical_value
+LI04_SQ007;LI04_SQ007;to let -;lexical_value
+LI04_SQ008;LI04_SQ008;torch;lexical_value
+LI04_SQ009;LI04_SQ009;touch wood -;lexical_value
+LI04_SQ010;LI04_SQ010;trainers;lexical_value
+LI04_SQ011;LI04_SQ011;whilst -;lexical_value
+LI04_SQ012;LI04_SQ012;windscreen;lexical_value
+LI04_SQ013;LI04_SQ013;a book about  chemistry -;lexical_value
+LI04_SQ014;LI04_SQ014;compare X to Y -;lexical_value
+LI04_SQ015;LI04_SQ015;typical of -;lexical_value
+LI04_SQ016;LI04_SQ016;Anyway;lexical_value
+L4C;L4C;Comments;qual_other
+G13Q46;G13Q46;;skip
+WSG_WSG1;WSG_WSG1;G1;grammar_value
+WSG_WSG2;WSG_WSG2;G2;grammar_value
+WSG_WSG3;WSG_WSG3;G3;grammar_value
+WSG_WSG4;WSG_WSG4;G4;grammar_value
+WSG_WSG5;WSG_WSG5;G5;grammar_value
+WSG_WSG6;WSG_WSG6;G6;grammar_value
+WSG_WSG7;WSG_WSG7;G7;grammar_value
+WSG_WSG8;WSG_WSG8;G8;grammar_value
+WSG_WSG9;WSG_WSG9;G9;grammar_value
+WSG_WSG10;WSG_WSG10;G10;grammar_value
+WSG_WSG11;WSG_WSG11;G11;grammar_value
+WSG_WSG12;WSG_WSG12;G12;grammar_value
+WSG_WSG13;WSG_WSG13;G13;grammar_value
+WSG_WSG14;WSG_WSG14;G14;grammar_value
+WSG_WSG15;WSG_WSG15;G15;grammar_value
+WSG_WSG16;WSG_WSG16;G16;grammar_value
+WSG_WSG17;WSG_WSG17;G17;grammar_value
+WSG_WSG18;WSG_WSG18;G18;grammar_value
+WSG_WSG19;WSG_WSG19;G19;grammar_value
+WSG_WSG20;WSG_WSG20;G20;grammar_value
+WSG_WSG21;WSG_WSG21;G21;grammar_value
+WSG_WSG22;WSG_WSG22;G22;grammar_value
+WSG_WSG23;WSG_WSG23;G23;grammar_value
+WSG_WSG24;WSG_WSG24;G24;grammar_value
+WSG_WSG25;WSG_WSG25;G25;grammar_value
+WSG_WSG26;WSG_WSG26;G26;grammar_value
+WSH_WSH1;WSH_WSH1;H1;grammar_value
+WSH_WSH2;WSH_WSH2;H2;grammar_value
+WSH_WSH3;WSH_WSH3;H3;grammar_value
+WSH_WSH4;WSH_WSH4;H4;grammar_value
+WSH_WSH5;WSH_WSH5;H5;grammar_value
+WSH_WSH6;WSH_WSH6;H6;grammar_value
+WSH_WSH7;WSH_WSH7;H7;grammar_value
+WSH_WSH8;WSH_WSH8;H8;grammar_value
+WSH_WSH9;WSH_WSH9;H9;grammar_value
+WSH_WSH10;WSH_WSH10;H10;grammar_value
+WSH_WSH11;WSH_WSH11;H11;grammar_value
+WSH_WSH12;WSH_WSH12;H12;grammar_value
+WSH_WSH13;WSH_WSH13;H13;grammar_value
+WSH_WSH14;WSH_WSH14;H14;grammar_value
+WSH_WSH15;WSH_WSH15;H15;grammar_value
+WSH_WSH16;WSH_WSH16;H16;grammar_value
+WSH_WSH17;WSH_WSH17;H17;grammar_value
+WSH_WSH18;WSH_WSH18;H18;grammar_value
+WSH_WSH19;WSH_WSH19;H19;grammar_value
+WSH_WSH20;WSH_WSH20;H20;grammar_value
+WSH_WSH21;WSH_WSH21;H21;grammar_value
+WSH_WSH22;WSH_WSH22;H22;grammar_value
+WSH_WSH23;WSH_WSH23;H23;grammar_value
+WSH_WSH24;WSH_WSH24;H24;grammar_value
+WSH_WSH25;WSH_WSH25;H25;grammar_value
+WSH_WSH26;WSH_WSH26;H26;grammar_value
+WSI_WSI1;WSI_WSI1;I1;grammar_value
+WSI_WSI2;WSI_WSI2;I2;grammar_value
+WSI_WSI3;WSI_WSI3;I3;grammar_value
+WSI_WSI4;WSI_WSI4;I4;grammar_value
+WSI_WSI5;WSI_WSI5;I5;grammar_value
+WSI_WSI6;WSI_WSI6;I6;grammar_value
+WSI_WSI7;WSI_WSI7;I7;grammar_value
+WSI_WSI8;WSI_WSI8;I8;grammar_value
+WSI_WSI9;WSI_WSI9;I9;grammar_value
+WSI_WSI10;WSI_WSI10;I10;grammar_value
+WSI_WSI11;WSI_WSI11;I11;grammar_value
+WSI_WSI12;WSI_WSI12;I12;grammar_value
+WSI_WSI13;WSI_WSI13;I13;grammar_value
+WSI_WSI14;WSI_WSI14;I14;grammar_value
+WSI_WSI15;WSI_WSI15;I15;grammar_value
+WSI_WSI16;WSI_WSI16;I16;grammar_value
+WSI_WSI17;WSI_WSI17;I17;grammar_value
+WSI_WSI18;WSI_WSI18;I18;grammar_value
+WSI_WSI19;WSI_WSI19;I19;grammar_value
+WSI_WSI20;WSI_WSI20;I20;grammar_value
+WSI_WSI21;WSI_WSI21;I21;grammar_value
+WSI_WSI22;WSI_WSI22;I22;grammar_value
+WSI_WSI23;WSI_WSI23;I23;grammar_value
+WSI_WSI24;WSI_WSI24;I24;grammar_value
+WSI_WSI25;WSI_WSI25;I25;grammar_value
+WSI_WSI26;WSI_WSI26;I26;grammar_value
+WSJ_WSJ1;WSJ_WSJ1;J1;grammar_value
+WSJ_WSJ2;WSJ_WSJ2;J2;grammar_value
+WSJ_WSJ3;WSJ_WSJ3;J3;grammar_value
+WSJ_WSJ4;WSJ_WSJ4;J4;grammar_value
+WSJ_WSJ5;WSJ_WSJ5;J5;grammar_value
+WSJ_WSJ6;WSJ_WSJ6;J6;grammar_value
+WSJ_WSJ7;WSJ_WSJ7;J7;grammar_value
+WSJ_WSJ8;WSJ_WSJ8;J8;grammar_value
+WSJ_WSJ9;WSJ_WSJ9;J9;grammar_value
+WSJ_WSJ10;WSJ_WSJ10;J10;grammar_value
+WSJ_WSJ11;WSJ_WSJ11;J11;grammar_value
+WSJ_WSJ12;WSJ_WSJ12;J12;grammar_value
+WSJ_WSJ13;WSJ_WSJ13;J13;grammar_value
+WSJ_WSJ14;WSJ_WSJ14;J14;grammar_value
+WSJ_WSJ15;WSJ_WSJ15;J15;grammar_value
+WSJ_WSJ16;WSJ_WSJ16;J16;grammar_value
+WSJ_WSJ17;WSJ_WSJ17;J17;grammar_value
+WSJ_WSJ18;WSJ_WSJ18;J18;grammar_value
+WSJ_WSJ19;WSJ_WSJ19;J19;grammar_value
+WSJ_WSJ20;WSJ_WSJ20;J20;grammar_value
+WSJ_WSJ21;WSJ_WSJ21;J21;grammar_value
+WSJ_WSJ22;WSJ_WSJ22;J22;grammar_value
+WSJ_WSJ23;WSJ_WSJ23;J23;grammar_value
+WSJ_WSJ24;WSJ_WSJ24;J24;grammar_value
+WSJ_WSJ25;WSJ_WSJ25;J25;grammar_value
+WSJ_WSJ26;WSJ_WSJ26;J26;grammar_value
+WSK_WSK1;WSK_WSK1;K1;grammar_value
+WSK_WSK2;WSK_WSK2;K2;grammar_value
+WSK_WSK3;WSK_WSK3;K3;grammar_value
+WSK_WSK4a;WSK_WSK4a;K4a;grammar_value
+WSK_WSK4b;WSK_WSK4b;K4b;grammar_value
+WSK_WSK5;WSK_WSK5;K5;grammar_value
+WSK_WSK6;WSK_WSK6;K6;grammar_value
+WSK_WSK7;WSK_WSK7;K7;grammar_value
+WSK_WSK8;WSK_WSK8;K8;grammar_value
+WSK_WSK9;WSK_WSK9;K9;grammar_value
+WSK_WSK10;WSK_WSK10;K10;grammar_value
+WSK_WSK11;WSK_WSK11;K11;grammar_value
+WSK_WSK12;WSK_WSK12;K12;grammar_value
+WSK_WSK13;WSK_WSK13;K13;grammar_value
+WSK_WSK14;WSK_WSK14;K14;grammar_value
+WSK_WSK15;WSK_WSK15;K15;grammar_value
+WSK_WSK16;WSK_WSK16;K16;grammar_value
+WSK_WSK17;WSK_WSK17;K17;grammar_value
+WSK_WSK18;WSK_WSK18;K18;grammar_value
+WSK_WSK19;WSK_WSK19;K19;grammar_value
+WSK_WSK20;WSK_WSK20;K20;grammar_value
+WSK_WSK21;WSK_WSK21;K21;grammar_value
+WSK_WSK22;WSK_WSK22;K22;grammar_value
+WSK_WSK23;WSK_WSK23;K23;grammar_value
+WSK_WSK24;WSK_WSK24;K24;grammar_value
+WSK_WSK25;WSK_WSK25;K25;grammar_value
+WSK_WSK26;WSK_WSK26;K26;grammar_value
+WSL_WSL1;WSL_WSL1;L1;grammar_value
+WSL_WSL2;WSL_WSL2;L2;grammar_value
+WSL_WSL3;WSL_WSL3;L3;grammar_value
+WSL_WSL4;WSL_WSL4;L4;grammar_value
+WSL_WSL5;WSL_WSL5;L5;grammar_value
+WSL_WSL6;WSL_WSL6;L6;grammar_value
+WSL_WSL7;WSL_WSL7;L7;grammar_value
+WSL_WSL8;WSL_WSL8;L8;grammar_value
+WSL_WSL9;WSL_WSL9;L9;grammar_value
+WSL_WSL10;WSL_WSL10;L10;grammar_value
+WSL_WSL11;WSL_WSL11;L11;grammar_value
+WSL_WSL12;WSL_WSL12;L12;grammar_value
+WSL_WSL13;WSL_WSL13;L13;grammar_value
+WSL_WSL14;WSL_WSL14;L14;grammar_value
+WSL_WSL15;WSL_WSL15;L15;grammar_value
+WSL_WSL16;WSL_WSL16;L16;grammar_value
+WSL_WSL17;WSL_WSL17;L17;grammar_value
+WSL_WSL18;WSL_WSL18;L18;grammar_value
+WSL_WSL19;WSL_WSL19;L19;grammar_value
+WSL_WSL20;WSL_WSL20;L20;grammar_value
+WSL_WSL21;WSL_WSL21;L21;grammar_value
+WSL_WSL22;WSL_WSL22;L22;grammar_value
+WSL_WSL23;WSL_WSL23;L23;grammar_value
+WSL_WSL24;WSL_WSL24;L24;grammar_value
+WSL_WSL25;WSL_WSL25;L25;grammar_value
+WSL_WSL26;WSL_WSL26;L26;grammar_value
+WSM_WSM1;WSM_WSM1;M1;grammar_value
+WSM_WSM2;WSM_WSM2;M2;grammar_value
+WSM_WSM3;WSM_WSM3;M3;grammar_value
+WSM_WSM4;WSM_WSM4;M4;grammar_value
+WSM_WSM5;WSM_WSM5;M5;grammar_value
+WSM_WSM6;WSM_WSM6;M6;grammar_value
+WSM_WSM7;WSM_WSM7;M7;grammar_value
+WSM_WSM8;WSM_WSM8;M8;grammar_value
+WSM_WSM9;WSM_WSM9;M9;grammar_value
+WSM_WSM10;WSM_WSM10;M10;grammar_value
+WSM_WSM11;WSM_WSM11;M11;grammar_value
+WSM_WSM12;WSM_WSM12;M12;grammar_value
+WSM_WSM13;WSM_WSM13;M13;grammar_value
+WSM_WSM14;WSM_WSM14;M14;grammar_value
+WSM_WSM15;WSM_WSM15;M15;grammar_value
+WSM_WSM16;WSM_WSM16;M16;grammar_value
+WSM_WSM17;WSM_WSM17;M17;grammar_value
+WSM_WSM18;WSM_WSM18;M18;grammar_value
+WSM_WSM19;WSM_WSM19;M19;grammar_value
+WSM_WSM20;WSM_WSM20;M20;grammar_value
+WSM_WSM21;WSM_WSM21;M21;grammar_value
+WSM_WSM22;WSM_WSM22;M22;grammar_value
+WSM_WSM23;WSM_WSM23;M23;grammar_value
+WSM_WSM24;WSM_WSM24;M24;grammar_value
+WSM_WSM25;WSM_WSM25;M25;grammar_value
+WSN_WSN1;WSN_WSN1;N1;grammar_value
+WSN_WSN2;WSN_WSN2;N2;grammar_value
+WSN_WSN3;WSN_WSN3;N3;grammar_value
+WSN_WSN4;WSN_WSN4;N4;grammar_value
+WSN_WSN5;WSN_WSN5;N5;grammar_value
+WSN_WSN6;WSN_WSN6;N6;grammar_value
+WSN_WSN7;WSN_WSN7;N7;grammar_value
+WSN_WSN8;WSN_WSN8;N8;grammar_value
+WSN_WSN9;WSN_WSN9;N9;grammar_value
+WSN_WSN10;WSN_WSN10;N10;grammar_value
+WSN_WSN11;WSN_WSN11;N11;grammar_value
+WSN_WSN12;WSN_WSN12;N12;grammar_value
+WSN_WSN13;WSN_WSN13;N13;grammar_value
+WSN_WSN14;WSN_WSN14;N14;grammar_value
+WSN_WSN15;WSN_WSN15;N15;grammar_value
+WSN_WSN16;WSN_WSN16;N16;grammar_value
+WSN_WSN17;WSN_WSN17;N17;grammar_value
+WSN_WSN18;WSN_WSN18;N18;grammar_value
+WSN_WSN19;WSN_WSN19;N19;grammar_value
+WSN_WSN20;WSN_WSN20;N20;grammar_value
+WSN_WSN21;WSN_WSN21;N21;grammar_value
+WSN_WSN22;WSN_WSN22;N22;grammar_value
+WSN_WSN23;WSN_WSN23;N23;grammar_value
+WSN_WSN24;WSN_WSN24;N24;grammar_value
+WSN_WSN25;WSN_WSN25;N25;grammar_value
+G24Q42;G24Q42;;skip
+_signature;;Signature;fixed:1
